@@ -1,0 +1,38 @@
+# 指定文件末尾的换行符处理规则
+* text=auto
+
+# 设置 PHP 文件为文本文件
+*.php text
+
+# 配置指定文件类型的属性
+*.html text
+*.css text
+*.js text
+*.json text
+*.md text
+*.yaml text
+
+# 对于所有二进制文件，Git 不会执行换行符转换
+*.jpg binary
+*.png binary
+*.gif binary
+*.svg binary
+*.zip binary
+*.tar binary
+*.tar.gz binary
+*.pdf binary
+
+# 为 Composer 的配置文件设置属性
+composer.json text eol=lf
+composer.lock text eol=lf
+
+# 对于数据库迁移文件使用 Unix 风格换行符
+database/migrations/* text eol=lf
+
+# 对于.env 文件设置敏感信息过滤
+.env filter=env_filter
+
+# 防止某些自动生成的文件被误合并
+/var/ text diff=ignored
+/vendor/ text diff=ignored
+/node_modules/ text diff=ignored

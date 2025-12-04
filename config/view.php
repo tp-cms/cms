@@ -22,4 +22,16 @@ return [
     'taglib_begin'  => '{',
     // 标签库标签结束标记
     'taglib_end'    => '}',
+
+    // 添加模板变量替换，前期前后端不分离时使用
+    'tpl_replace_string' => [
+        // 后台资源
+        '__STATIC_ADMIN__'      => '/assets/admin',
+        '__ADMIN_CSS__'         => '/assets/admin/css',
+        '__ADMIN_JS__'          => '/assets/admin/js',
+        '__ADMIN_IMG__'         => '/assets/admin/img',
+
+        // 上传相关
+        '__UPLOAD_DIR__'        => '/storage/upload', // 图片上传目录
+    ]
 ];

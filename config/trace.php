@@ -7,4 +7,12 @@ return [
     'type'    => 'Html',
     // 读取的日志通道名
     'channel' => '',
+    // https://www.kancloud.cn/manual/thinkphp6_0/1037619
+    'tabs' => [
+        'base'                 => '基本',
+        'file'                 => '文件',
+        'error|notice|warning' => '错误',
+        'sql'                  => 'SQL',
+        'debug|info'           => '调试',
+    ],
 ];

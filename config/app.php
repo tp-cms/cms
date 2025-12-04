@@ -8,15 +8,18 @@ return [
     'app_namespace'    => '',
     // 是否启用路由
     'with_route'       => true,
+    // https://doc.thinkphp.cn/v8_0/multi_app_model.html
+    // 开启应用快速访问
+    'app_express'      => true,
     // 默认应用
-    'default_app'      => 'index',
+    'default_app'      => '',
     // 默认时区
     'default_timezone' => 'Asia/Shanghai',
 
     // 应用映射（自动多应用模式有效）
     'app_map'          => [],
     // 域名绑定（自动多应用模式有效）
-    'domain_bind'      => [],
+    'domain_bind'      => ['common', 'model', 'command'],
     // 禁止URL访问的应用列表（自动多应用模式有效）
     'deny_app_list'    => [],
 
