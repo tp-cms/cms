@@ -16,7 +16,7 @@ class Env extends Command
     protected function configure()
     {
         // 指令配置
-        $this->setName('env') // 这里的好像不生效吧
+        $this->setName('env')
             ->addArgument('envarg', Argument::OPTIONAL, "环境：local/dev/prod")
             ->setDescription('环境切换。1:local 2:dev 3:prod');
     }

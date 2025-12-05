@@ -6,7 +6,7 @@
 
 return [
     // 默认缓存驱动
-    'default' => env('cache.driver', 'file'),
+    'default' => env('CACHE_DRIVER', 'file'),
 
     // 缓存连接方式配置
     'stores'  => [
@@ -31,14 +31,14 @@ return [
         // php扩展下载地址 https://pecl.php.net/package/redis
         'redis' => [
             'type'       => 'redis',
-            'host'       => env('redis.host', '127.0.0.1'),
-            'port'       => env('redis.port', 6379),
-            'password'   => env('redis.password', ''),
-            'select'     => env('redis.db', 0),
+            'host'       => env('REDIS_HOST', '127.0.0.1'),
+            'port'       => env('REDIS_PORT', 6379),
+            'password'   => env('REDIS_PASSWORD', ''),
+            'select'     => env('REDIS_DB', 0),
             'timeout'    => 2,
-            'expire'     => env('redis.expire', 300), // 每个缓存有效期
+            'expire'     => env('REDIS_EXPIRE', 300), // 每个缓存有效期
             'prefix'     => 'tpcms_', // 缓存前缀防冲突
-            'persistent' => env('redis.persistent', false),
+            'persistent' => env('REDIS_PERSISTENT', false),
         ]
     ],
 ];

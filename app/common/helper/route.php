@@ -3,7 +3,7 @@
 // admin 用户路由前缀
 function adminRoutePrefix(): string
 {
-    $prefix = strtolower(env('route.admin_prefix', 'tpcmsadmin'));
+    $prefix = strtolower(env('ROUTE_ADMIN_PREFIX', 'tpcmsadmin'));
 
     // 防止用户配置非法字符
     if (!preg_match('/^[a-z0-9\-_]+$/', $prefix)) {

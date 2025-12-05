@@ -8,13 +8,13 @@ return [
     // cookie 保存路径
     'path'      => '/',
     // cookie 有效域名
-    'domain'    => env('cookie.domain', ''),
+    'domain'    => env('COOKIE_DOMAIN', ''),
     //  cookie 启用安全传输
-    'secure'    => env('cookie.secure', false),
+    'secure'    => env('COOKIE_SECURE', false),
     // httponly设置
     'httponly'  => false,
     // 是否使用 setcookie
     'setcookie' => true,
     // samesite 设置，支持 'strict' 'lax'
-    'samesite'  => env('cookie.samesite', 'lax'),
+    'samesite'  => env('COOKIE_SAMESITE', 'lax'),
 ];

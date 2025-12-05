@@ -9,30 +9,15 @@
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 
+use app\common\util\EnvUtil;
 use think\App;
 
 // [ 应用入口文件 ]
 
 require __DIR__ . '/../vendor/autoload.php';
 
-// .env 处理
-$root = dirname(__DIR__) . DIRECTORY_SEPARATOR;
-$envFile = $root . '.env';
-
-$envName = 'prod';
-if (!file_exists($envFile)) {
-    die("环境配置文件不存在: {$envFile}");
-}
-
-// 环境名
-$envName = trim(file_get_contents($envFile));
-
-// 配置文件
-$envConfigFile = $root . ".env.{$envName}";
-
-if (!file_exists($envConfigFile)) {
-    die("环境配置文件不存在: {$envConfigFile}");
-}
+$evnUtil = new EnvUtil();
+$envConfigFile = $evnUtil->getEnvConfigFile();
 
 $app = new App();
 // 配置文件加载
