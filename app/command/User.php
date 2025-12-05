@@ -46,8 +46,9 @@ class User extends Command
         $passwordHash = password_hash($password . $saltString, PASSWORD_BCRYPT);
 
         // 加载下配置
-        $evnUtil = new EnvUtil();
-        $envConfigFile = $evnUtil->getEnvConfigFile();
+        $envUtil = new EnvUtil();
+        $envUtil->init(root_path());
+        $envConfigFile = $envUtil->getEnvConfigFile();
 
         // 这里执行下index.php的流程吧，有点难受🙄
         // 不然会提示 SQLSTATE[HY000] [1045] Access denied for user 'root'@'localhost' (using password: NO)

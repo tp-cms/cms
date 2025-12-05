@@ -22,23 +22,23 @@ return [
     'connections'     => [
         'mysql' => [
             // 数据库类型
-            'type'            => env('DB_TYPE', 'mysql'),
+            'type'            => env('db.type', 'mysql'),
             // 服务器地址
-            'hostname'        => env('DB_HOSTNAME', '127.0.0.1'),
+            'hostname'        => env('db.hostname', '127.0.0.1'),
             // 数据库名
-            'database'        => env('DB_DATABASE', ''),
+            'database'        => env('db.database', ''),
             // 用户名
-            'username'        => env('DB_USERNAME', 'root'),
+            'username'        => env('db.username', 'root'),
             // 密码
-            'password'        => env('DB_PASSWORD', ''),
+            'password'        => env('db.password', ''),
             // 端口
-            'hostport'        => env('DB_HOSTPORT', '3306'),
+            'hostport'        => env('db.hostport', '3306'),
             // 数据库连接参数
             'params'          => [],
             // 数据库编码
-            'charset'         => env('DB_CHARSET', 'utf8mb4'),
+            'charset'         => env('db.charset', 'utf8mb4'),
             // 数据库表前缀
-            'prefix'          => env('DB_PREFIX', ''),
+            'prefix'          => env('db.prefix', ''),
 
             // 数据库部署方式:0 集中式(单一服务器),1 分布式(主从服务器)
             'deploy'          => 0,
@@ -53,7 +53,7 @@ return [
             // 是否需要断线重连
             'break_reconnect' => false,
             // 监听SQL
-            'trigger_sql'     => env('APP_DEBUG', true),
+            'trigger_sql'     => env('app.debug', true),
             // 开启字段缓存
             'fields_cache'    => false,
         ],

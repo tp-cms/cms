@@ -1,0 +1,82 @@
+<div class="side">
+    <h1 class="title">TPCMS</h1>
+    <nav>
+        <ul class="menu-root">
+
+            {volist name="baseConfig.menu" id="item"}
+            <li class="menu-item {if condition='$item.active'}active{/if}">
+
+                <div class="menu-title {if condition='$item.active'}open{/if}">
+                    {if !empty($item.url)}
+                    <a href="{$item.url}">{$item.title}</a>
+                    {else}
+                    <span class="no-link">{$item.title}</span>
+                    {/if}
+                    {if !empty($item.children)}<span class="arrow"></span>{/if}
+                </div>
+
+                {if !empty($item.children)}
+                <ul class="submenu {if condition='$item.active'}open{/if}">
+                    {volist name="$item.children" id="child"}
+                    <li class="menu-item {if condition='$child.active'}active{/if}">
+
+                        <div class="menu-title {if condition='$child.active'}open{/if}">
+                            {if !empty($child.url)}
+                            <a href="{$child.url}">{$child.title}</a>
+                            {else}
+                            <span class="no-link">{$child.title}</span>
+                            {/if}
+                        </div>
+
+                        {if !empty($child.children)}
+                        <ul class="submenu {if condition='$child.active'}open{/if}">
+                            {volist name="$child.children" id="grand"}
+                            <li class="menu-item {if condition='$grand.active'}active{/if}">
+                                <div class="menu-title">
+                                    <a href="{$grand.url}">{$grand.title}</a>
+                                </div>
+                            </li>
+                            {/volist}
+                        </ul>
+                        {/if}
+
+                    </li>
+                    {/volist}
+                </ul>
+                {/if}
+
+            </li>
+            {/volist}
+
+        </ul>
+    </nav>
+</div>
+
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // 遍历所有有子菜单的一级菜单
+        document.querySelectorAll(".menu-item > .menu-title").forEach(function (title) {
+            let submenu = title.nextElementSibling;
+            let link = title.querySelector('a');
+
+            // 只有有子菜单才处理折叠
+            if (!submenu) return;
+
+            title.querySelector('.arrow')?.addEventListener("click", function (e) {
+                e.stopPropagation(); // 阻止冒泡
+                submenu.classList.toggle("open");
+                title.classList.toggle("open");
+            });
+
+            // 如果父菜单没有 url，点击整个 title 都折叠
+            if (!link) {
+                title.addEventListener("click", function () {
+                    submenu.classList.toggle("open");
+                    title.classList.toggle("open");
+                });
+            }
+        });
+    });
+</script>

@@ -1,0 +1,11 @@
+:root {
+	--bg-color: #ffffff;
+	--text-color: #1f2328;
+	--a-color: #59636e;
+	--a-hover-color: #0969da;
+	--accent-color: #0969da;
+	--accent-hover-color: #0550b1;
+	--sidebar-bg: #f9f9f9;
+	--menu-item-active: #eaeaea;
+	--menu-item-hover: #efefef;
+}

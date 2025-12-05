@@ -9,9 +9,10 @@ class EnvUtil
     protected $envName;
     protected $envConfigFile;
 
-    public function __construct()
+    // 移除 __construct 方法，使用 init 方法初始化
+    public function init($root)
     {
-        $this->root = root_path();
+        $this->root = $root;
         $this->envFile = $this->root . '.env';
         $this->envName = 'prod';  // 默认环境为 prod
 

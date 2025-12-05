@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>tp-cms 登录</title>
+    <!-- js -->
+    <script src="__ADMIN_JS__/jquery-3.7.1.min.js"></script>
+</head>
+
+<body>
+    <form id="login-form">
+        <label>用户名：</label>
+        <input type="text" name="username" id="username" autocomplete="off"><br>
+
+        <label>密码：</label>
+        <input type="password" name="password" id="password" autocomplete="off"><br>
+
+        <label>验证码：</label>
+        <input type="text" name="captcha" id="captcha" autocomplete="off"><br>
+
+        <img src="/{$baseConfig.adminRoutePrefix}/api/captcha"
+            onclick="this.src='/{$baseConfig.adminRoutePrefix}/api/captcha?'+Math.random();" style="cursor:pointer;">
+        <small>点击图片刷新验证码</small><br>
+
+        <button type="submit">登录</button>
+    </form>
+
+    <div id="error-message" style="color: red; display: none;"></div> <!-- 用于显示错误信息 -->
+
+    <script>
+        $(document).ready(function () {
+            // 捕获表单提交
+            $('#login-form').on('submit', function (e) {
+                e.preventDefault(); // 阻止默认表单提交行为
+
+                // 清除之前的错误信息
+                $('#error-message').hide();
+
+                // 获取表单数据
+                var username = $('#username').val();
+                var password = $('#password').val();
+                var captcha = $('#captcha').val();
+
+                // 校验表单数据是否完整
+                if (!username || !password || !captcha) {
+                    $('#error-message').text('请填写完整的用户名、密码和验证码').show();
+                    return; // 如果有空字段，则不继续提交
+                }
+
+
+                var formData = {
+                    username: username,
+                    password: password,
+                    captcha: captcha
+                };
+
+                // 发送 AJAX 请求
+                $.ajax({
+                    url: '/{$baseConfig.adminRoutePrefix}/api/user/login', // 替换为实际的登录处理路由
+                    type: 'POST',
+                    data: formData,
+                    dataType: 'json',
+                    success: function (response) {
+                        console.log(response)
+                        if (response.code === 20826) {
+                            // 登录成功后处理
+                            window.location.href = '/{$baseConfig.adminRoutePrefix}'; // 登录成功后跳转到后台首页
+                        } else {
+                            // 登录失败显示错误信息
+                            $('#error-message').text(response.message).show();
+                            // 刷新验证码
+                            $('img').click();
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        // 请求失败时的处理
+                        $('#error-message').text('网络错误，请稍后再试！').show();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

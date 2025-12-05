@@ -16,8 +16,9 @@ use think\App;
 
 require __DIR__ . '/../vendor/autoload.php';
 
-$evnUtil = new EnvUtil();
-$envConfigFile = $evnUtil->getEnvConfigFile();
+$envUtil = new EnvUtil();
+$envUtil->init(dirname(__DIR__) . DIRECTORY_SEPARATOR);
+$envConfigFile = $envUtil->getEnvConfigFile();
 
 $app = new App();
 // 配置文件加载

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+{include file="layout/head" /}
+
+<body>
+    <div class="wrap">
+        <!-- 侧边栏 -->
+        {include file="layout/side" /}
+
+        <!-- 内容 -->
+        <main>
+            <!-- header -->
+            {include file="layout/header" /}
+            <!-- 内容 -->
+            <div class="main-con">
+                {block name="content"}{/block}
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>

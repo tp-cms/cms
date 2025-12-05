@@ -29,4 +29,11 @@ class UserRepository extends BaseRepository
             return $this->user->update($userData, $where);
         }
     }
+
+    // 用户信息（用户名）
+    public function infoByUserName(string $username)
+    {
+        $info = $this->user->field('id,username,uuid,salt,password,phone,email')->where(['username' => $username])->find();
+        return $info;
+    }
 }
