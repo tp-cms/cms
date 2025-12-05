@@ -15,8 +15,31 @@ use think\App;
 
 require __DIR__ . '/../vendor/autoload.php';
 
+// .env 处理
+$root = dirname(__DIR__) . DIRECTORY_SEPARATOR;
+$envFile = $root . '.env';
+
+$envName = 'prod';
+if (!file_exists($envFile)) {
+    die("环境配置文件不存在: {$envFile}");
+}
+
+// 环境名
+$envName = trim(file_get_contents($envFile));
+
+// 配置文件
+$envConfigFile = $root . ".env.{$envName}";
+
+if (!file_exists($envConfigFile)) {
+    die("环境配置文件不存在: {$envConfigFile}");
+}
+
+$app = new App();
+// 配置文件加载
+$app->env->load($envConfigFile);
+
 // 执行HTTP应用并响应
-$http = (new App())->http;
+$http = $app->http;
 
 $response = $http->run();
 
