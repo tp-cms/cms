@@ -63,7 +63,6 @@
                     data: formData,
                     dataType: 'json',
                     success: function (response) {
-                        console.log(response)
                         if (response.code === 20826) {
                             // 登录成功后处理
                             window.location.href = '/{$baseConfig.adminRoutePrefix}'; // 登录成功后跳转到后台首页

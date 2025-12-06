@@ -54,7 +54,7 @@ class User extends Base
                 return $this->err('验证码错误');
             } else {
                 // 删除验证码cookie
-                // Cookie::delete(CacheKeyEnum::CaptchaCookie->value);
+                Cookie::delete(CacheKeyEnum::CaptchaCookie->value);
             }
 
             if ($username && $password) {
@@ -81,8 +81,6 @@ class User extends Base
                     $ipKey = CacheKeyEnum::CaptchaIP->value . $ip;
                     Cache::delete($ipKey);
                 }
-
-
                 return $this->suc();
             }
 
@@ -91,5 +89,40 @@ class User extends Base
 
         // 页面展示
         return View::fetch('admin@user/login');
+    }
+
+    // 退出登录
+    public function logout()
+    {
+        // 获取当前的 token
+        $token = Cookie::get(CacheKeyEnum::AccessTokenCookie->value);
+
+        // 如果没有 token 或 token 无效，返回未登录或会话已过期
+        if (!$token) {
+            return $this->unauthorized();
+        }
+
+        // 解析 JWT 并检查有效性
+        $jwtCon = $this->decodeJWT($token);
+        if (!$jwtCon || $jwtCon->exp < time()) {
+            // Token 无效，删除 token 并返回
+            Cookie::delete(CacheKeyEnum::AccessTokenCookie->value);
+            return $this->unauthorized();
+        }
+
+        // 获取缓存中的用户信息，并验证用户名一致性
+        $user = Cache::get(CacheKeyEnum::UserInfo->value . $jwtCon->jti);
+        if (!$user || $user['username'] !== $jwtCon->username) {
+            // 如果缓存中的用户信息异常，删除 token 并返回
+            Cookie::delete(CacheKeyEnum::AccessTokenCookie->value);
+            return $this->err('异常访问');
+        }
+
+        // 删除 token 和缓存中的用户信息
+        Cookie::delete(CacheKeyEnum::AccessTokenCookie->value);
+        Cache::delete(CacheKeyEnum::UserInfo->value . $jwtCon->jti);
+
+        // 返回退出成功消息
+        return $this->suc();
     }
 }

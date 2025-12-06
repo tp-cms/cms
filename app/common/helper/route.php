@@ -5,6 +5,11 @@ function R(string $controllerAction, $app = 'frontend'): string
     return "\\app\\{$app}\\controller\\{$controllerAction}";
 }
 
+function A(string $controllerAction): string
+{
+    return R($controllerAction, 'admin');
+}
+
 // admin 用户路由前缀
 function adminRoutePrefix(): string
 {

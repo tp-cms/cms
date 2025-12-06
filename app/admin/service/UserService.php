@@ -31,10 +31,11 @@ class UserService extends BaseService
 
         // 验证密码
         $salt = $info->salt;
+        $saltString = base64_encode($salt);
         $passwordHash = $info->password;
 
         // 使用盐直接与密码进行验证
-        if (password_verify($password . $salt, $passwordHash)) {
+        if (password_verify($password . $saltString, $passwordHash)) {
             $checkPasswordRes['status'] = true;
             // 仅返回一些基本信息
             $checkPasswordRes['user'] = [

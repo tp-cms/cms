@@ -13,7 +13,7 @@
     document.getElementById("logout-btn").onclick = async function () {
         if (!confirm("确定要退出登录吗？")) return;
 
-        const data = await request("/{$baseConfig.adminRoutePrefix}/user/logout", { method: "POST" });
+        const data = await request("/{$baseConfig.adminRoutePrefix}/api/user/logout", { method: "POST" });
         if (data.status) {
             window.location.href = "/{$baseConfig.adminRoutePrefix}/login";
         }

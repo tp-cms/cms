@@ -24,7 +24,7 @@ class UserRepository extends BaseRepository
     {
         $where = ['id' => 1];
         if ($isCreate) {
-            return $this->user->save($userData, $where);
+            return $this->user->save($userData);
         } else {
             return $this->user->update($userData, $where);
         }

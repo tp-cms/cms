@@ -70,7 +70,6 @@ class User extends Command
         // 用户信息
         $info = $userRepo->info($userId);
         if ($info) {
-            $isCreate = true;
             // 修改密码
             $userData = [
                 'salt' => $salt,
@@ -78,6 +77,7 @@ class User extends Command
                 'updated_at' => $now,
             ];
         } else {
+            $isCreate = true;
             // 新增
             $userData = [
                 'id' => $userId,
