@@ -1,0 +1,138 @@
+{extend name="layout/main" /}
+
+{block name="content"}
+<div class="wrap-con">
+    <div class="con-header">
+        <h2>新增产品</h2>
+    </div>
+    <form class="layui-form" id="product-form">
+        <!-- 名称 -->
+        <div class="layui-form-item">
+            <label class="layui-form-label">名称</label>
+            <div class="layui-input-block">
+                <input type="text" id="title" name="title" required lay-verify="required" placeholder="请输入产品名称"
+                    class="layui-input" autocomplete="off">
+            </div>
+        </div>
+
+        <!-- 分类 -->
+        <div class="layui-form-item">
+            <label class="layui-form-label">分类</label>
+            <div class="layui-input-block">
+                <select id="category_id" name="category_id" lay-verify="required">
+                    <option value="">选择分类</option>
+                    {volist name="productCategory" id="category" key="id"}
+                    <option value="{$id}">{$category}</option>
+                    {/volist}
+                </select>
+            </div>
+        </div>
+
+        <!-- 封面图（单张） -->
+        <div class="layui-form-item">
+            <label class="layui-form-label">封面</label>
+            <div class="layui-input-block">
+                <button type="button" class="layui-btn" id="upload-cover">上传封面</button>
+                <img id="cover-img" src="" class="layui-upload-img" style="display: none;" />
+                <input type="hidden" id="cover" name="cover">
+            </div>
+        </div>
+
+        <!-- 产品图（支持多张） -->
+        <div class="layui-form-item">
+            <label class="layui-form-label">产品图</label>
+            <div class="layui-input-block">
+                <button type="button" class="layui-btn" id="upload-content-images">上传产品图</button>
+                <div id="content-images-preview"></div>
+                <input type="hidden" id="content_image" name="content_image">
+            </div>
+        </div>
+
+        <!-- 简介 -->
+        <div class="layui-form-item">
+            <label class="layui-form-label">简介</label>
+            <div class="layui-input-block">
+                <textarea id="summary" name="summary" lay-verify="required" placeholder="请输入简介" class="layui-textarea"></textarea>
+            </div>
+        </div>
+
+        <!-- 价格 -->
+        <div class="layui-form-item">
+            <label class="layui-form-label">价格</label>
+            <div class="layui-input-block">
+                <input type="number" id="price" name="price" required lay-verify="required" placeholder="请输入价格"
+                    class="layui-input" autocomplete="off">
+            </div>
+        </div>
+        
+        <!-- 百度爱采购链接 -->
+        <div class="layui-form-item">
+            <label class="layui-form-label">爱采购</label>
+            <div class="layui-input-block">
+                <input type="url" id="b2b_uri" name="b2b_uri" placeholder="请输入百度爱采购链接" class="layui-input" autocomplete="off">
+            </div>
+        </div>
+
+        <!-- 内容 -->
+        <div class="layui-form-item">
+            <label class="layui-form-label">内容</label>
+            <div class="layui-input-block editor-wrapper">
+                <div id="content-toolbar-container" class="toobal-container"></div>
+                <div id="content-editor-container" class="editor-container"></div>
+            </div>
+        </div>
+
+        <!-- 参数 -->
+        <div class="layui-form-item">
+            <label class="layui-form-label">参数</label>
+            <div class="layui-input-block editor-wrapper">
+                <div id="parameter-toolbar-container" class="toobal-container"></div>
+                <div id="parameter-editor-container" class="editor-container"></div>
+            </div>
+        </div>
+
+        <!-- 提交按钮 -->
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button type="submit" class="layui-btn layui-btn-normal">提交</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    // 富文本编辑器初始化
+    const cEditor = initEditor('#content-editor-container', '#content-toolbar-container');
+    const pEditor = initEditor('#parameter-editor-container', '#parameter-toolbar-container');
+
+    // 提交表单时获取并打印表单数据
+    document.getElementById('product-form').addEventListener('submit', function (e) {
+        e.preventDefault(); // 阻止表单提交
+
+        // 获取表单数据
+        const formData = new FormData(this);
+        let formObject = {};
+
+        formData.forEach((value, key) => {
+            formObject[key] = value;
+        });
+
+        let content = cEditor.getHtml();
+        let parameter = pEditor.getHtml();
+        formObject.content = content;
+        formObject.parameter = parameter;
+
+        // 打印表单内容
+        console.log('提交的表单数据:', formObject);
+
+        // 如果需要，可以在这里通过 AJAX 提交表单数据
+        // 例如: 
+        // fetch('/submit', {
+        //     method: 'POST',
+        //     body: formData
+        // })
+        // .then(response => response.json())
+        // .then(data => console.log(data))
+    });
+</script>
+{/block}

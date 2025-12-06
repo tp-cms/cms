@@ -21,8 +21,12 @@ Route::group($adminPrefix . '/api', function () {
 
 // 需要登录的（页面）
 Route::group($adminPrefix, function () {
+    // 首页
     Route::get('/', A('Index@indexHtml'));
-    Route::get('product', A('Product@indexHtml'));
+    // 产品
+    Route::get('product/create', A('Product@createHtml'));
+    Route::get('product/update/:id', A('Product@updateHtml'));
+    Route::get('product/index', A('Product@indexHtml'));
 })->middleware(Auth::class);
 
 
@@ -30,4 +34,7 @@ Route::group($adminPrefix, function () {
 Route::group($adminPrefix . '/api', function () {
     // 产品
     Route::post('product/list', A('Product@index'));
+    Route::post('product/create', A('Product@create'));
+    Route::post('product/update', A('Product@update'));
+    Route::post('product/delete', A('Product@delete'));
 })->middleware(Auth::class);

@@ -10,17 +10,18 @@
                 style="width: 200px; display: inline-block;">
             <select id="category" class="layui-select" style="width: 150px; display: inline-block;">
                 <option value="">选择分类</option>
-                <option value="1">分类 1</option>
-                <option value="2">分类 2</option>
+                {volist name="productCategory" id="category" key="id"}
+                <option value="{$id}">{$category}</option>
+                {/volist}
             </select>
             <button class="layui-btn" id="searchBtn">搜索</button>
-            <button class="layui-btn layui-btn-normal" id="addBtn">新增</button>
+            <a class="layui-btn layui-btn-normal" href="/{$baseConfig.adminRoutePrefix}/product/create">新增</a>
             <button class="layui-btn layui-btn-danger" id="deleteBtn">删除</button>
         </div>
     </div>
     <div class="table-wrap">
         <!-- 将表格ID作为标识 -->
-        <table class="layui-table" id="table-id"></table>
+        <table class="layui-table" id="table-id" lay-filter="filter"></table>
     </div>
 </div>
 
@@ -34,7 +35,7 @@
         table.render({
             elem: '#table-id',
             url: '/{$baseConfig.adminRoutePrefix}/api/product/list',
-            parseData:function(res){
+            parseData: function(res){
                 return {
                     code: res.code,
                     msg: res.message,
@@ -44,8 +45,8 @@
             },
             css: '.layui-table,.layui-table th{text-align: center;}',
             page: true, // 开启分页
-            limit:20,
-            limits:[20],
+            limit: 20,
+            limits: [20],
             method: 'post',
             request: {
                 pageName: 'p',
@@ -54,7 +55,8 @@
                 statusCode: 20826,
             },
             cols: [[
-                 {
+                { type: 'checkbox', title: '选择', width: 80 },
+                {
                     field: 'id',
                     title: '序号',
                     width: 80,
@@ -64,10 +66,134 @@
                 },
                 { field: 'title', title: '产品名称', width: 200 },
                 { field: 'category_name', title: '分类', width: 200 },
-                { field: 'summary', title: '描述' },
+                { field: 'summary', title: '描述', width: 300 },
                 { field: 'price', title: '价格', width: 100, sort: true },
-                { field: 'created_at', title: '创建时间', width: 200 }
+                {
+                    field: 'b2b_uri',
+                    title: '百度爱采购',
+                    width: 200,
+                    templet: function (d) {
+                        // 如果 b2b_uri 不为空，显示链接；如果为空，则显示普通文本
+                        if (d.b2b_uri) {
+                            return `<a href="${d.b2b_uri}" target="_blank">访问店铺</a>`; // 如果有 b2b_uri，显示可点击的链接
+                        } else {
+                            return '暂未设置'; // 如果 b2b_uri 为空，显示普通文本
+                        }
+                    }
+                },
+                { field: 'created_at', title: '创建时间', width: 200 },
+                {
+                    title: '操作',
+                    width: 150,
+                    fixed: 'right',  // 使该列固定在右侧
+                    templet: function (d) {
+                        return `
+                        <button class="layui-btn layui-btn-xs layui-btn-normal" onclick="editProduct(${d.id})">编辑</button>
+                        <button class="layui-btn layui-btn-xs layui-btn-danger" onclick="deleteProduct(${d.id})">删除</button>
+                    `;
+                    }
+                }
             ]]
+        });
+
+        // 编辑操作
+        window.editProduct = function (id) {
+            window.location.href = '/{$baseConfig.adminRoutePrefix}/product/update/' + id;
+        };
+
+        // 删除操作
+        window.deleteProduct = function (id) {
+            layer.confirm('确认删除该产品吗？', { icon: 3, title: '删除确认' }, function (index) {
+                // 执行删除操作，调用接口
+                $.ajax({
+                    url: '/api/product/delete',  // 你的删除接口
+                    type: 'POST',
+                    data: { id: id },
+                    success: function (res) {
+                        if (res.code === 0) {
+                            layer.msg('删除成功');
+                            table.reload('table-id');  // 重新加载表格
+                        } else {
+                            layer.msg('删除失败');
+                        }
+                    },
+                    error: function () {
+                        layer.msg('网络错误，请重试');
+                    }
+                });
+                layer.close(index);  // 关闭确认框
+            });
+        };
+
+
+        // 复选框事件
+        table.on('checkbox(filter)', function (obj) {
+            console.log(obj); // 查看对象所有成员
+            console.log(obj.checked); // 当前是否选中状态
+            console.log(obj.data); // 选中行的相关数据
+            console.log(obj.type); // 若触发的是全选，则为：all；若触发的是单选，则为：one
+
+            // 获取当前表格的选中状态
+            var checkStatus = table.checkStatus('table-id');
+            if (checkStatus.isAll) {
+                // 如果所有行都选中了
+                console.log("全选");
+            } else {
+                // 如果有部分行被选中
+                console.log("部分选中");
+            }
+        });
+
+        // 删除按钮点击事件
+        $('#deleteBtn').on('click', function () {
+            var checkStatus = table.checkStatus('table-id'); // 获取选中的行
+            var selectedData = checkStatus.data; // 获取选中的行数据
+
+            if (selectedData.length === 0) {
+                // 如果没有选中任何行
+                layer.msg('请选择要删除的项');
+                return;
+            }
+
+            // 提取选中行的 ID
+            var ids = selectedData.map(function (item) {
+                return item.id;
+            });
+
+            // 在这里可以执行删除操作，如发送删除请求
+            console.log('选中的 ID:', ids); // 显示选中的 ID
+
+            // 你可以调用接口删除数据，示例：
+            // $.ajax({
+            //     url: '/delete-api-endpoint',  // 删除的 API 接口
+            //     type: 'POST',
+            //     data: { ids: ids },
+            //     success: function (res) {
+            //         if (res.code === 0) {
+            //             layer.msg('删除成功');
+            //             table.reload('table-id');  // 重新加载表格
+            //         } else {
+            //             layer.msg('删除失败');
+            //         }
+            //     }
+            // });
+        });
+
+        // 搜索按钮点击事件
+        $('#searchBtn').on('click', function () {
+            var keyword = $('#keyword').val();  // 获取输入的关键词
+            var category = $('#category').val(); // 获取选择的分类
+
+            // 使用 table.reload 重新加载表格，并传递搜索条件
+            table.reload('table-id', {
+                page: {
+                    curr: 1 // 重置分页到第一页
+                },
+                where: {  // 传递搜索参数
+                    keyword: keyword,
+                    category: category
+                }
+            });
         });
     });
 </script>

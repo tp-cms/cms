@@ -3,6 +3,30 @@
 
 {include file="layout/head" /}
 
+<style>
+    .wrap {
+        height: 100vh;
+        width: 100%;
+        display: flex;
+    }
+
+    .wrap main {
+        background-color: var(--bg-color);
+        width: 100%;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        /* 限制最大宽度 */
+        max-width: calc(100% - 260px);
+    }
+    
+    .wrap main .main-con {
+        padding: 6px;
+        height: 100vh;
+        overflow: auto;
+    }
+</style>
 <body>
     <div class="wrap">
         <!-- 侧边栏 -->

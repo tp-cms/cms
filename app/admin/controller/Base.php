@@ -34,7 +34,7 @@ class Base extends BaseController
                 ],
                 [
                     'title' => '产品列表',
-                    'url'   => '/' . $this->adminRoutePrefix . '/product',
+                    'url'   => '/' . $this->adminRoutePrefix . '/product/index',
                 ]
             ];
 

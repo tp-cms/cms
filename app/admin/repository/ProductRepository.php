@@ -25,7 +25,7 @@ class ProductRepository extends BaseRepository
                     $query->where('p.category_id', $category);
                 }
             })
-            ->field('p.*, c.name as category_name');
+            ->field('p.id,p.title,p.summary,p.cover,p.created_at,p.price,p.b2b_uri, c.name as category_name');
 
         // 记录数
         $total = $query->count();
@@ -45,5 +45,35 @@ class ProductRepository extends BaseRepository
             'content' => $data,
             'count' => $total,
         ];
+    }
+
+    // 添加
+    public function create($data)
+    {
+        return $this->product->insertGetId($data);
+    }
+
+    // 详情
+    public function info($id)
+    {
+        $info = $this->product
+            ->field('id,category_id,cover,title,summary,parameter,content_image,content,price,b2b_uri,created_by')
+            ->where(['id' => $id])
+            ->find();
+
+        return $info;
+    }
+
+    // 更新
+    public function update($id, $data)
+    {
+        $data['updated_at'] = date('Y-m-d H:i:s');
+        return $this->product->update($data, ['id' => $id]);
+    }
+
+    // 删除
+    public function delete(array $ids)
+    {
+        return $this->product->delete($ids);
     }
 }
