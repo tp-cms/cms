@@ -15,5 +15,7 @@ return [
         'app\command\Service',
         // controller
         'app\command\Controller',
+        // model
+        'app\command\Model',
     ],
 ];

@@ -27,4 +27,7 @@ Route::group($adminPrefix, function () {
 
 
 // 需要登录的（接口）
-Route::group($adminPrefix . '/api', function () {})->middleware(Auth::class);
+Route::group($adminPrefix . '/api', function () {
+    // 产品
+    Route::post('product/list', A('Product@index'));
+})->middleware(Auth::class);
