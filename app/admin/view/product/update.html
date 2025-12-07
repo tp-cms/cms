@@ -105,8 +105,9 @@
 
 <script>
     // 富文本编辑器初始化
-    const cEditor = initEditor('#content-editor-container', '#content-toolbar-container', "{$info.content}");
-    const pEditor = initEditor('#parameter-editor-container', '#parameter-toolbar-container', "{$info.parameter}");
+    const uploadURL = "/{$baseConfig.adminRoutePrefix}/api/file/upload";
+    const cEditor = initEditor(uploadURL, '#content-editor-container', '#content-toolbar-container', "{$info.content}");
+    const pEditor = initEditor(uploadURL, '#parameter-editor-container', '#parameter-toolbar-container', "{$info.parameter}");
 
     // 提交表单时获取并打印表单数据
     document.getElementById('product-form').addEventListener('submit', function (e) {

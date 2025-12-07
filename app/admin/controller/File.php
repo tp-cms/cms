@@ -7,6 +7,19 @@ use app\admin\service\FileService;
 use app\trait\ResponseTrait;
 use think\App;
 
+// 大文件错误提示
+// PHP Request Startup: POST Content-Length of 9536740 bytes exceeds the limit of 8388608 bytes in
+// php.ini
+// 修改配置
+// upload_max_filesize = 20M   ; 允许上传的最大文件大小，单位是MB
+// post_max_size = 20M         ; 允许的最大 POST 数据大小，单位是MB
+// 其他（可选）
+// max_execution_time = 300     ; 允许脚本执行的最大时间，单位秒
+// max_input_time = 300         ; 允许 PHP 处理输入数据的最大时间
+
+// openresty
+// client_max_body_size 20M;  # 设置最大上传文件大小
+
 class File extends Base
 {
     use ResponseTrait;
@@ -31,38 +44,31 @@ class File extends Base
         // 用户id
         $userID = $this->request->user['id'];
         // 文件信息
-        $files = $this->request->file('file');
+        $file = $this->request->file('file');
 
-        if (!$files) {
+        if (!$file) {
             return $this->err('未选择文件',);
-        }
-
-        if (!is_array($files)) {
-            $files = [$files];
         }
 
         // 允许上传文件前缀
         $allowedPrefixes = ['image/', 'video/'];
 
         // 判断下
-        foreach ($files as $file) {
-            $mime = $this->file->mimeType($file);
-            $valid = false;
-            foreach ($allowedPrefixes as $prefix) {
-                if (str_starts_with($mime, $prefix)) {
-                    $valid = true;
-                    break;
-                }
-            }
-            if (!$valid) {
-                return $this->err('只允许上传图片/视频,不支持' . $mime);
+        $mime = $this->file->mimeType($file);
+        $valid = false;
+        foreach ($allowedPrefixes as $prefix) {
+            if (str_starts_with($mime, $prefix)) {
+                $valid = true;
+                break;
             }
         }
-
+        if (!$valid) {
+            return $this->err('只允许上传图片/视频,不支持' . $mime);
+        }
 
         // 上传
         try {
-            $res = $this->file->fileUpload($files, $userID);
+            $res = $this->file->fileUpload($file, $userID);
             return $this->suc($res);
         } catch (\Exception $e) {
             return $this->err($e->getMessage());

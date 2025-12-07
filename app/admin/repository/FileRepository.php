@@ -13,11 +13,12 @@ class FileRepository extends BaseRepository
         $this->file = new File();
     }
 
-    public function hashesAndUser($hashes, $userID)
+    public function hashDuplicate($hash, $userID)
     {
-        return $this->file->where('created_by', $userID)
-            ->whereIn('hash_name', $hashes)
-            ->select();
+        return $this->file->where([
+            'hash_name' => $hash,
+            'created_by' => $userID,
+        ])->find();
     }
 
     public function create($data)

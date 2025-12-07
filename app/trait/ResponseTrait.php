@@ -12,11 +12,14 @@ trait ResponseTrait
     private function jsonResp($code = self::success, $message = '成功', $data = [])
     {
         $status = $code == self::success ? true : false;
+        $errno = $code == self::success ? 0 : 1;
         return json([
             'status' => $status,
             'code' => $code,
             'message' => $message,
             'data' => $data,
+            // 兼容 wangeditor 文件上传
+            'errno' => $errno,
         ]);
     }
 

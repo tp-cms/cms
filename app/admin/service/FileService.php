@@ -82,11 +82,11 @@ class FileService extends BaseService
     }
 
     // 文件上传
-    public function fileUpload(array $files, int $userID)
+    public function fileUpload($file, $userID)
     {
         $results = [];
 
-        if (empty($files)) {
+        if (!$file) {
             return $results;
         }
 
@@ -99,76 +99,58 @@ class FileService extends BaseService
             mkdir($saveDir, 0755, true);
         }
 
-        // 先计算所有文件的哈希、文件大小、扩展名、原始名和 MIME 类型，批量处理减少查询次数
-        $fileInfos = [];
-
-        foreach ($files as $file) {
-            $realPath = $file->getRealPath();
-            $hash = $this->fileHash($realPath);
-            if (!$hash) {
-                throw new \Exception('无法计算文件哈希');
-            }
-
-            $fileInfos[] = [
-                'file' => $file,
-                'hash' => $hash,
-                'size' => $file->getSize(),
-                'extension' => $file->getOriginalExtension() ?: 'bin',
-                'originalName' => $file->getOriginalName(),
-                'mime' => $this->mimeType($file),
-            ];
+        $realPath = $file->getRealPath();
+        $hash = $this->fileHash($realPath);
+        if (!$hash) {
+            throw new \Exception('无法计算文件哈希');
         }
+
+        $fileInfo = [
+            'file' => $file,
+            'hash' => $hash,
+            'size' => $file->getSize(),
+            'extension' => $file->getOriginalExtension() ?: 'bin',
+            'originalName' => $file->getOriginalName(),
+            'mime' => $this->mimeType($file),
+        ];
 
         // 查询数据库是否已有相同 hash 且属于该用户的文件
-        $hashes = array_column($fileInfos, 'hash');
-        $existingFilesRaw = $this->file->hashesAndUser($hashes, $userID);
-        // 用关联数组以 hash 为 key，方便快速判断文件是否已存在
-        $existingFiles = [];
-        foreach ($existingFilesRaw as $file) {
-            $existingFiles[$file->hash_name] = $file;
-        }
+        $foundFile = $this->file->hashDuplicate([$hash], $userID);
 
-        // 逐个处理文件
-        foreach ($fileInfos as $info) {
-            $hash = $info['hash'];
-
-            if (isset($existingFiles[$hash])) {
-                // 文件已存在，直接返回数据库信息，避免重复上传浪费空间
-                $fileModel = $existingFiles[$hash];
-                $results[] = [
-                    'id' => $fileModel->id,
-                    'success' => true,
-                    'hash' => $hash,
-                    'path' => $fileModel->path,
-                    'url' => request()->domain() . '/' . $fileModel->path,
-                    'msg' => '文件已存在，返回之前上传信息',
-                ];
-                continue;
-            }
-
+        if ($foundFile) {
+            // 文件已存在，直接返回数据库信息，避免重复上传浪费空间
+            $results = [
+                'id' => $foundFile->id,
+                'success' => true,
+                'hash' => $hash,
+                'path' => $foundFile->path,
+                'url' => request()->domain() . '/' . $foundFile->path,
+                'msg' => '文件已存在，返回之前上传信息',
+            ];
+        } else {
             // 新文件，保存文件到指定目录
-            $saveName = $hash . '.' . $info['extension'];
+            $saveName = $hash . '.' . $fileInfo['extension'];
             $savePath = $saveDir . $saveName;
             $relativePath = $relativeDir . $saveName;
 
             if (!file_exists($savePath)) {
                 // move() 会自动覆盖同名文件，故这里判断避免重复移动
-                $info['file']->move($saveDir, $saveName);
+                $fileInfo['file']->move($saveDir, $saveName);
             }
 
             // 写入数据库
             $newFile = $this->file->create([
                 // 使用安全文件名保存到数据库，防止路径或显示问题
-                'name' => $this->fileSafeName($info['originalName']),
+                'name' => $this->fileSafeName($fileInfo['originalName']),
                 'hash_name' => $hash,
                 'path' => $relativePath,
-                'size' => $info['size'],
-                'ext' => $info['extension'],
-                'mime' => $info['mime'],
+                'size' => $fileInfo['size'],
+                'ext' => $fileInfo['extension'],
+                'mime' => $fileInfo['mime'],
                 'created_by' => $userID,
             ]);
 
-            $results[] = [
+            $results = [
                 'id' => $newFile->id,
                 'success' => true,
                 'hash' => $hash,

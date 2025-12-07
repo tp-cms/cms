@@ -102,8 +102,9 @@
 
 <script>
     // 富文本编辑器初始化
-    const cEditor = initEditor('#content-editor-container', '#content-toolbar-container');
-    const pEditor = initEditor('#parameter-editor-container', '#parameter-toolbar-container');
+    const uploadURL = "/{$baseConfig.adminRoutePrefix}/api/file/upload";
+    const cEditor = initEditor(uploadURL, '#content-editor-container', '#content-toolbar-container');
+    const pEditor = initEditor(uploadURL, '#parameter-editor-container', '#parameter-toolbar-container');
 
     // 文件上传
     var upload = layui.upload;
@@ -123,14 +124,14 @@
             layer.msg('上传中...', { icon: 16, time: 0 });
         },
         done: function (res) {
-            if (res.data && res.data[0].url) {
+            if (res.data) {
                 var imgWrapper = $('<div class="img-wrapper" style="position: relative; display: inline-block; margin-right: 10px;">')
-                    .append('<img src="' + res.data[0].url + '" alt="封面图" style="width: 90px; height: 90px;">')
+                    .append('<img src="' + res.data.url + '" alt="封面图" style="width: 90px; height: 90px;">')
                     .append('<button class="layui-btn layui-btn-xs layui-btn-danger delete-btn" style="position: absolute; top: 0; right: 0;">删除</button>')
-                    .attr('data-id', res.data[0].id);
+                    .attr('data-id', res.data.id);
 
                 $('#cover-img-preview').html(imgWrapper);
-                $('#cover').val(res.data[0].id);
+                $('#cover').val(res.data.id);
 
                 // 删除
                 imgWrapper.find('.delete-btn').on('click', function () {
@@ -157,12 +158,12 @@
             layer.msg('上传中...', { icon: 16, time: 0 });
         },
         done: function (res) {
-            if (res.data && res.data[0].url) {
+            if (res.data) {
                 // 使用接口返回的 url 展示产品图
                 var imgWrapper = $('<div class="img-wrapper" style="position: relative; display: inline-block; margin-right: 10px;">')
-                    .append('<img src="' + res.data[0].url + '" alt="产品图" style="width: 90px; height: 90px;">')
+                    .append('<img src="' + res.data.url + '" alt="产品图" style="width: 90px; height: 90px;">')
                     .append('<button class="layui-btn layui-btn-xs layui-btn-danger delete-btn" style="position: absolute; top: 0; right: 0;">删除</button>')
-                    .attr('data-id', res.data[0].id);
+                    .attr('data-id', res.data.id);
 
                 $('#content-images-preview').append(imgWrapper);
 
@@ -180,7 +181,7 @@
                 });
 
                 // 更新 content_image 字段
-                ids.push(res.data[0].id);
+                ids.push(res.data.id);
                 updateContentImageField(); 
                 layer.closeAll();  // 关闭上传中的提示
             }

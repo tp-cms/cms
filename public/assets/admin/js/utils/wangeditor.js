@@ -1,8 +1,37 @@
 // 封装一个函数用于初始化编辑器
-function initEditor(selector, toolbarSelector, htmlContent = '<p><br></p>') {
+function initEditor(uploadURL, selector, toolbarSelector, htmlContent = '<p><br></p>') {
 	const {createEditor, createToolbar} = window.wangEditor
 	const editorConfig = {
-		placeholder: '请输入内容'
+		placeholder: '请输入内容',
+		// https://www.wangeditor.com/v5/menu-config.html#上传图片
+		MENU_CONF: {
+			uploadImage: {
+				server: uploadURL,
+				fieldName: 'file',
+				maxNumberOfFiles: 5, // 最多上传
+				allowedFileTypes: ['image/*'], // 图片
+				maxFileSize: 5 * 1024 * 1024,
+				onError(err) {
+					console.error('上传失败', err)
+				},
+				onSuccess(file, res) {
+					console.log(`${file.name} 上传成功`, res)
+				}
+			},
+			uploadVideo: {
+				server: uploadURL,
+				fieldName: 'file',
+				maxFileSize: 10 * 1024 * 1024,
+				maxNumberOfFiles: 1,
+				allowedFileTypes: ['video/*'],
+				onError(err) {
+					console.error('上传失败', err)
+				},
+				onSuccess(file, res) {
+					console.log(`${file.name} 上传成功`, res)
+				}
+			}
+		}
 	}
 	const toolbarConfig = {}
 
