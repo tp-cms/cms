@@ -1,6 +1,6 @@
 <?php
 
-use app\middleware\Auth;
+use app\admin\middleware\Auth;
 use think\facade\Route;
 
 // 后台路由

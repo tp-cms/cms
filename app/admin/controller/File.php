@@ -6,8 +6,6 @@ use app\admin\service\FileCategoryService;
 use app\admin\service\FileService;
 use app\trait\ResponseTrait;
 use think\App;
-use think\facade\Log;
-use think\facade\Request;
 
 class File extends Base
 {

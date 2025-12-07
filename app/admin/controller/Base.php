@@ -2,8 +2,8 @@
 
 namespace app\admin\controller;
 
-use app\admin\trait\JWTTrait;
 use app\BaseController;
+use app\trait\JWTTrait;
 use app\trait\ResponseTrait;
 use think\facade\Cache;
 use think\facade\View;

@@ -1,9 +1,9 @@
 <?php
 
-namespace app\middleware;
+namespace app\admin\middleware;
 
 use app\admin\enum\CacheKeyEnum;
-use app\admin\trait\JWTTrait;
+use app\trait\JWTTrait;
 use think\facade\Cache;
 use think\facade\Cookie;
 
