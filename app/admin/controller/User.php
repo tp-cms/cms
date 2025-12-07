@@ -52,9 +52,6 @@ class User extends Base
             Cache::delete($captchaKey);
             if (strtolower($captcha) != $cacheCaptcha) {
                 return $this->err('验证码错误');
-            } else {
-                // 删除验证码cookie
-                Cookie::delete(CacheKeyEnum::CaptchaCookie->value);
             }
 
             if ($username && $password) {
@@ -63,6 +60,9 @@ class User extends Base
                 if (!$checkRes['status']) {
                     return $this->err('用户名或密码错误');
                 }
+
+                // 删除验证码cookie
+                Cookie::delete(CacheKeyEnum::CaptchaCookie->value);
 
                 // 登录成功，设置 cookie
                 // TODO:.env文件处理问题，可以存在空值

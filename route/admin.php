@@ -1,10 +1,9 @@
 <?php
 
-// 后台路由
-
 use app\middleware\Auth;
 use think\facade\Route;
 
+// 后台路由
 $adminPrefix = adminRoutePrefix();
 
 // 不需要登录的
@@ -37,4 +36,7 @@ Route::group($adminPrefix . '/api', function () {
     Route::post('product/create', A('Product@create'));
     Route::post('product/update', A('Product@update'));
     Route::post('product/delete', A('Product@delete'));
+
+    // 文件
+    Route::post('file/upload', A('File@upload'));
 })->middleware(Auth::class);

@@ -13,3 +13,6 @@ Thumbs.db
 
 # 配置文件
 .env.*
+
+# 文件上传
+/public/storage/*

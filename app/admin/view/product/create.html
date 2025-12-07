@@ -31,9 +31,9 @@
         <!-- 封面图（单张） -->
         <div class="layui-form-item">
             <label class="layui-form-label">封面</label>
-            <div class="layui-input-block">
+            <div class="layui-input-block cover-con">
                 <button type="button" class="layui-btn" id="upload-cover">上传封面</button>
-                <img id="cover-img" src="" class="layui-upload-img" style="display: none;" />
+                <div id="cover-img-preview"></div>
                 <input type="hidden" id="cover" name="cover">
             </div>
         </div>
@@ -104,6 +104,92 @@
     // 富文本编辑器初始化
     const cEditor = initEditor('#content-editor-container', '#content-toolbar-container');
     const pEditor = initEditor('#parameter-editor-container', '#parameter-toolbar-container');
+
+    // 文件上传
+    var upload = layui.upload;
+
+    // 更新 content_image 字段的值
+    var ids = [];
+    function updateContentImageField() {
+        $('#content_image').val(ids.join(','));
+    }
+
+    // 封面图上传（单张）
+    var uploadCover = upload.render({
+        elem: '#upload-cover',
+        url: '/{$baseConfig.adminRoutePrefix}/api/file/upload',
+        before: function (obj) {
+            // 这里不再需要 obj.preview 进行预览，直接上传即可
+            layer.msg('上传中...', { icon: 16, time: 0 });
+        },
+        done: function (res) {
+            if (res.data && res.data[0].url) {
+                var imgWrapper = $('<div class="img-wrapper" style="position: relative; display: inline-block; margin-right: 10px;">')
+                    .append('<img src="' + res.data[0].url + '" alt="封面图" style="width: 90px; height: 90px;">')
+                    .append('<button class="layui-btn layui-btn-xs layui-btn-danger delete-btn" style="position: absolute; top: 0; right: 0;">删除</button>')
+                    .attr('data-id', res.data[0].id);
+
+                $('#cover-img-preview').html(imgWrapper);
+                $('#cover').val(res.data[0].id);
+
+                // 删除
+                imgWrapper.find('.delete-btn').on('click', function () {
+                    $(this).parent().remove();
+                    $('#cover').val('');
+                });
+
+                layer.closeAll();
+            }
+        },
+        error: function () {
+            layer.msg('上传失败，请重试');
+            layer.closeAll();
+        }
+    });
+
+    // 产品图上传（支持多张）
+    var uploadContentImages = upload.render({
+        elem: '#upload-content-images',
+        url: '/{$baseConfig.adminRoutePrefix}/api/file/upload',
+        multiple: true,
+        before: function (obj) {
+            // 上传前提示
+            layer.msg('上传中...', { icon: 16, time: 0 });
+        },
+        done: function (res) {
+            if (res.data && res.data[0].url) {
+                // 使用接口返回的 url 展示产品图
+                var imgWrapper = $('<div class="img-wrapper" style="position: relative; display: inline-block; margin-right: 10px;">')
+                    .append('<img src="' + res.data[0].url + '" alt="产品图" style="width: 90px; height: 90px;">')
+                    .append('<button class="layui-btn layui-btn-xs layui-btn-danger delete-btn" style="position: absolute; top: 0; right: 0;">删除</button>')
+                    .attr('data-id', res.data[0].id);
+
+                $('#content-images-preview').append(imgWrapper);
+
+                // 删除
+                imgWrapper.find('.delete-btn').on('click', function () {
+                    var imgId = $(this).parent().attr('data-id');
+                    imgId = String(imgId).trim();
+
+                    ids = ids.filter(function (id) {
+                        return String(id).trim() !== imgId; 
+                    });
+
+                    $(this).parent().remove();
+                    $('#cover').val('');
+                });
+
+                // 更新 content_image 字段
+                ids.push(res.data[0].id);
+                updateContentImageField(); 
+                layer.closeAll();  // 关闭上传中的提示
+            }
+        },
+        error: function () {
+            layer.msg('上传失败，请重试');
+            layer.closeAll();  // 关闭上传中的提示
+        }
+    });
 
     // 提交表单时获取并打印表单数据
     document.getElementById('product-form').addEventListener('submit', function (e) {
