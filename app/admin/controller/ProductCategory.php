@@ -2,10 +2,12 @@
 
 namespace app\admin\controller;
 
+use think\facade\View;
+
 class ProductCategory extends Base
 {
-    public function index()
+    public function indexHtml()
     {
-        return 'Hello, ProductCategory';
+        return View::fetch('admin@productcategory/index');
     }
 }

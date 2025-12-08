@@ -6,6 +6,7 @@ use app\admin\service\FileCategoryService;
 use app\admin\service\FileService;
 use app\trait\ResponseTrait;
 use think\App;
+use think\facade\View;
 
 // 大文件错误提示
 // PHP Request Startup: POST Content-Length of 9536740 bytes exceeds the limit of 8388608 bytes in
@@ -33,9 +34,9 @@ class File extends Base
         return parent::__construct($app);
     }
 
-    public function index()
+    public function indexHtml()
     {
-        return 'Hello, File';
+        return View::fetch('admin@file/index');
     }
 
     // 文件上传

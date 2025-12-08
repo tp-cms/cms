@@ -25,4 +25,7 @@ class File extends Base
         'created_at',
         'updated_at'
     ];
+
+    // 存储类型
+    public const fileStorageTypeLocal = 1;
 }

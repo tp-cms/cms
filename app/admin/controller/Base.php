@@ -33,8 +33,66 @@ class Base extends BaseController
                     'url'   => '/' . $this->adminRoutePrefix,
                 ],
                 [
-                    'title' => '产品列表',
+                    'title' => 'Banner',
+                    'url'   => '/' . $this->adminRoutePrefix . '/banner/index',
+                ],
+                [
+                    'title' => '产品',
                     'url'   => '/' . $this->adminRoutePrefix . '/product/index',
+                    'include' => [
+                        '/' . $this->adminRoutePrefix . '/product/create',
+                        '/' . $this->adminRoutePrefix . '/product/update',
+                    ]
+                ],
+                [
+                    'title' => '新闻',
+                    'url'   => '/' . $this->adminRoutePrefix . '/news/index',
+                ],
+                [
+                    'title' => '案例',
+                    'url'   => '/' . $this->adminRoutePrefix . '/project/index',
+                ],
+                [
+                    'title' => '客户',
+                    'url'   => '/' . $this->adminRoutePrefix . '/customer/index',
+                ],
+                [
+                    'title' => '网站留言',
+                    'url'   => '/' . $this->adminRoutePrefix . '/contact-message/index',
+                ],
+                [
+                    'title' => '友情链接',
+                    'url'   => '/' . $this->adminRoutePrefix . '/link/index',
+                ],
+                [
+                    'title' => '单页',
+                    'children' => [
+                        [
+                            'title' => '隐私政策',
+                            'url'   => '/' . $this->adminRoutePrefix . '/page/privacy',
+                        ],
+                        [
+                            'title' => '关于我们',
+                            'url'   => '/' . $this->adminRoutePrefix . '/page/about-us',
+                        ]
+                    ]
+                ],
+                [
+                    'title' => '系统',
+                    'children' => [
+                        [
+                            'title' => '文件',
+                            'url'   => '/' . $this->adminRoutePrefix . '/file/index',
+                        ],
+                        [
+                            'title' => '配置',
+                            'url'   => '/' . $this->adminRoutePrefix . '/config/index',
+                        ],
+                        [
+                            'title' => '操作记录',
+                            'url'   => '/' . $this->adminRoutePrefix . '/action-log/index',
+                        ],
+                    ]
                 ]
             ];
 

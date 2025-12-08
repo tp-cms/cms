@@ -3,6 +3,7 @@
 namespace app\admin\service;
 
 use app\admin\repository\FileRepository;
+use app\model\File;
 
 class FileService extends BaseService
 {
@@ -147,6 +148,7 @@ class FileService extends BaseService
                 'size' => $fileInfo['size'],
                 'ext' => $fileInfo['extension'],
                 'mime' => $fileInfo['mime'],
+                'storage_type' => File::fileStorageTypeLocal,
                 'created_by' => $userID,
             ]);
 
