@@ -48,6 +48,13 @@
             </div>
         </div>
 
+        <div class="layui-form-item">
+            <label class="layui-form-label">上传</label>
+            <div class="layui-input-block">
+                <button type="button" class="layui-btn file-upload">弹出框上传</button>
+            </div>
+        </div>
+
         <!-- 简介 -->
         <div class="layui-form-item">
             <label class="layui-form-label">简介</label>
@@ -99,6 +106,9 @@
         </div>
     </form>
 </div>
+
+<!-- 文件上传 -->
+{include file="components/fileupload" /}
 
 <script>
     // 富文本编辑器初始化

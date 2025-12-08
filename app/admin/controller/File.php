@@ -39,6 +39,16 @@ class File extends Base
         return View::fetch('admin@file/index');
     }
 
+    // 文件列表
+    public function index()
+    {
+        $page = input('post.p', 1);
+        $keyword = input('post.keyword', '');
+        $categoryId = input('post.category', 0);
+        $list = $this->file->index($keyword, $categoryId, $page);
+        return $this->suc($list);
+    }
+
     // 文件上传
     public function upload()
     {

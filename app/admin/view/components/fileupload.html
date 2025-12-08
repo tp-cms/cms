@@ -1,0 +1,218 @@
+<div class="file-upload-html" style="display: none;">
+    <div class="file-upload-wrap">
+        <!-- 上传按钮和搜索功能 -->
+        <div class="file-upload-header">
+            <input type="text" id="file-upload-keyword" class="layui-input" placeholder="请输入关键词"
+                style="width: 200px; display: inline-block;">
+            <select id="file-upload-category" class="layui-select" style="width: 150px; display: inline-block;">
+                <option value="">选择分类</option>
+                {volist name="fileCategory" id="category" key="id"}
+                <option value="{$id}">{$category}</option>
+                {/volist}
+            </select>
+            <button class="layui-btn" id="file-upload-search">搜索</button>
+            <button class="layui-btn" id="file-upload-btn">上传文件</button>
+        </div>
+
+        <!-- 文件列表 -->
+        <div class="file-upload-grid" id="file-upload-grid"></div>
+    </div>
+</div>
+
+<script>
+    // 文件上传和显示弹窗
+    $('.file-upload').on('click', toUploadFile);
+
+    // 渲染文件列表
+    function toUploadFile() {
+        const origin = window.origin;
+        const fileURL = '/{$baseConfig.adminRoutePrefix}/api/file/index';
+
+        // 显示弹出框
+        $.confirm({
+            title: '文件上传',
+            content: $('.file-upload-html').html(),
+            boxWidth: '80%',
+            useBootstrap: false,
+            onContentReady: function () {
+                const self = this.$content;
+                const fileGrid = self.find('#file-upload-grid');
+                fileGrid.empty(); // 清空现有的文件内容
+
+                // 文件加载
+                function loadFile(page = 1, keyword = '', category = 0){
+                    $.ajax({
+                        url: fileURL,
+                        method: 'POST',
+                        dataType: 'json',
+                        data: { p: page, keyword: keyword, category: category },
+                        success: function (res) {
+                            const files = res.data.content;
+
+                            // 渲染文件
+                            files.forEach(file => {
+                                const fileType = getFileType(file.mime); // 获取文件类型
+                                let fileIcon;
+                                if (fileType === 'image') {
+                                    fileIcon = origin + '/' + file.path;
+                                } else {
+                                    fileIcon = getFileIcon(fileType); // 获取文件图标
+                                }
+
+                                const fileItem = `
+                                    <div class="file-item">
+                                        <div class="file-icon">
+                                            <img src="${fileIcon}" alt="${file.name}">
+                                        </div>
+                                        <div class="file-name">${file.name}</div>
+                                    </div>
+                                `;
+                                fileGrid.append(fileItem);
+                            });
+                        }
+                    });
+                }
+                loadFile();
+
+                // 文件搜索
+                function searchFile(){
+                    const keyword = self.find('#file-upload-keyword').val();
+                    const categoryId = self.find('#file-upload-category').val();
+                    fileGrid.empty(); // 清空现有的文件内容
+                    loadFile(1, keyword, categoryId);
+                }
+
+                // 文件上传
+                function uploadFile(){
+                    alert('文件上传按钮点击');
+                }
+
+                // 按钮事件
+                self.find('#file-upload-search').on('click', searchFile);
+                self.find('#file-upload-btn').on('click', uploadFile);
+            },
+            buttons: {
+                close: {
+                    text: '关闭'
+                }
+            }
+        });
+    }
+
+    // 渲染文件列表
+    function renderFile(page = 1, keyword = '', category = 0) {
+        const origin = window.origin;
+        const fileURL = '/{$baseConfig.adminRoutePrefix}/api/file/index';
+
+        $.ajax({
+            url: fileURL,
+            method: 'POST',
+            dataType: 'json',
+            data: { p: page, keyword: keyword, category: category },
+            success: function (res) {
+                const files = res.data.content;
+                const fileGrid = $('#file-upload-grid');
+                fileGrid.empty(); // 清空现有的文件内容
+
+                // 渲染文件
+                files.forEach(file => {
+                    const fileType = getFileType(file.mime); // 获取文件类型
+                    let fileIcon;
+                    if (fileType === 'image') {
+                        fileIcon = origin + '/' + file.path;
+                    } else {
+                        fileIcon = getFileIcon(fileType); // 获取文件图标
+                    }
+
+                    const fileItem = `
+                        <div class="file-item">
+                            <div class="file-icon">
+                                <img src="${fileIcon}" alt="${file.name}">
+                            </div>
+                            <div class="file-name">${file.name}</div>
+                        </div>
+                    `;
+                    fileGrid.append(fileItem);
+                });
+            }
+        });
+    }
+
+    // 获取文件类型
+    function getFileType(mime) {
+        if (mime.startsWith('image/')) return 'image';
+        if (mime === 'application/pdf') return 'pdf';
+        if (mime === 'application/msword' || mime === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') return 'word';
+        if (mime === 'application/vnd.ms-excel' || mime === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') return 'excel';
+        if (mime.startsWith('video/')) return 'video';
+        return 'default'; // 默认图标
+    }
+
+    // 获取文件图标
+    function getFileIcon(fileType) {
+        switch (fileType) {
+            case 'pdf':
+                return '/assets/admin/img/icon/pdf.png';
+            case 'word':
+                return '/assets/admin/img/icon/word.png';
+            case 'excel':
+                return '/assets/admin/img/icon/excel.png';
+            case 'video':
+                return '/assets/admin/img/icon/mp4.png';
+            default:
+                return '/assets/admin/img/icon/image.png';
+        }
+    }
+</script>
+
+<style>
+.file-upload-grid {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 20px;
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 10px;
+    margin-top: 20px;
+}
+
+.file-item {
+    text-align: center;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center
+}
+
+.file-icon {
+    width: 100px;
+    overflow: hidden;
+    border-radius: 6%;
+    margin: 0 auto;
+    cursor: pointer;
+}
+
+.file-icon img {
+    width: 100%;
+    height: 100%;
+    /* 使图片填满圆形容器 */
+    /* object-fit: cover;  */
+    /* 保持图片的比例并保证不被拉伸 */
+    object-fit: contain; 
+     /* 确保图片垂直和水平居中 */
+    object-position: center;
+}
+
+.file-name {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #333;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+</style>

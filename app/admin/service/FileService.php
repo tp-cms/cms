@@ -164,4 +164,10 @@ class FileService extends BaseService
 
         return $results;
     }
+
+    // 文件列表
+    public function index($keyword = '', $category = 0, $page = 1, $perPage = 20)
+    {
+        return $this->file->index($keyword, $category, $page, $perPage);
+    }
 }

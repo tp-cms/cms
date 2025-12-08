@@ -12,4 +12,9 @@ class FileCategoryService extends BaseService
     {
         $this->fileCategory = new FileCategoryRepository();
     }
+
+    public function all()
+    {
+        return $this->fileCategory->all();
+    }
 }

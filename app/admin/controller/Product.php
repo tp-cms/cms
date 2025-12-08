@@ -2,6 +2,7 @@
 
 namespace app\admin\controller;
 
+use app\admin\service\FileCategoryService;
 use app\admin\service\ProductCategoryService;
 use app\admin\service\ProductService;
 use think\App;
@@ -11,11 +12,13 @@ class Product extends Base
 {
     protected ProductService $product;
     protected ProductCategoryService $productCategory;
+    protected FileCategoryService $fileCategory;
 
     public function __construct(App $app)
     {
         $this->product = new ProductService();
         $this->productCategory = new ProductCategoryService();
+        $this->fileCategory = new FileCategoryService();
         return parent::__construct($app);
     }
 
@@ -44,6 +47,9 @@ class Product extends Base
         // 产品分类
         $all = $this->productCategory->all();
         View::assign('productCategory', $all);
+        // 文件分类
+        $fileCategory = $this->fileCategory->all();
+        View::assign('fileCategory', $fileCategory);
         return View::fetch('admin@product/create');
     }
 
