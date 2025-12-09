@@ -202,6 +202,11 @@ CREATE TABLE `page` (
   KEY `idx_category` (`category`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='单页信息';
 
+INSERT INTO `page` (`image`, `category`, `title`, `created_by`, `content`)
+VALUES 
+(0,'about_us', '关于我们', 1, ''),
+(0,'privacy', '隐私政策', 1, '');
+
 -- 友情链接
 DROP TABLE IF EXISTS `link`;
 CREATE TABLE `link` (

@@ -116,59 +116,24 @@
     // 文件上传
     FileUploader.bind('.file-upload')
 
-    // 提交表单时获取并打印表单数据
+    // 提交表单
     document.getElementById('product-form').addEventListener('submit', function (e) {
-        e.preventDefault(); // 阻止表单提交
+        e.preventDefault();
 
-        // 获取表单数据
-        const formData = new FormData(this);
-        let formObject = {};
+        // 富文本框信息
+        const editorContents = {
+            content: cEditor.getHtml(),
+            parameter: pEditor.getHtml(),
+        };
 
-        formData.forEach((value, key) => {
-            formObject[key] = value;
+        const url = "/{$baseConfig.adminRoutePrefix}/api/product/create";
+
+        submitForm('product-form', url, editorContents, function () {
+            // 一些方法
+            // setTimeout(() => {
+            //     window.history.back();
+            // }, 1000);
         });
-
-        let content = cEditor.getHtml();
-        let parameter = pEditor.getHtml();
-        formObject.content = content;
-        formObject.parameter = parameter;
-
-        // 打印表单内容
-        console.log('提交的表单数据:', formObject);
-
-        const createURL = "/{$baseConfig.adminRoutePrefix}/api/product/create";
-
-        $.ajax({
-            url:createURL,
-            type:'POST',
-            dataType: 'json',
-            data:formObject,
-            success:(res) => {
-                if(!res.status){
-                    // 错误提示
-                    layer.msg(res.message, {
-                        icon: 2,      // 红色叉
-                        time: 2000    // 自动关闭时间（ms）
-                    });
-                    return;
-                }
-                // 成功提示
-                layer.msg(res.msg || '操作成功', {
-                    icon: 1,      // 绿色勾
-                    time: 1500
-                }, function () {
-                    // 保存成功后，返回上一页
-                    window.history.back();
-                });
-            },
-            error: function (xhr, status, error) {
-                // 网络错误或服务器异常
-                layer.msg('请求异常，请稍后重试', {
-                    icon: 2,
-                    time: 2000
-                });
-            }
-        })
     });
 </script>
 {/block}

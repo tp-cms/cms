@@ -1,5 +1,88 @@
 {extend name="layout/main" /}
 
 {block name="content"}
-<p>关于我们</p>
+<div class="wrap-con">
+    <div class="con-header">
+        <h2>关于我们</h2>
+    </div>
+
+    <form class="layui-form" id="about-us-form">
+        <!-- 标题 -->
+        <div class="layui-form-item">
+            <label class="layui-form-label">标题</label>
+            <div class="layui-input-block">
+                <input type="text" id="title" name="title" required lay-verify="required" placeholder="标题"
+                    class="layui-input" value="{$info.title}">
+            </div>
+        </div>
+
+        <!-- 首页图 -->
+        <div class="layui-form-item">
+            <label class="layui-form-label">首页图</label>
+            <div class="layui-input-block">
+                <button type="button" class="layui-btn file-upload" id="upload-image" data-is-multiple="false"
+                    data-container-id="about-us-image-preview" data-input-id="image">上传封面</button>
+                <div id="about-us-image-preview" class="preview-img">
+                    {volist name="info.image_file" id="img"}
+                    <img src="/{$img.path}" data-file-id="{$img.id}">
+                    {/volist}
+                </div>
+                <input type="hidden" id="image" name="image" value="{$info.image}">
+            </div>
+        </div>
+
+        <!-- 简介/描述 -->
+        <div class="layui-form-item">
+            <label class="layui-form-label">简介</label>
+            <div class="layui-input-block">
+                <textarea id="summary" name="summary" placeholder="请输入简介" class="layui-textarea">{$info.summary}</textarea>
+            </div>
+        </div>
+
+        <!-- 内容 -->
+        <div class="layui-form-item">
+            <label class="layui-form-label">内容</label>
+            <div class="layui-input-block editor-wrapper">
+                <div id="content-toolbar-container" class="toobal-container"></div>
+                <div id="content-editor-container" class="editor-container"></div>
+            </div>
+        </div>
+
+        <!-- 提交按钮 -->
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button type="submit" class="layui-btn layui-btn-normal">提交</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- 文件上传 -->
+{include file="components/fileupload" /}
+
+<script>
+    // 富文本编辑器初始化
+    const uploadURL = "/{$baseConfig.adminRoutePrefix}/api/file/upload";
+
+    const cEditor = initEditor(uploadURL, '#content-editor-container', '#content-toolbar-container', "{$info.content}");
+    
+    // 文件上传
+    FileUploader.bind('.file-upload')
+
+    document.getElementById('about-us-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        // 富文本框信息
+        const editorContents = {
+            content: cEditor.getHtml(),
+        };
+
+        const url = "/{$baseConfig.adminRoutePrefix}/api/page/about-us";
+
+        submitForm('about-us-form', url, editorContents, function () {
+            window.location.reload();
+        });
+    });
+
+</script>
 {/block}

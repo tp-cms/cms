@@ -12,4 +12,13 @@ class PageRepository extends BaseRepository
     {
         $this->page = new Page();
     }
+
+    // info
+    public function info($category)
+    {
+        return $this->page
+            ->field('title,category,image,summary,content')
+            ->where(['category' => $category])
+            ->find();
+    }
 }
