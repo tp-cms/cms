@@ -1,11 +1,11 @@
 <?php
 
-
 use think\facade\Request;
 
 /**
  * 标记菜单选中
  * 支持 url / children / include 扩展匹配
+ * 支持 URL 占位符 :id 等
  */
 function setActiveMenu(array &$menu)
 {
@@ -17,8 +17,16 @@ function setActiveMenu(array &$menu)
 
         $item['active'] = false;
 
-        // URL 完全相等
-        if ($url !== '' && $url === $currentUrl) {
+        // 动态 URL 匹配函数
+        $matchUrl = function ($pattern) use ($currentUrl) {
+            // 将 /product/update/:id 转为正则
+            $pattern = preg_replace('#:([\w]+)#', '[^/]+', $pattern);
+            $pattern = '#^' . trim($pattern, '/') . '$#';
+            return preg_match($pattern, trim($currentUrl, '/'));
+        };
+
+        // URL 完全或动态匹配
+        if ($url !== '' && $matchUrl($url)) {
             $item['active'] = true;
         }
 
@@ -28,8 +36,11 @@ function setActiveMenu(array &$menu)
                 ? $item['include']
                 : [$item['include']];
 
-            if (in_array($currentUrl, $includeList)) {
-                $item['active'] = true;
+            foreach ($includeList as $includeUrl) {
+                if ($matchUrl($includeUrl)) {
+                    $item['active'] = true;
+                    break;
+                }
             }
         }
 

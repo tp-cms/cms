@@ -5,6 +5,7 @@ namespace app\admin\controller;
 use app\admin\service\FileCategoryService;
 use app\admin\service\ProductCategoryService;
 use app\admin\service\ProductService;
+use app\admin\validate\ProductValidate;
 use think\App;
 use think\facade\View;
 
@@ -13,12 +14,14 @@ class Product extends Base
     protected ProductService $product;
     protected ProductCategoryService $productCategory;
     protected FileCategoryService $fileCategory;
+    protected ProductValidate $productValidate;
 
     public function __construct(App $app)
     {
         $this->product = new ProductService();
         $this->productCategory = new ProductCategoryService();
         $this->fileCategory = new FileCategoryService();
+        $this->productValidate = new ProductValidate();
         return parent::__construct($app);
     }
 
@@ -54,7 +57,22 @@ class Product extends Base
     }
 
     // 产品新增
-    public function create() {}
+    public function create()
+    {
+        // 简单验证下参数
+        $data = $this->request->post();
+        if (!$this->productValidate->scene('create')->check($data)) {
+            return $this->err($this->productValidate->getError());
+        }
+
+        $userID = $this->request->user['id'];
+        $id = $this->product->create($data, $userID);
+        if (!$id) {
+            return $this->err('保存失败');
+        }
+
+        return $this->suc();
+    }
 
     // 产品编辑（页面）
     public function updateHtml($id = 0)
@@ -62,6 +80,10 @@ class Product extends Base
         // 产品分类
         $all = $this->productCategory->all();
         View::assign('productCategory', $all);
+        // 文件分类
+        $fileCategory = $this->fileCategory->all();
+        View::assign('fileCategory', $fileCategory);
+
         $id = $this->request->route('id');
         $info = $this->product->info($id);
         View::assign('info', $info);
@@ -69,7 +91,17 @@ class Product extends Base
     }
 
     // 产品编辑
-    public function update() {}
+    public function update()
+    {
+        // 简单验证下参数
+        $data = $this->request->post();
+        if (!$this->productValidate->scene('update')->check($data)) {
+            return $this->err($this->productValidate->getError());
+        }
+
+        $this->product->update($data);
+        return $this->suc();
+    }
 
     // 产品删除
     public function delete() {}

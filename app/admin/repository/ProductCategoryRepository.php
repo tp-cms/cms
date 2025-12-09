@@ -20,4 +20,9 @@ class ProductCategoryRepository extends BaseRepository
         $names = $this->productCategory->column('name', 'id');
         return $names;
     }
+
+    public function info($id)
+    {
+        return $this->productCategory->field('id,name,code')->find($id);
+    }
 }

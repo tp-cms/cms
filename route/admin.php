@@ -124,7 +124,10 @@ Route::group($adminPrefix . '/api', function () {
 
     // 文件
     Route::post('file/index', A('File@index'));
+    // 上传 （file，wangeditor富文本使用，上传多文件时逻辑是循环请求上传接口）
     Route::post('file/upload', A('File@upload'));
+    // 批量上传（files[]，弹出框使用)
+    Route::post('file/upload-multiple', A('File@uploadMultiple'));
     Route::post('file/update', A('File@update'));
     Route::post('file/delete', A('File@delete'));
 

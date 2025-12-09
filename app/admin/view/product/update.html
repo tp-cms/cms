@@ -35,9 +35,14 @@
         <div class="layui-form-item">
             <label class="layui-form-label">封面</label>
             <div class="layui-input-block">
-                <button type="button" class="layui-btn" id="upload-cover">上传封面</button>
-                <img id="cover-img" src="" class="layui-upload-img" style="display: none;" />
-                <input type="hidden" id="cover" name="cover">
+                <button type="button" class="layui-btn file-upload" id="upload-cover" data-is-multiple="false"
+                    data-container-id="cover-img-preview" data-input-id="cover">上传封面</button>
+                <div id="cover-img-preview" class="preview-img">
+                    {volist name="info.cover_file" id="img"}
+                        <img src="/{$img.path}" data-file-id="{$img.id}">
+                    {/volist}
+                </div>
+                <input type="hidden" id="cover" name="cover" value="{$info.cover}">
             </div>
         </div>
 
@@ -45,9 +50,14 @@
         <div class="layui-form-item">
             <label class="layui-form-label">产品图</label>
             <div class="layui-input-block">
-                <button type="button" class="layui-btn" id="upload-content-images">上传产品图</button>
-                <div id="content-images-preview"></div>
-                <input type="hidden" id="content_image" name="content_image">
+                <button type="button" class="layui-btn file-upload" id="upload-content-images" data-is-multiple="true"
+                    data-container-id="content-images-preview" data-input-id="content_image">上传产品图</button>
+                <div id="content-images-preview" class="preview-img">
+                    {volist name="info.content_image_file" id="img"}
+                    <img src="/{$img.path}" data-file-id="{$img.id}">
+                    {/volist}
+                </div>
+                <input type="hidden" id="content_image" name="content_image" value="{$info.content_image}">
             </div>
         </div>
 
@@ -103,11 +113,22 @@
     </form>
 </div>
 
+<!-- 文件上传 -->
+{include file="components/fileupload" /}
+
 <script>
     // 富文本编辑器初始化
     const uploadURL = "/{$baseConfig.adminRoutePrefix}/api/file/upload";
+    
+    // // 这里可以这样，可是编辑器报红，强迫症很难受
+    // const contentHTML = {$info.content|json_encode|raw};
+    // const parameterHTML = {$info.parameter|json_encode|raw};
+
     const cEditor = initEditor(uploadURL, '#content-editor-container', '#content-toolbar-container', "{$info.content}");
     const pEditor = initEditor(uploadURL, '#parameter-editor-container', '#parameter-toolbar-container', "{$info.parameter}");
+
+    // 文件上传
+    FileUploader.bind('.file-upload')
 
     // 提交表单时获取并打印表单数据
     document.getElementById('product-form').addEventListener('submit', function (e) {
@@ -129,14 +150,36 @@
         // 打印表单内容
         console.log('提交的表单数据:', formObject);
 
-        // 如果需要，可以在这里通过 AJAX 提交表单数据
-        // 例如: 
-        // fetch('/submit', {
-        //     method: 'POST',
-        //     body: formData
-        // })
-        // .then(response => response.json())
-        // .then(data => console.log(data))
+        const createURL = "/{$baseConfig.adminRoutePrefix}/api/product/update";
+
+        $.ajax({
+            url: createURL,
+            type: 'POST',
+            dataType: 'json',
+            data: formObject,
+            success: (res) => {
+                if (!res.status) {
+                    layer.msg(res.message, {
+                        icon: 2,
+                        time: 2000
+                    });
+                    return;
+                }
+                // 成功提示
+                layer.msg(res.msg || '操作成功', {
+                    icon: 1,
+                    time: 1500
+                }, function () {
+                    window.history.back();
+                });
+            },
+            error: function (xhr, status, error) {
+                layer.msg('请求异常，请稍后重试', {
+                    icon: 2,
+                    time: 2000
+                });
+            }
+        })
     });
 </script>
 {/block}

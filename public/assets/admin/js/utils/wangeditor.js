@@ -1,5 +1,14 @@
+// 处理下view里的转义
+function decodeHtmlEntities(text) {
+	const div = document.createElement('div')
+	div.innerHTML = text
+	const result = div.textContent
+	div.remove() // 现代浏览器支持
+	return result
+}
 // 封装一个函数用于初始化编辑器
 function initEditor(uploadURL, selector, toolbarSelector, htmlContent = '<p><br></p>') {
+	htmlContent = decodeHtmlEntities(htmlContent)
 	const {createEditor, createToolbar} = window.wangEditor
 	const editorConfig = {
 		placeholder: '请输入内容',

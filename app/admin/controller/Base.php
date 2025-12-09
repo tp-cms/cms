@@ -41,7 +41,7 @@ class Base extends BaseController
                     'url'   => '/' . $this->adminRoutePrefix . '/product/index',
                     'include' => [
                         '/' . $this->adminRoutePrefix . '/product/create',
-                        '/' . $this->adminRoutePrefix . '/product/update',
+                        '/' . $this->adminRoutePrefix . '/product/update/:id',
                     ]
                 ],
                 [

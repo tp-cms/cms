@@ -23,6 +23,7 @@ class FileRepository extends BaseRepository
             ->when($category > 0, function ($query) use ($category) {
                 $query->where('f.category_id', $category);
             })
+            ->order('f.id desc')
             ->field('f.id,f.name,f.path,f.size,f.mime,f.storage_type,f.ext,f.created_at,c.name as category_name');
 
         // 记录数
@@ -63,5 +64,11 @@ class FileRepository extends BaseRepository
     public function delete(array $ids)
     {
         return $this->file->delete($ids);
+    }
+
+    // 获取文件信息
+    public function info($ids)
+    {
+        return $this->file->whereIn('id', $ids)->field('id,path')->select();
     }
 }

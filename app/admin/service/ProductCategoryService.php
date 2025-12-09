@@ -13,7 +13,13 @@ class ProductCategoryService extends BaseService
         $this->productCategory = new ProductCategoryRepository();
     }
 
-    public function all(){
+    public function all()
+    {
         return $this->productCategory->all();
+    }
+
+    public function info($id)
+    {
+        return $this->productCategory->info($id);
     }
 }

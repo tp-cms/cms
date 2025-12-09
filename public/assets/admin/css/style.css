@@ -18,7 +18,7 @@ body {
 .editor-wrapper {
 	border: 1px solid #eeeeee;
 }
-.editor-wrapper.w-e-full-screen-container{
+.editor-wrapper.w-e-full-screen-container {
 	z-index: 99;
 }
 /* 多个时,上面全屏被遮挡问题 */
@@ -33,4 +33,18 @@ body {
 /* 编辑区域 */
 .editor-container {
 	height: 300px;
+}
+
+/* 图片选择展示 */
+.preview-img{
+	display: flex;
+	flex-wrap: wrap;
+	gap: 5px;
+	padding-top: 5px;
+}
+.preview-img img {
+	width: 80px;
+	height: 80px;
+	border: 1px solid #ddd;
+	border-radius: 6px;
 }

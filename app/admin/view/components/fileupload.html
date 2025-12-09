@@ -5,13 +5,13 @@
             <input type="text" id="file-upload-keyword" class="layui-input" placeholder="请输入关键词"
                 style="width: 200px; display: inline-block;">
             <select id="file-upload-category" class="layui-select" style="width: 150px; display: inline-block;">
-                <option value="">选择分类</option>
+                <option value="0">选择分类</option>
                 {volist name="fileCategory" id="category" key="id"}
                 <option value="{$id}">{$category}</option>
                 {/volist}
             </select>
             <button class="layui-btn" id="file-upload-search">搜索</button>
-            <button class="layui-btn" id="file-upload-btn">上传文件</button>
+            <button class="layui-btn" id="file-upload-btn" style="margin-left: 0;">上传文件</button>
         </div>
 
         <!-- 文件列表 -->
@@ -20,122 +20,219 @@
 </div>
 
 <script>
-    // 文件上传和显示弹窗
-    $('.file-upload').on('click', toUploadFile);
+    // 文件上传
+    class FileUploader {
+        // 静态对象保存实例
+        static instances = {};
 
-    // 渲染文件列表
-    function toUploadFile() {
-        const origin = window.origin;
-        const fileURL = '/{$baseConfig.adminRoutePrefix}/api/file/index';
+        // https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Classes/constructor
+        constructor(options = {}) {
+            this.origin = window.origin;
+            this.fileURL = options.fileURL || '/{$baseConfig.adminRoutePrefix}/api/file/index';
+            this.uploadURL = options.uploadURL || '/{$baseConfig.adminRoutePrefix}/api/file/upload-multiple';
+            this.pageSize = options.pageSize || 20;
 
-        // 显示弹出框
-        $.confirm({
-            title: '文件上传',
-            content: $('.file-upload-html').html(),
-            boxWidth: '80%',
-            useBootstrap: false,
-            onContentReady: function () {
-                const self = this.$content;
-                const fileGrid = self.find('#file-upload-grid');
-                fileGrid.empty(); // 清空现有的文件内容
+            this.isMultiple = options.isMultiple || false;
+            this.containerId = options.containerId || '';
+            this.inputId = options.inputId || '';
 
-                // 文件加载
-                function loadFile(page = 1, keyword = '', category = 0){
-                    $.ajax({
-                        url: fileURL,
-                        method: 'POST',
-                        dataType: 'json',
-                        data: { p: page, keyword: keyword, category: category },
-                        success: function (res) {
-                            const files = res.data.content;
+            // 弹窗状态
+            this.currentPage = 1;
+            this.totalPage = 1;
+            this.currentKeyword = '';
+            this.currentCategory = 0;
+            this.isLoading = false;
 
-                            // 渲染文件
-                            files.forEach(file => {
-                                const fileType = getFileType(file.mime); // 获取文件类型
-                                let fileIcon;
-                                if (fileType === 'image') {
-                                    fileIcon = origin + '/' + file.path;
-                                } else {
-                                    fileIcon = getFileIcon(fileType); // 获取文件图标
-                                }
+            this.$content = null;
+            this.$fileGrid = null;
+        }
 
-                                const fileItem = `
-                                    <div class="file-item">
-                                        <div class="file-icon">
-                                            <img src="${fileIcon}" alt="${file.name}">
-                                        </div>
-                                        <div class="file-name">${file.name}</div>
-                                    </div>
-                                `;
-                                fileGrid.append(fileItem);
-                            });
-                        }
+        // https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Classes/static
+        static bind(triggerSelector) {
+            $(triggerSelector).each(function () {
+                const $btn = $(this);
+                const btnId = $btn.attr('id') || $btn.data('id');
+
+                if (!btnId) {
+                    console.error('每个触发按钮必须有唯一 id 或 data-id');
+                    return;
+                }
+
+                // 如果实例已存在，复用
+                if (!FileUploader.instances[btnId]) {
+                    FileUploader.instances[btnId] = new FileUploader({
+                        isMultiple: $btn.data('is-multiple') || false,
+                        containerId: $btn.data('container-id') || '',
+                        inputId: $btn.data('input-id') || ''
                     });
                 }
-                loadFile();
 
-                // 文件搜索
-                function searchFile(){
-                    const keyword = self.find('#file-upload-keyword').val();
-                    const categoryId = self.find('#file-upload-category').val();
-                    fileGrid.empty(); // 清空现有的文件内容
-                    loadFile(1, keyword, categoryId);
-                }
-
-                // 文件上传
-                function uploadFile(){
-                    alert('文件上传按钮点击');
-                }
-
-                // 按钮事件
-                self.find('#file-upload-search').on('click', searchFile);
-                self.find('#file-upload-btn').on('click', uploadFile);
-            },
-            buttons: {
-                close: {
-                    text: '关闭'
-                }
-            }
-        });
-    }
-
-    // 渲染文件列表
-    function renderFile(page = 1, keyword = '', category = 0) {
-        const origin = window.origin;
-        const fileURL = '/{$baseConfig.adminRoutePrefix}/api/file/index';
-
-        $.ajax({
-            url: fileURL,
-            method: 'POST',
-            dataType: 'json',
-            data: { p: page, keyword: keyword, category: category },
-            success: function (res) {
-                const files = res.data.content;
-                const fileGrid = $('#file-upload-grid');
-                fileGrid.empty(); // 清空现有的文件内容
-
-                // 渲染文件
-                files.forEach(file => {
-                    const fileType = getFileType(file.mime); // 获取文件类型
-                    let fileIcon;
-                    if (fileType === 'image') {
-                        fileIcon = origin + '/' + file.path;
-                    } else {
-                        fileIcon = getFileIcon(fileType); // 获取文件图标
-                    }
-
-                    const fileItem = `
-                        <div class="file-item">
-                            <div class="file-icon">
-                                <img src="${fileIcon}" alt="${file.name}">
-                            </div>
-                            <div class="file-name">${file.name}</div>
-                        </div>
-                    `;
-                    fileGrid.append(fileItem);
+                $btn.off('click').on('click', () => {
+                    FileUploader.instances[btnId].openModal();
                 });
+            });
+        }
+
+        openModal() {
+            $.confirm({
+                title: '文件上传',
+                content: $('.file-upload-html').html(),
+                boxWidth: '80%',
+                useBootstrap: false,
+                buttons: { close: { text: '关闭' } },
+                onContentReady: () => this.onContentReady()
+            });
+        }
+
+        onContentReady() {
+            this.$content = $('.jconfirm-box:visible').last().find('.jconfirm-content');
+            this.$fileGrid = this.$content.find('#file-upload-grid');
+
+            if (!this.$fileGrid.length) return;
+
+            // 事件绑定
+            this.$fileGrid.off('scroll').on('scroll', () => this.onFileGridScroll());
+            this.$content.find('#file-upload-search').off('click').on('click', () => this.onFileSearchClick());
+            this.$content.find('#file-upload-btn').off('click').on('click', () => this.onFileUploadBtnClick());
+
+            // 首次加载文件列表
+            this.loadFile();
+        }
+
+        loadFile(page = 1, keyword = '', category = 0, callback) {
+            this.isLoading = true;
+            $.ajax({
+                url: this.fileURL,
+                method: 'POST',
+                dataType: 'json',
+                data: { p: page, keyword, category },
+                success: (res) => {
+                    this.renderFiles(res.data.content || [], page, res.data.count || 0);
+                    this.isLoading = false;
+                    if (callback) callback();
+                },
+                error: () => { this.isLoading = false; }
+            });
+        }
+
+        renderFiles(files, page, totalCount) {
+            const container = $('#' + this.containerId);
+            if (page === 1) this.$fileGrid.empty();
+            this.currentPage = page;
+            this.totalPage = Math.ceil(totalCount / this.pageSize);
+
+            files.forEach(file => {
+                const fileType = getFileType(file.mime);
+                const fileIcon = fileType === 'image' ? this.origin + '/' + file.path : getFileIcon(fileType);
+
+                const $fileItem = $(`
+                    <div class="file-item" data-path="${fileIcon}" data-file-id="${file.id}">
+                        <div class="file-icon"><img src="${fileIcon}" alt="${file.name}"></div>
+                        <div class="file-name">${file.name}</div>
+                    </div>
+                `);
+
+                // 保持已选状态
+                const exists = container.find(`img[data-file-id="${file.id}"]`);
+                if (exists.length > 0) {
+                    $fileItem.addClass('selected');
+                }
+
+                $fileItem.off('click').on('click', () => this.onFileItemClick($fileItem));
+                this.$fileGrid.append($fileItem);
+            });
+        }
+
+        onFileItemClick($fileItem) {
+            if (!this.isMultiple) {
+                this.$fileGrid.find('.file-item').removeClass('selected');
+                $fileItem.addClass('selected');
+            } else {
+                $fileItem.toggleClass('selected');
             }
-        });
+            this.updateSelectedToContainer();
+        }
+
+        updateSelectedToContainer() {
+            const $container = $('#' + this.containerId);
+            const $input = $('#' + this.inputId);
+            if (!$container.length || !$input.length) return;
+            if (!this.isMultiple) $container.empty();
+
+            let ids = [];
+
+            this.$fileGrid.find('.file-item').each((_, el) => {
+                const $el = $(el);
+                const imgPath = $el.data('path');
+                const hashName = $el.data('hash-name');
+                const fileID = $el.data('file-id');
+
+                // 查找容器里是否已有该图片
+                const exists = $container.find(`img[data-file-id="${fileID}"]`);
+
+                if ($el.hasClass('selected')) {
+                    if (!exists.length) {
+                        const imgEl = `<img data-hash-name="${hashName}" data-file-id="${fileID}" src="${imgPath}">`;
+                        $container.append(imgEl);
+                    }
+                    ids.push(fileID);
+                } else {
+                    exists.remove();
+                }
+            });
+
+            // 更新 hidden input
+            $input.val(ids.join(','));
+        }
+
+        onFileGridScroll() {
+            const scrollTop = this.$fileGrid.scrollTop();
+            const scrollHeight = this.$fileGrid[0].scrollHeight;
+            const containerHeight = this.$fileGrid.height();
+
+            if (scrollTop + containerHeight >= scrollHeight - 50) {
+                if (!this.isLoading && this.currentPage < this.totalPage) {
+                    this.loadFile(this.currentPage + 1, this.currentKeyword, this.currentCategory);
+                }
+            }
+        }
+
+        onFileSearchClick() {
+            this.currentKeyword = this.$content.find('#file-upload-keyword').val();
+            this.currentCategory = this.$content.find('#file-upload-category').val();
+            this.loadFile(1, this.currentKeyword, this.currentCategory);
+        }
+
+        onFileUploadBtnClick() {
+            const input = $('<input type="file" name="file[]" multiple />');
+            input.on('change', (e) => this.onFileInputChange(e));
+            input.click();
+        }
+
+        onFileInputChange(e) {
+            const files = e.target.files;
+            if (!files.length) return;
+
+            const formData = new FormData();
+            for (let i = 0; i < files.length; i++) {
+                formData.append('files[]', files[i]);
+            }
+
+            $.ajax({
+                url: this.uploadURL,
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: () => {
+                    $.alert({ title: '提示', content: '上传成功！', boxWidth: '300px', useBootstrap: false});
+                    this.loadFile(1, this.currentKeyword, this.currentCategory);
+                },
+                error: () => {
+                    $.alert({ title: '错误', content: '上传失败，请重试', boxWidth: '300px', useBootstrap: false });
+                }
+            });
+        }
     }
 
     // 获取文件类型
@@ -145,74 +242,83 @@
         if (mime === 'application/msword' || mime === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') return 'word';
         if (mime === 'application/vnd.ms-excel' || mime === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') return 'excel';
         if (mime.startsWith('video/')) return 'video';
-        return 'default'; // 默认图标
+        return 'default';
     }
 
     // 获取文件图标
     function getFileIcon(fileType) {
         switch (fileType) {
-            case 'pdf':
-                return '/assets/admin/img/icon/pdf.png';
-            case 'word':
-                return '/assets/admin/img/icon/word.png';
-            case 'excel':
-                return '/assets/admin/img/icon/excel.png';
-            case 'video':
-                return '/assets/admin/img/icon/mp4.png';
-            default:
-                return '/assets/admin/img/icon/image.png';
+            case 'pdf': return '/assets/admin/img/icon/pdf.png';
+            case 'word': return '/assets/admin/img/icon/word.png';
+            case 'excel': return '/assets/admin/img/icon/excel.png';
+            case 'video': return '/assets/admin/img/icon/mp4.png';
+            default: return '/assets/admin/img/icon/image.png';
         }
     }
 </script>
 
 <style>
-.file-upload-grid {
-    display: grid;
-    grid-template-columns: repeat(8, 1fr);
-    gap: 20px;
-    max-height: 400px;
-    overflow-y: auto;
-    padding-right: 10px;
-    margin-top: 20px;
-}
+    .file-upload-grid {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 20px;
+        max-height: 400px;
+        overflow-y: auto;
+        padding-right: 10px;
+        margin-top: 20px;
+    }
 
-.file-item {
-    text-align: center;
-    border: 1px solid #ddd;
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    justify-content: center
-}
+    .file-item {
+        text-align: center;
+        border: 1px solid #ddd;
+        padding: 10px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        position: relative;
+        cursor: pointer;
+    }
 
-.file-icon {
-    width: 100px;
-    overflow: hidden;
-    border-radius: 6%;
-    margin: 0 auto;
-    cursor: pointer;
-}
+    .file-item.selected {
+        border: 2px solid #0969da;
+        box-shadow: 0 0 10px rgba(30, 159, 255, 0.5);
+        background: rgba(30, 159, 255, 0.08);
+    }
 
-.file-icon img {
-    width: 100%;
-    height: 100%;
-    /* 使图片填满圆形容器 */
-    /* object-fit: cover;  */
-    /* 保持图片的比例并保证不被拉伸 */
-    object-fit: contain; 
-     /* 确保图片垂直和水平居中 */
-    object-position: center;
-}
+    .file-item.selected::after {
+        content: "✔";
+        position: absolute;
+        top: 6px;
+        right: 8px;
+        font-size: 18px;
+        color: #0969da;
+        font-weight: bold;
+    }
 
-.file-name {
-    margin-top: 10px;
-    font-size: 14px;
-    color: #333;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-}
+    .file-icon {
+        width: 100px;
+        overflow: hidden;
+        border-radius: 6%;
+        margin: 0 auto;
+        cursor: pointer;
+    }
+
+    .file-icon img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        object-position: center;
+    }
+
+    .file-name {
+        margin-top: 10px;
+        font-size: 14px;
+        color: #333;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+    }
 </style>

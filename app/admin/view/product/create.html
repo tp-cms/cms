@@ -20,7 +20,7 @@
             <label class="layui-form-label">分类</label>
             <div class="layui-input-block">
                 <select id="category_id" name="category_id" lay-verify="required">
-                    <option value="">选择分类</option>
+                    <option value="0">选择分类</option>
                     {volist name="productCategory" id="category" key="id"}
                     <option value="{$id}">{$category}</option>
                     {/volist}
@@ -32,8 +32,9 @@
         <div class="layui-form-item">
             <label class="layui-form-label">封面</label>
             <div class="layui-input-block cover-con">
-                <button type="button" class="layui-btn" id="upload-cover">上传封面</button>
-                <div id="cover-img-preview"></div>
+                <button type="button" class="layui-btn file-upload" id="upload-cover" data-is-multiple="false"
+                    data-container-id="cover-img-preview" data-input-id="cover">上传封面</button>
+                <div id="cover-img-preview" class="preview-img"></div>
                 <input type="hidden" id="cover" name="cover">
             </div>
         </div>
@@ -42,16 +43,10 @@
         <div class="layui-form-item">
             <label class="layui-form-label">产品图</label>
             <div class="layui-input-block">
-                <button type="button" class="layui-btn" id="upload-content-images">上传产品图</button>
-                <div id="content-images-preview"></div>
+                <button type="button" class="layui-btn file-upload" id="upload-content-images" data-is-multiple="true"
+                    data-container-id="content-images-preview" data-input-id="content_image">上传产品图</button>
+                <div id="content-images-preview" class="preview-img"></div>
                 <input type="hidden" id="content_image" name="content_image">
-            </div>
-        </div>
-
-        <div class="layui-form-item">
-            <label class="layui-form-label">上传</label>
-            <div class="layui-input-block">
-                <button type="button" class="layui-btn file-upload">弹出框上传</button>
             </div>
         </div>
 
@@ -59,7 +54,8 @@
         <div class="layui-form-item">
             <label class="layui-form-label">简介</label>
             <div class="layui-input-block">
-                <textarea id="summary" name="summary" lay-verify="required" placeholder="请输入简介" class="layui-textarea"></textarea>
+                <textarea id="summary" name="summary" lay-verify="required" placeholder="请输入简介"
+                    class="layui-textarea"></textarea>
             </div>
         </div>
 
@@ -68,15 +64,16 @@
             <label class="layui-form-label">价格</label>
             <div class="layui-input-block">
                 <input type="number" id="price" name="price" required lay-verify="required" placeholder="请输入价格"
-                    class="layui-input" autocomplete="off">
+                    class="layui-input" autocomplete="off" value="0.00">
             </div>
         </div>
-        
+
         <!-- 百度爱采购链接 -->
         <div class="layui-form-item">
             <label class="layui-form-label">爱采购</label>
             <div class="layui-input-block">
-                <input type="url" id="b2b_uri" name="b2b_uri" placeholder="请输入百度爱采购链接" class="layui-input" autocomplete="off">
+                <input type="url" id="b2b_uri" name="b2b_uri" placeholder="请输入百度爱采购链接" class="layui-input"
+                    autocomplete="off">
             </div>
         </div>
 
@@ -117,90 +114,7 @@
     const pEditor = initEditor(uploadURL, '#parameter-editor-container', '#parameter-toolbar-container');
 
     // 文件上传
-    var upload = layui.upload;
-
-    // 更新 content_image 字段的值
-    var ids = [];
-    function updateContentImageField() {
-        $('#content_image').val(ids.join(','));
-    }
-
-    // 封面图上传（单张）
-    var uploadCover = upload.render({
-        elem: '#upload-cover',
-        url: '/{$baseConfig.adminRoutePrefix}/api/file/upload',
-        before: function (obj) {
-            // 这里不再需要 obj.preview 进行预览，直接上传即可
-            layer.msg('上传中...', { icon: 16, time: 0 });
-        },
-        done: function (res) {
-            if (res.data) {
-                var imgWrapper = $('<div class="img-wrapper" style="position: relative; display: inline-block; margin-right: 10px;">')
-                    .append('<img src="' + res.data.url + '" alt="封面图" style="width: 90px; height: 90px;">')
-                    .append('<button class="layui-btn layui-btn-xs layui-btn-danger delete-btn" style="position: absolute; top: 0; right: 0;">删除</button>')
-                    .attr('data-id', res.data.id);
-
-                $('#cover-img-preview').html(imgWrapper);
-                $('#cover').val(res.data.id);
-
-                // 删除
-                imgWrapper.find('.delete-btn').on('click', function () {
-                    $(this).parent().remove();
-                    $('#cover').val('');
-                });
-
-                layer.closeAll();
-            }
-        },
-        error: function () {
-            layer.msg('上传失败，请重试');
-            layer.closeAll();
-        }
-    });
-
-    // 产品图上传（支持多张）
-    var uploadContentImages = upload.render({
-        elem: '#upload-content-images',
-        url: '/{$baseConfig.adminRoutePrefix}/api/file/upload',
-        multiple: true,
-        before: function (obj) {
-            // 上传前提示
-            layer.msg('上传中...', { icon: 16, time: 0 });
-        },
-        done: function (res) {
-            if (res.data) {
-                // 使用接口返回的 url 展示产品图
-                var imgWrapper = $('<div class="img-wrapper" style="position: relative; display: inline-block; margin-right: 10px;">')
-                    .append('<img src="' + res.data.url + '" alt="产品图" style="width: 90px; height: 90px;">')
-                    .append('<button class="layui-btn layui-btn-xs layui-btn-danger delete-btn" style="position: absolute; top: 0; right: 0;">删除</button>')
-                    .attr('data-id', res.data.id);
-
-                $('#content-images-preview').append(imgWrapper);
-
-                // 删除
-                imgWrapper.find('.delete-btn').on('click', function () {
-                    var imgId = $(this).parent().attr('data-id');
-                    imgId = String(imgId).trim();
-
-                    ids = ids.filter(function (id) {
-                        return String(id).trim() !== imgId; 
-                    });
-
-                    $(this).parent().remove();
-                    $('#cover').val('');
-                });
-
-                // 更新 content_image 字段
-                ids.push(res.data.id);
-                updateContentImageField(); 
-                layer.closeAll();  // 关闭上传中的提示
-            }
-        },
-        error: function () {
-            layer.msg('上传失败，请重试');
-            layer.closeAll();  // 关闭上传中的提示
-        }
-    });
+    FileUploader.bind('.file-upload')
 
     // 提交表单时获取并打印表单数据
     document.getElementById('product-form').addEventListener('submit', function (e) {
@@ -222,14 +136,39 @@
         // 打印表单内容
         console.log('提交的表单数据:', formObject);
 
-        // 如果需要，可以在这里通过 AJAX 提交表单数据
-        // 例如: 
-        // fetch('/submit', {
-        //     method: 'POST',
-        //     body: formData
-        // })
-        // .then(response => response.json())
-        // .then(data => console.log(data))
+        const createURL = "/{$baseConfig.adminRoutePrefix}/api/product/create";
+
+        $.ajax({
+            url:createURL,
+            type:'POST',
+            dataType: 'json',
+            data:formObject,
+            success:(res) => {
+                if(!res.status){
+                    // 错误提示
+                    layer.msg(res.message, {
+                        icon: 2,      // 红色叉
+                        time: 2000    // 自动关闭时间（ms）
+                    });
+                    return;
+                }
+                // 成功提示
+                layer.msg(res.msg || '操作成功', {
+                    icon: 1,      // 绿色勾
+                    time: 1500
+                }, function () {
+                    // 保存成功后，返回上一页
+                    window.history.back();
+                });
+            },
+            error: function (xhr, status, error) {
+                // 网络错误或服务器异常
+                layer.msg('请求异常，请稍后重试', {
+                    icon: 2,
+                    time: 2000
+                });
+            }
+        })
     });
 </script>
 {/block}

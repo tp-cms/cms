@@ -26,11 +26,25 @@ class File extends Base
     use ResponseTrait;
     protected FileService $file;
     protected FileCategoryService $fileCategory;
+    protected $allowedPrefixes;
 
     public function __construct(App $app)
     {
         $this->file = new FileService();
         $this->fileCategory = new FileCategoryService();
+        $this->allowedPrefixes = [
+            'image/',      // png, jpg, jpeg, gif, webp
+            'video/',      // mp4, mov, avi...
+            'application/pdf', // PDF
+
+            // Word
+            'application/msword', // .doc
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
+
+            // Excel
+            'application/vnd.ms-excel', // .xls
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // .xlsx
+        ];
         return parent::__construct($app);
     }
 
@@ -61,25 +75,57 @@ class File extends Base
             return $this->err('未选择文件',);
         }
 
-        // 允许上传文件前缀
-        $allowedPrefixes = ['image/', 'video/'];
-
         // 判断下
         $mime = $this->file->mimeType($file);
         $valid = false;
-        foreach ($allowedPrefixes as $prefix) {
+        foreach ($this->allowedPrefixes as $prefix) {
             if (str_starts_with($mime, $prefix)) {
                 $valid = true;
                 break;
             }
         }
         if (!$valid) {
-            return $this->err('只允许上传图片/视频,不支持' . $mime);
+            return $this->err('只允许上传图片/视频/文档,不支持' . $mime);
         }
 
         // 上传
         try {
-            $res = $this->file->fileUpload($file, $userID);
+            $res = $this->file->upload($file, $userID);
+            return $this->suc($res);
+        } catch (\Exception $e) {
+            return $this->err($e->getMessage());
+        }
+    }
+
+    // 文件上传（批量）
+    public function uploadMultiple(){
+        // 用户id
+        $userID = $this->request->user['id'];
+        // 文件信息
+        $files = $this->request->file('files');
+
+        if (!$files) {
+            return $this->err('未选择文件',);
+        }
+
+        foreach($files as $file){
+            // 判断下
+            $mime = $this->file->mimeType($file);
+            $valid = false;
+            foreach ($this->allowedPrefixes as $prefix) {
+                if (str_starts_with($mime, $prefix)) {
+                    $valid = true;
+                    break;
+                }
+            }
+            if (!$valid) {
+                return $this->err('只允许上传图片/视频/文档,不支持' . $mime);
+            }
+        }
+
+        // 上传
+        try {
+            $res = $this->file->uploadMultiple($files, $userID);
             return $this->suc($res);
         } catch (\Exception $e) {
             return $this->err($e->getMessage());

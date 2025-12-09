@@ -82,23 +82,29 @@ class FileService extends BaseService
         return hash_final($hashContext);
     }
 
-    // 文件上传
-    public function fileUpload($file, $userID)
+    private function prepareUploadDir()
     {
-        $results = [];
-
-        if (!$file) {
-            return $results;
-        }
-
-        $dateDir = date('Y-m-d'); // 按日期归档文件目录
+        $dateDir = date('Y-m-d');
         $relativeDir = 'storage/upload/' . $dateDir . '/';
-        $saveDir = public_path($relativeDir); // 绝对路径
+        $saveDir = public_path($relativeDir);
 
-        // 不存在则递归创建目录，权限 0755
         if (!is_dir($saveDir)) {
             mkdir($saveDir, 0755, true);
         }
+
+        return [
+            'saveDir' => $saveDir,
+            'relativeDir' => $relativeDir,
+        ];
+    }
+
+
+    // 文件上传
+    public function upload($file, $userID)
+    {
+        $dirInfo = $this->prepareUploadDir();
+        $saveDir = $dirInfo['saveDir'];
+        $relativeDir = $dirInfo['relativeDir'];
 
         $realPath = $file->getRealPath();
         $hash = $this->fileHash($realPath);
@@ -115,51 +121,59 @@ class FileService extends BaseService
             'mime' => $this->mimeType($file),
         ];
 
-        // 查询数据库是否已有相同 hash 且属于该用户的文件
-        $foundFile = $this->file->hashDuplicate([$hash], $userID);
+        // 是否重复
+        $found = $this->file->hashDuplicate([$hash], $userID);
 
-        if ($foundFile) {
-            // 文件已存在，直接返回数据库信息，避免重复上传浪费空间
-            $results = [
-                'id' => $foundFile->id,
+        if ($found) {
+            return [
+                'id' => $found->id,
                 'success' => true,
                 'hash' => $hash,
-                'path' => $foundFile->path,
-                'url' => request()->domain() . '/' . $foundFile->path,
+                'path' => $found->path,
+                'url' => request()->domain() . '/' . $found->path,
                 'msg' => '文件已存在，返回之前上传信息',
             ];
-        } else {
-            // 新文件，保存文件到指定目录
-            $saveName = $hash . '.' . $fileInfo['extension'];
-            $savePath = $saveDir . $saveName;
-            $relativePath = $relativeDir . $saveName;
+        }
 
-            if (!file_exists($savePath)) {
-                // move() 会自动覆盖同名文件，故这里判断避免重复移动
-                $fileInfo['file']->move($saveDir, $saveName);
-            }
+        // 保存文件
+        $saveName = $hash . '.' . $fileInfo['extension'];
+        $savePath = $saveDir . $saveName;
+        $relativePath = $relativeDir . $saveName;
 
-            // 写入数据库
-            $newFile = $this->file->create([
-                // 使用安全文件名保存到数据库，防止路径或显示问题
-                'name' => $this->fileSafeName($fileInfo['originalName']),
-                'hash_name' => $hash,
-                'path' => $relativePath,
-                'size' => $fileInfo['size'],
-                'ext' => $fileInfo['extension'],
-                'mime' => $fileInfo['mime'],
-                'storage_type' => File::fileStorageTypeLocal,
-                'created_by' => $userID,
-            ]);
+        if (!file_exists($savePath)) {
+            $fileInfo['file']->move($saveDir, $saveName);
+        }
 
-            $results = [
-                'id' => $newFile->id,
-                'success' => true,
-                'hash' => $hash,
-                'path' => $relativePath,
-                'url' => request()->domain() . '/' . $relativePath,
-                'msg' => '上传成功',
-            ];
+        // 写入数据库
+        $new = $this->file->create([
+            'name' => $this->fileSafeName($fileInfo['originalName']),
+            'hash_name' => $hash,
+            'path' => $relativePath,
+            'size' => $fileInfo['size'],
+            'ext' => $fileInfo['extension'],
+            'mime' => $fileInfo['mime'],
+            'storage_type' => File::fileStorageTypeLocal,
+            'created_by' => $userID,
+        ]);
+
+        return [
+            'id' => $new->id,
+            'success' => true,
+            'hash' => $hash,
+            'path' => $relativePath,
+            'url' => request()->domain() . '/' . $relativePath,
+            'msg' => '上传成功',
+        ];
+    }
+
+    public function uploadMultiple(array $files, $userID)
+    {
+        $results = [];
+
+        foreach ($files as $file) {
+            if (!$file) continue;
+
+            $results[] = $this->upload($file, $userID);
         }
 
         return $results;
