@@ -13,6 +13,7 @@ class ProductRepository extends BaseRepository
         $this->product = new Product();
     }
 
+    // 列表
     public function index($keyword = '', $category = 0, $page = 1, $perPage = 20)
     {
         $query = $this->product->alias('p')
@@ -70,9 +71,20 @@ class ProductRepository extends BaseRepository
         return $this->product->update($data, ['id' => $id]);
     }
 
-    // 删除
-    public function delete(array $ids)
+    // 检查产品id选择情况
+    public function selectCount($ids)
     {
-        return $this->product->delete($ids);
+        return $this->product->where('id', 'in', $ids)->count('id');
+    }
+
+    // 删除
+    public function delete($ids)
+    {
+        // 这个场景好像必须添加一个useSoftDelete，find后直接->delete是可以的
+        // https://doc.thinkphp.cn/v8_0/soft_delete.html
+        return $this->product
+            ->where('id', 'in', $ids)
+            ->useSoftDelete('deleted_at', date('Y-m-d H:i:s'))
+            ->delete();
     }
 }

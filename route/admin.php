@@ -132,13 +132,10 @@ Route::group($adminPrefix . '/api', function () {
     Route::post('file/delete', A('File@delete'));
 
     // 配置
-    Route::post('config/save', A('File@save'));
+    Route::post('config/save', A('Config@save'));
 
     // 单页
-    // 单页-关于我们
-    Route::post('page/about-us', A('Page@aboutUs'));
-    // 单页-隐私政策
-    Route::post('page/privacy', A('Page@privacy'));
+    Route::post('page/save', A('Page@save'));
 
     // 操作日志
     Route::post('action-log/index', A('ActionLog@index'));

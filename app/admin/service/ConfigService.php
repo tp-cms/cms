@@ -31,4 +31,58 @@ class ConfigService extends BaseService
 
         return $configs;
     }
+
+    public function checkKey($key)
+    {
+        return in_array($key, [
+            Config::configKeyTitle,
+            Config::configKeyKeywords,
+            Config::configKeyDescription,
+            Config::configKeyLogo,
+            Config::configKeyPhone,
+            Config::configKeyEmail,
+            Config::configKeyAddress,
+            Config::configKeyQQ,
+            Config::configKeyWechat,
+            Config::configKeyDouyin,
+            Config::configKeyCompany,
+            Config::configKeyICP,
+        ]);
+    }
+
+    // 保存
+    public function save($param)
+    {
+        // 图片处理
+        if ($param['logo']) {
+            $logoInfo = $this->file->info($param['logo']);
+            if (!$logoInfo) {
+                $param['logo'] = 0;
+            }
+        }
+
+        // 抖音二维码
+        if ($param['douyin']) {
+            $douyinInfo = $this->file->info($param['douyin']);
+            if (!$douyinInfo) {
+                $param['douyin'] = 0;
+            }
+        }
+
+        // 微信二维码
+        if ($param['wechat']) {
+            $wechatInfo = $this->file->info($param['wechat']);
+            if (!$wechatInfo) {
+                $param['wechat'] = 0;
+            }
+        }
+
+        foreach ($param as $key => $val) {
+            if ($this->checkKey($key)) {
+                $this->config->save(['cfg_val' => $val], $key);
+            }
+        }
+
+        return true;
+    }
 }

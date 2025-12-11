@@ -7,9 +7,9 @@ class Config extends Base
     protected $table = 'config';
 
     // tdk
-    public const title = 'title';
-    public const description = 'description';
-    public const keywords = 'keywords';
+    public const configKeyTitle = 'title';
+    public const configKeyDescription = 'description';
+    public const configKeyKeywords = 'keywords';
 
     // 基本信息
     // logo

@@ -3,6 +3,7 @@
 namespace app\admin\controller;
 
 use app\admin\service\FileCategoryService;
+use app\admin\service\FileService;
 use app\admin\service\PageService;
 use think\App;
 use think\facade\View;
@@ -32,6 +33,33 @@ class Page extends Base
 
     public function privacyHtml()
     {
+        // 文件分类
+        $fileCategory = $this->fileCategory->all();
+        View::assign('fileCategory', $fileCategory);
+        // 获取关于我们信息
+        $info = $this->page->info('privacy');
+        View::assign('info', $info);
         return View::fetch('admin@page/privacy');
+    }
+
+    // 保存
+    public function save()
+    {
+        $category = input('post.category');
+        if (!$this->page->checkCategory($category)) {
+            return $this->err('单页类型不存在');
+        }
+
+        $content = input('post.content', '');
+        $summary = input('post.summary', '');
+        $image = input('post.image', 0);
+        $data = [
+            'content' => $content,
+            'summary' => $summary,
+            'image' => $image
+        ];
+
+        $this->page->save($data, $category);
+        return $this->suc();
     }
 }

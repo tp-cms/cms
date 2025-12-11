@@ -13,12 +13,18 @@ class PageRepository extends BaseRepository
         $this->page = new Page();
     }
 
-    // info
+    // 详情
     public function info($category)
     {
         return $this->page
             ->field('title,category,image,summary,content')
             ->where(['category' => $category])
             ->find();
+    }
+
+    // 保存
+    public function save($data, $category)
+    {
+        return $this->page->save($data, ['category' => $category]);
     }
 }

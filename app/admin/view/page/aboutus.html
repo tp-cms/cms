@@ -7,14 +7,8 @@
     </div>
 
     <form class="layui-form" id="about-us-form">
-        <!-- 标题 -->
-        <div class="layui-form-item">
-            <label class="layui-form-label">标题</label>
-            <div class="layui-input-block">
-                <input type="text" id="title" name="title" required lay-verify="required" placeholder="标题"
-                    class="layui-input" value="{$info.title}">
-            </div>
-        </div>
+        <!-- 单面类型 -->
+        <input type="text" name="category" value="about_us" hidden>
 
         <!-- 首页图 -->
         <div class="layui-form-item">
@@ -77,11 +71,9 @@
             content: cEditor.getHtml(),
         };
 
-        const url = "/{$baseConfig.adminRoutePrefix}/api/page/about-us";
+        const url = "/{$baseConfig.adminRoutePrefix}/api/page/save";
 
-        submitForm('about-us-form', url, editorContents, function () {
-            window.location.reload();
-        });
+        submitForm('about-us-form', url, editorContents);
     });
 
 </script>

@@ -53,7 +53,9 @@ function submitForm(formId, url, editorContents, callback) {
 				return
 			}
 			showMessage(res.message || '操作成功', 1, 1500)
-			callback()
+			if (callback && typeof callback === 'function') {
+				callback()
+			}
 		},
 		error: function (xhr, status, error) {
 			showMessage('请求异常，请稍后重试', 2, 2000)

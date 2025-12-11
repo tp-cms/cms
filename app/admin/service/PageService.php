@@ -26,7 +26,7 @@ class PageService extends BaseService
         ]);
     }
 
-    // info
+    // 详情
     public function info($category)
     {
         $info =  $this->page->info($category);
@@ -36,5 +36,19 @@ class PageService extends BaseService
             $info->image_file = $this->file->info($info->image);
         }
         return $info->toArray();
+    }
+
+    // 保存
+    public function save($data, $category)
+    {
+        // 文件信息处理
+        $image = $data['image'];
+        if ($image) {
+            $imageFile = $this->file->info($data['image']);
+            if (!$imageFile) {
+                $data['image'] = 0;
+            }
+        }
+        return $this->page->save($data, $category);
     }
 }

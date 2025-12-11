@@ -60,13 +60,13 @@ class Product extends Base
     public function create()
     {
         // 简单验证下参数
-        $data = $this->request->post();
-        if (!$this->productValidate->scene('create')->check($data)) {
+        $param = $this->request->post();
+        if (!$this->productValidate->scene('create')->check($param)) {
             return $this->err($this->productValidate->getError());
         }
 
         $userID = $this->request->user['id'];
-        $id = $this->product->create($data, $userID);
+        $id = $this->product->create($param, $userID);
         if (!$id) {
             return $this->err('保存失败');
         }
@@ -104,5 +104,21 @@ class Product extends Base
     }
 
     // 产品删除
-    public function delete() {}
+    public function delete()
+    {
+        $ids = input('post.ids', []);
+        if (!$ids && !is_array($ids)) {
+            return $this->err('未选择要删除产品');
+        }
+
+        // 是否选择正确
+        $check = $this->product->checkSelect($ids);
+        if (!$check) {
+            return $this->err('产品选择错误');
+        }
+
+        $this->product->delete($ids);
+
+        return $this->suc();
+    }
 }

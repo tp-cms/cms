@@ -18,4 +18,10 @@ class ConfigRepository extends BaseRepository
     {
         return $this->config->column('cfg_label,cfg_key,cfg_val,cfg_type', 'id');
     }
+
+    // 保存
+    public function save($data, $key)
+    {
+        return $this->config->save($data, ['cfg_key' => $key]);
+    }
 }

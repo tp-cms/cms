@@ -246,7 +246,7 @@ CREATE TABLE `contact_message` (
 DROP TABLE IF EXISTS `config`;
 CREATE TABLE `config` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'id',
-  `cfg_label` varchar(10) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT 'label',
+  `cfg_label` varchar(20) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT 'label',
   `cfg_key` varchar(20) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '键',
   `cfg_val` varchar(200) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '值',
   `cfg_type` varchar(20) COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'input' COMMENT '类型',

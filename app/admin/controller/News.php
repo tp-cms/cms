@@ -16,6 +16,7 @@ class News extends Base
         return parent::__construct($app);
     }
 
+    // 列表页面
     public function indexHtml()
     {
         return View::fetch('admin@news/index');

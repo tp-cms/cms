@@ -69,5 +69,13 @@
 <script>
     // 文件上传
     FileUploader.bind('.file-upload');
+
+    document.getElementById('config-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const url = "/{$baseConfig.adminRoutePrefix}/api/config/save";
+
+        submitForm('config-form', url);
+    });
 </script>
 {/block}

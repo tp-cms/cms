@@ -16,7 +16,7 @@ class ProductService extends BaseService
         $this->file = new FileRepository();
     }
 
-    // index
+    // 列表
     public function index($keyword = '', $category = 0, $page = 1, $perPage = 20)
     {
         return $this->product->index($keyword, $category, $page, $perPage);
@@ -45,6 +45,7 @@ class ProductService extends BaseService
         return $info->toArray();
     }
 
+    // 新增
     public function create($data, $userID)
     {
         $productData = [
@@ -63,6 +64,7 @@ class ProductService extends BaseService
         return $this->product->create($productData);
     }
 
+    // 更新
     public function update($data)
     {
         $productData = [
@@ -78,5 +80,21 @@ class ProductService extends BaseService
         ];
 
         return $this->product->update($data['id'], $productData);
+    }
+
+    // 检查选择
+    public function checkSelect($ids)
+    {
+        if ($ids) {
+            $count = $this->product->selectCount($ids);
+            return count($ids) == $count;
+        }
+        return false;
+    }
+
+    // 删除
+    public function delete($ids)
+    {
+        return $this->product->delete($ids);
     }
 }

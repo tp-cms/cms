@@ -1,5 +1,57 @@
 {extend name="layout/main" /}
 
 {block name="content"}
-<p>隐私政策</p>
+<div class="wrap-con">
+    <div class="con-header">
+        <h2>隐私政策</h2>
+    </div>
+
+    <form class="layui-form" id="privacy-form">
+        <!-- 单面类型 -->
+        <input type="text" name="category" value="privacy" hidden>
+
+        <!-- 内容 -->
+        <div class="layui-form-item">
+            <label class="layui-form-label">内容</label>
+            <div class="layui-input-block editor-wrapper">
+                <div id="content-toolbar-container" class="toobal-container"></div>
+                <div id="content-editor-container" class="editor-container"></div>
+            </div>
+        </div>
+
+        <!-- 提交按钮 -->
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button type="submit" class="layui-btn layui-btn-normal">提交</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- 文件上传 -->
+{include file="components/fileupload" /}
+
+<script>
+    // 富文本编辑器初始化
+    const uploadURL = "/{$baseConfig.adminRoutePrefix}/api/file/upload";
+
+    const cEditor = initEditor(uploadURL, '#content-editor-container', '#content-toolbar-container', "{$info.content}");
+
+    // 文件上传
+    FileUploader.bind('.file-upload')
+
+    document.getElementById('privacy-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        // 富文本框信息
+        const editorContents = {
+            content: cEditor.getHtml(),
+        };
+
+        const url = "/{$baseConfig.adminRoutePrefix}/api/page/save";
+
+        submitForm('privacy-form', url, editorContents);
+    });
+
+</script>
 {/block}
