@@ -74,7 +74,7 @@
         }
 
         openModal() {
-            $.confirm({
+            this.modal = $.confirm({
                 title: '文件上传',
                 content: $('.file-upload-html').html(),
                 boxWidth: '80%',
@@ -144,12 +144,31 @@
         }
 
         onFileItemClick($fileItem) {
+            // 单选模式
             if (!this.isMultiple) {
+
+                // 如果当前是已选状态 → 则取消选中（允许取消）
+                if ($fileItem.hasClass('selected')) {
+                    $fileItem.removeClass('selected');
+                    this.updateSelectedToContainer();
+                    return;
+                }
+
+                // 选中新的，取消其它
                 this.$fileGrid.find('.file-item').removeClass('selected');
                 $fileItem.addClass('selected');
-            } else {
-                $fileItem.toggleClass('selected');
+                this.updateSelectedToContainer();
+
+                // 单选选择后关闭
+                if (this.modal) {
+                    this.modal.close();
+                }
+
+                return;
             }
+
+            // 多选模式
+            $fileItem.toggleClass('selected');
             this.updateSelectedToContainer();
         }
 
@@ -172,7 +191,7 @@
 
                 if ($el.hasClass('selected')) {
                     if (!exists.length) {
-                        const imgEl = `<img data-hash-name="${hashName}" data-file-id="${fileID}" src="${imgPath}">`;
+                        const imgEl = `<img data-file-id="${fileID}" src="${imgPath}">`;
                         $container.append(imgEl);
                     }
                     ids.push(fileID);
@@ -181,8 +200,12 @@
                 }
             });
 
-            // 更新 hidden input
-            $input.val(ids.join(','));
+            // 更新 hidden input，未选择设置为0
+            if (ids.length === 0) {
+                $input.val('0');
+            } else {
+                $input.val(ids.join(','));
+            }
         }
 
         onFileGridScroll() {
@@ -225,7 +248,7 @@
                 processData: false,
                 contentType: false,
                 success: () => {
-                    $.alert({ title: '提示', content: '上传成功！', boxWidth: '300px', useBootstrap: false});
+                    $.alert({ title: '提示', content: '上传成功！', boxWidth: '300px', useBootstrap: false });
                     this.loadFile(1, this.currentKeyword, this.currentCategory);
                 },
                 error: () => {

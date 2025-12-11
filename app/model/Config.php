@@ -13,21 +13,21 @@ class Config extends Base
 
     // 基本信息
     // logo
-    public const configLogo = 'logo';
+    public const configKeyLogo = 'logo';
     // 电话
-    public const configPhone = 'phone';
+    public const configKeyPhone = 'phone';
     // 邮箱
-    public const configEmail = 'email';
+    public const configKeyEmail = 'email';
     // 地址
-    public const configAddress = 'address';
+    public const configKeyAddress = 'address';
     // qq
-    public const configQQ = 'qq';
+    public const configKeyQQ = 'qq';
     // 抖音
-    public const configDouyin = 'douyin';
+    public const configKeyDouyin = 'douyin';
     // 微信
-    public const configWechat = 'wechat';
+    public const configKeyWechat = 'wechat';
     // 公司名
-    public const configCompany = 'company';
+    public const configKeyCompany = 'company';
     // 备案号
-    public const configICP = 'icp';
+    public const configKeyICP = 'icp';
 }

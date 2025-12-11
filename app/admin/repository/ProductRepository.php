@@ -23,6 +23,7 @@ class ProductRepository extends BaseRepository
             ->when($category > 0, function ($query) use ($category) {
                 $query->where('p.category_id', $category);
             })
+            ->order('p.id desc')
             ->field('p.id,p.title,p.summary,p.cover,p.created_at,p.price,p.b2b_uri, c.name as category_name');
 
         // 记录数

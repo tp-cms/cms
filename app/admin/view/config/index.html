@@ -1,5 +1,73 @@
 {extend name="layout/main" /}
 
 {block name="content"}
-<p>配置</p>
+<div class="wrap-con">
+    <div class="con-header">
+        <h2>系统配置</h2>
+    </div>
+
+    <form class="layui-form" id="config-form">
+        {volist name="configs" id="config"}
+
+        {if $config.cfg_type == 'input'}
+        <!-- input -->
+        <div class="layui-form-item">
+            <label class="layui-form-label">{$config.cfg_label}</label>
+            <div class="layui-input-block">
+                <input type="text" name="{$config.cfg_key}" value="{$config.cfg_val}"
+                    placeholder="请输入{$config.cfg_label}" class="layui-input" autocomplete="off">
+            </div>
+        </div>
+        {/if}
+
+        {if $config.cfg_type == 'textarea'}
+        <!-- textarea -->
+        <div class="layui-form-item">
+            <label class="layui-form-label">{$config.cfg_label}</label>
+            <div class="layui-input-block">
+                <textarea name="{$config.cfg_key}" class="layui-textarea"
+                    placeholder="请输入{$config.cfg_label}">{$config.cfg_val}</textarea>
+            </div>
+        </div>
+        {/if}
+
+        {if $config.cfg_type == 'img'}
+        <!-- img upload -->
+        <div class="layui-form-item">
+            <label class="layui-form-label">{$config.cfg_label}</label>
+            <div class="layui-input-block cover-con">
+                <button type="button" class="layui-btn file-upload" id="upload-{$config.cfg_key}"
+                    data-is-multiple="false" data-container-id="{$config.cfg_key}-img-preview"
+                    data-input-id="{$config.cfg_key}">
+                    上传图片
+                </button>
+
+                <div id="{$config.cfg_key}-img-preview" class="preview-img">
+                    {volist name="config.cfg_val_file" id="img"}
+                    <img src="/{$img.path}" data-file-id="{$img.id}">
+                    {/volist}
+                </div>
+
+                <input type="hidden" name="{$config.cfg_key}" id="{$config.cfg_key}" value="{$config.cfg_val}">
+            </div>
+        </div>
+        {/if}
+
+        {/volist}
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button type="submit" class="layui-btn layui-btn-normal">提交</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- 文件上传 -->
+{include file="components/fileupload" /}
+
+<script>
+    // 文件上传
+    FileUploader.bind('.file-upload');
+</script>
 {/block}

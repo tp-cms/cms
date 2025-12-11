@@ -130,7 +130,7 @@ CREATE TABLE `news` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'id',
   `title` varchar(100) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '标题',
   `summary` varchar(200) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '描述',
-  `cover_id` int(10) NOT NULL DEFAULT '0' COMMENT '封面',
+  `cover` int(10) NOT NULL DEFAULT '0' COMMENT '封面',
   `content` text COLLATE utf8mb4_general_ci NOT NULL COMMENT '内容',
   `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态',
   `is_top` tinyint(1) NOT NULL DEFAULT '0' COMMENT '置顶',
@@ -152,7 +152,7 @@ CREATE TABLE `project` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'id',
   `title` varchar(100) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '标题',
   `summary` varchar(200) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '描述',
-  `cover_id` int(10) NOT NULL DEFAULT '0' COMMENT '封面',
+  `cover` int(10) NOT NULL DEFAULT '0' COMMENT '封面',
   `content` text COLLATE utf8mb4_general_ci NOT NULL COMMENT '内容',
   `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态',
   `is_top` tinyint(1) NOT NULL DEFAULT '0' COMMENT '置顶',
@@ -225,6 +225,7 @@ DROP TABLE IF EXISTS `contact_message`;
 CREATE TABLE `contact_message` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'id',
   `name` varchar(100) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '姓名',
+  `email` varchar(100) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '邮箱',
   `phone` varchar(57) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '电话',
   `content` varchar(200) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '留言内容',
   `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态',
@@ -237,15 +238,18 @@ CREATE TABLE `contact_message` (
   KEY `idx_status` (`status`),
   KEY `idx_phone` (`phone`),
   KEY `idx_ip` (`ip`),
-  KEY `idx_created_at` (`created_at`)
+  KEY `idx_created_at` (`created_at`),
+  KEY `idx_email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='联系消息';
 
 -- 配置
 DROP TABLE IF EXISTS `config`;
 CREATE TABLE `config` (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `cfg_label` varchar(10) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT 'label',
   `cfg_key` varchar(20) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '键',
   `cfg_val` varchar(200) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '值',
+  `cfg_type` varchar(20) COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'input' COMMENT '类型',
   `created_by` int NOT NULL DEFAULT 1 COMMENT '用户id',
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',
   `updated_at` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
@@ -254,22 +258,24 @@ CREATE TABLE `config` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='配置信息';
 
 -- 这里的cfg_key与app\model\Config统一下
-INSERT INTO `config` (`cfg_key`, `cfg_val`, `created_by`)
+INSERT INTO `config` (`cfg_label`, `cfg_key`, `cfg_val`, `cfg_type`, `created_by`)
 VALUES
-  ('title',       '', 1),
-  ('description', '', 1),
-  ('keywords',    '', 1),
-  ('logo',        '', 1),
-  ('phone',       '', 1),
-  ('email',       '', 1),
-  ('address',     '', 1),
-  ('qq',          '', 1),
-  ('douyin',      '', 1),
-  ('wechat',      '', 1),
-  ('company',     '', 1),
-  ('icp',         '', 1)
+  ('标题' ,'title',       '', 'input', 1),
+  ('描述' ,'description', '', 'textarea', 1),
+  ('关键词' ,'keywords',    '', 'textarea', 1),
+  ('logo' ,'logo',        0, 'img', 1),
+  ('电话' ,'phone',       '', 'input', 1),
+  ('邮箱' ,'email',       '', 'input', 1),
+  ('地址' ,'address',     '', 'input', 1),
+  ('QQ' ,'qq',          '', 'input', 1),
+  ('抖音' ,'douyin',      0, 'img', 1),
+  ('微信' ,'wechat',      0, 'img', 1),
+  ('公司' ,'company',     '', 'input', 1),
+  ('备案号' ,'icp',         '', 'input', 1)
 ON DUPLICATE KEY UPDATE
-  cfg_val = VALUES(cfg_val),
+  cfg_label   = VALUES(cfg_label),
+  cfg_val   = VALUES(cfg_val),
+  cfg_type  = VALUES(cfg_type),
   updated_at = CURRENT_TIMESTAMP;
 
 -- 操作记录

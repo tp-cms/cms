@@ -21,8 +21,57 @@ class ProductCategoryRepository extends BaseRepository
         return $names;
     }
 
+    public function index($keyword = '', $page = 1, $perPage = 20)
+    {
+        $query = $this->productCategory
+            ->when($keyword, function ($query) use ($keyword) {
+                $query->where('name', 'like', '%' . $keyword . '%');
+            })
+            ->order('id desc')
+            ->field('id,name,code');
+
+        // 记录数
+        $total = $query->count();
+
+        $totalPages = ceil($total / $perPage);
+
+        if ($page > $totalPages) {
+            return [
+                'content' => [],
+                'count' => $total
+            ];
+        }
+
+        $data = $query->page($page, $perPage)->select();
+
+        return [
+            'content' => $data,
+            'count' => $total,
+        ];
+    }
+
+    // 添加
+    public function create($data)
+    {
+        return $this->productCategory->insertGetId($data);
+    }
+
+    // 详情
     public function info($id)
     {
-        return $this->productCategory->field('id,name,code')->find($id);
+        return $this->productCategory->field('id,name,code')->where('id', $id)->find();
+    }
+
+    // 更新
+    public function update($id, $data)
+    {
+        $data['updated_at'] = date('Y-m-d H:i:s');
+        return $this->productCategory->update($data, ['id' => $id]);
+    }
+
+    // 删除
+    public function delete(array $ids)
+    {
+        return $this->productCategory->delete($ids);
     }
 }
