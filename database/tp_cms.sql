@@ -49,6 +49,7 @@ CREATE TABLE `file` (
   `size` int NOT NULL DEFAULT '0' COMMENT '大小',
   `ext` varchar(20) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '扩展名',
   `mime` varchar(64) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '文件mime',
+  `is_content` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否内容图片',
   `created_by` int NOT NULL DEFAULT '0' COMMENT '上传用户',
   `storage_type` tinyint(1) NOT NULL DEFAULT '1' COMMENT '存储类型',
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '添加时间',

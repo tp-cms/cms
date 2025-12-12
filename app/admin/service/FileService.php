@@ -100,7 +100,7 @@ class FileService extends BaseService
 
 
     // 文件上传
-    public function upload($file, $userID)
+    public function upload($file, $userID, $isContent = true)
     {
         $dirInfo = $this->prepareUploadDir();
         $saveDir = $dirInfo['saveDir'];
@@ -153,6 +153,7 @@ class FileService extends BaseService
             'ext' => $fileInfo['extension'],
             'mime' => $fileInfo['mime'],
             'storage_type' => File::fileStorageTypeLocal,
+            'is_content' => $isContent,
             'created_by' => $userID,
         ]);
 
@@ -173,7 +174,7 @@ class FileService extends BaseService
         foreach ($files as $file) {
             if (!$file) continue;
 
-            $results[] = $this->upload($file, $userID);
+            $results[] = $this->upload($file, $userID, false);
         }
 
         return $results;

@@ -24,7 +24,7 @@ class FileRepository extends BaseRepository
                 $query->where('f.category_id', $category);
             })
             ->order('f.id desc')
-            ->field('f.id,f.name,f.path,f.size,f.mime,f.storage_type,f.ext,f.created_at,c.name as category_name');
+            ->field('f.id,f.name,f.path,f.size,f.mime,f.storage_type,f.ext,f.is_content,f.created_at,c.name as category_name');
 
         // 记录数
         $total = $query->count();
