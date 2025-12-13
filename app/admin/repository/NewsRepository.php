@@ -68,6 +68,9 @@ class NewsRepository extends BaseRepository
     // 删除
     public function delete(array $ids)
     {
-        return $this->news->delete($ids);
+        return $this->news
+            ->where('id', 'in', $ids)
+            ->useSoftDelete('deleted_at', date('Y-m-d H:i:s'))
+            ->delete();
     }
 }

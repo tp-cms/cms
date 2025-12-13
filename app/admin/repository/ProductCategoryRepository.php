@@ -72,6 +72,9 @@ class ProductCategoryRepository extends BaseRepository
     // 删除
     public function delete(array $ids)
     {
-        return $this->productCategory->delete($ids);
+        return $this->productCategory
+            ->where('id', 'in', $ids)
+            ->useSoftDelete('deleted_at', date('Y-m-d H:i:s'))
+            ->delete();
     }
 }

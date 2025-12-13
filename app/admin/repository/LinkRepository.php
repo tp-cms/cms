@@ -72,6 +72,20 @@ class LinkRepository extends BaseRepository
     // 删除
     public function delete(array $ids)
     {
-        return $this->link->delete($ids);
+        return $this->link
+            ->where('id', 'in', $ids)
+            ->useSoftDelete('deleted_at', date('Y-m-d H:i:s'))
+            ->delete();
+    }
+
+    public function dublicate($url, $id = 0)
+    {
+        return $this->link
+            ->where(['url' => $url])
+            ->when($id > 0, function ($query) use ($id) {
+                $query->where('id', '<>', $id);
+            })
+            ->field('id')
+            ->find();
     }
 }

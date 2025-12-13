@@ -16,8 +16,15 @@ class Link extends Base
         return parent::__construct($app);
     }
 
+
+    // 列表
+    public function index() {}
+
     public function indexHtml()
     {
         return View::fetch('admin@link/index');
     }
+
+    // 新增
+    public function create() {}
 }

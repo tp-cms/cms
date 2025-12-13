@@ -63,7 +63,10 @@ class FileRepository extends BaseRepository
     // 删除
     public function delete(array $ids)
     {
-        return $this->file->delete($ids);
+        return $this->file
+            ->where('id', 'in', $ids)
+            ->useSoftDelete('deleted_at', date('Y-m-d H:i:s'))
+            ->delete();
     }
 
     // 获取文件信息
