@@ -36,13 +36,21 @@ body {
 }
 
 /* 图片选择展示 */
-.preview-img{
+/* 上传展示 */
+.preview-img {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 5px;
 	padding-top: 5px;
 }
 .preview-img img {
+	width: 80px;
+	height: 80px;
+	border: 1px solid #ddd;
+	border-radius: 6px;
+}
+/* 表格展示 */
+.table-preview-img img {
 	width: 80px;
 	height: 80px;
 	border: 1px solid #ddd;

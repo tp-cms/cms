@@ -50,6 +50,8 @@ class File extends Base
 
     public function indexHtml()
     {
+        $fileCategory = $this->fileCategory->all();
+        View::assign('fileCategory', $fileCategory);
         return View::fetch('admin@file/index');
     }
 
@@ -59,7 +61,12 @@ class File extends Base
         $page = input('post.p', 1);
         $keyword = input('post.keyword', '');
         $categoryId = input('post.category', 0);
-        $list = $this->file->index($keyword, $categoryId, $page);
+        $fileType = strtolower(input('post.type', 'all'));
+        // 这里弹出框选中时使用，这里先使用一个接口处理下
+        if (!in_array($fileType, ['all', 'image', 'video'])) {
+            $fileType = 'all';
+        }
+        $list = $this->file->index($keyword, $categoryId, $fileType, $page);
         return $this->suc($list);
     }
 

@@ -15,7 +15,7 @@
             <label class="layui-form-label">首页图</label>
             <div class="layui-input-block">
                 <button type="button" class="layui-btn file-upload" id="upload-image" data-is-multiple="false"
-                    data-container-id="about-us-image-preview" data-input-id="image">上传封面</button>
+                    data-container-id="about-us-image-preview" data-input-id="image" data-file-type="image">上传封面</button>
                 <div id="about-us-image-preview" class="preview-img">
                     {volist name="info.image_file" id="img"}
                     <img src="/{$img.path}" data-file-id="{$img.id}">

@@ -48,7 +48,7 @@
             <label class="layui-form-label">图片</label>
             <div class="layui-input-block cover-con">
                 <button type="button" class="layui-btn file-upload" id="upload-image" data-is-multiple="false"
-                    data-container-id="image-file-preview" data-input-id="image">上传图片</button>
+                    data-container-id="image-file-preview" data-input-id="image" data-file-type="image">上传图片</button>
                 <div id="image-file-preview" class="preview-img">
                     {volist name="info.image_file" id="img"}
                     <img src="/{$img.path}" data-file-id="{$img.id}">
@@ -63,7 +63,7 @@
             <label class="layui-form-label">视频</label>
             <div class="layui-input-block cover-con">
                 <button type="button" class="layui-btn file-upload" id="upload-video" data-is-multiple="false"
-                    data-container-id="video-file-preview" data-input-id="video">上传视频</button>
+                    data-container-id="video-file-preview" data-input-id="video" data-file-type="video">上传视频</button>
                 <div id="video-file-preview" class="preview-img">
                     {volist name="info.video_file" id="img"}
                     <img src="/{$img.path}" data-file-id="{$img.id}">

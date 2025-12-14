@@ -1,5 +1,124 @@
 {extend name="layout/main" /}
 
 {block name="content"}
-<p>文件</p>
+<style>
+    .file-table td{
+        height: 120px;
+    }
+    /* 默认的行样式 */
+    .layui-table-cell{
+        height: auto;
+    }
+</style>
+<div class="wrap-con">
+    <div class="con-header">
+        <div class="search-bar">
+            <div class="search-bar">
+                <input type="text" id="keyword" class="layui-input" placeholder="请输入搜索关键词"
+                    style="width: 200px; display: inline-block;" autocomplete="off">
+                <button class="layui-btn" id="search-btn">搜索</button>
+                <a class="layui-btn layui-btn-normal" href="/{$baseConfig.adminRoutePrefix}/file-category/index">分类</a>
+                <button class="layui-btn" id="index-upload-btn">上传文件</button>
+                <button class="layui-btn layui-btn-danger" id="delete-btn">删除</button>
+            </div>
+        </div>
+    </div>
+    <div class="table-wrap file-table">
+        <table class="layui-table" id="table-id" layui-filter="filter"></table>
+    </div>
+</div>
+
+<script>
+    layui.use(['table'], function () {
+        const table = layui.table;
+
+        // 绑定按钮点击事件
+        document.getElementById('index-upload-btn').addEventListener('click', _fileUpload);
+
+        // 文件上传
+        function _fileUpload() {
+            const input = $('<input type="file" name="file[]" multiple />');  // 创建文件选择框
+            input.on('change', (e) => _fileInputChange(e));  // 监听文件选择事件
+            input.click();  // 自动触发文件选择框
+        }
+
+        // 处理文件选择变化
+        function _fileInputChange(e) {
+            const files = e.target.files;  // 获取选择的文件
+            if (!files.length) return;  // 如果没有文件，退出
+
+            const formData = new FormData();  // 创建 FormData 对象
+            for (let i = 0; i < files.length; i++) {
+                formData.append('files[]', files[i]);  // 将每个文件添加到 formData 中
+            }
+
+            // 发送 AJAX 请求上传文件
+            $.ajax({
+                url: '/{$baseConfig.adminRoutePrefix}/api/file/upload-multiple',  // 替换为实际的上传 URL
+                type: 'POST',
+                data: formData,
+                processData: false,  // 不处理数据
+                contentType: false,  // 不设置内容类型
+                success: () => {
+                    $.alert({ title: '提示', content: '上传成功！', boxWidth: '300px', useBootstrap: false });
+
+                    // 上传成功后，重新加载表格
+                    table.reload('table-id', {
+                        page: { curr: 1 }  // 刷新时返回第一页
+                    });
+                },
+                error: () => {
+                    $.alert({ title: '错误', content: '上传失败，请重试', boxWidth: '300px', useBootstrap: false });
+                }
+            });
+        }
+    });
+
+    renderTable('#table-id', '/{$baseConfig.adminRoutePrefix}/api/file/index', {
+        actionWidth: 200,
+        checkbox: true,
+        filter: 'filter',
+        searchFormId: 'search-btn',
+        deleteBtnId: 'delete-btn',
+        actions: {
+            edit: '/{$baseConfig.adminRoutePrefix}/file/update/{id}',
+            delete: '/{$baseConfig.adminRoutePrefix}/api/file/delete'
+        },
+        cols: [
+            { field: 'name', title: '文件名', width: 200 },
+            { field: 'category_name', title: '分类', width: 200 },
+            { field: 'path', title: '文件预览', width: 200,
+                templet:function(d){
+                    const fileType = getFileType(d.mime);
+                    const fileIcon = fileType === 'image' ? window.origin + '/' + d.path : getFileIcon(fileType);
+                    if(fileType == 'image'){
+                        return `<a href="${fileIcon}" target="_blank" class="table-preview-img"><img src="${fileIcon}"></a>`;
+                    }else{
+                        return `<a class="table-preview-img"><img src="${fileIcon}" alt="${d.name}"></a>`;
+                    }
+                }
+            },
+            { field: 'size', title: '大小', width: 200,
+                templet:function(d){
+                    // 字节转kb
+                    return (d.size / 1024).toFixed(2) + 'KB';
+                }
+             },
+            { field: 'mime', title: '文件类型', width: 200 },
+            { field: 'is_content', title: '是否内容上传', width: 200,
+                templet:function(d){
+                    if(d.is_content){
+                        return '是';
+                    }else{
+                        return '否';
+                    }
+                }
+             },
+             { field: 'created_at', title: '创建时间', width: 200 }
+        ],
+        checkboxCallback: function (obj) {
+            console.log(obj)
+        }
+    })
+</script>
 {/block}

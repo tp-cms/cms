@@ -28,17 +28,11 @@
     </form>
 </div>
 
-<!-- 文件上传 -->
-{include file="components/fileupload" /}
-
 <script>
     // 富文本编辑器初始化
     const uploadURL = "/{$baseConfig.adminRoutePrefix}/api/file/upload";
 
     const cEditor = initEditor(uploadURL, '#content-editor-container', '#content-toolbar-container', "{$info.content}");
-
-    // 文件上传
-    FileUploader.bind('.file-upload')
 
     document.getElementById('privacy-form').addEventListener('submit', function (e) {
         e.preventDefault();

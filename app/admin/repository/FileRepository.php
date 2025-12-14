@@ -13,7 +13,7 @@ class FileRepository extends BaseRepository
         $this->file = new File();
     }
 
-    public function index($keyword = '', $category = 0, $page = 1, $perPage = 20)
+    public function index($keyword = '', $category = 0, $fileType = 'all', $page = 1, $perPage = 20)
     {
         $query = $this->file->alias('f')
             ->join('file_category c', 'f.category_id = c.id', 'left')
@@ -22,6 +22,9 @@ class FileRepository extends BaseRepository
             })
             ->when($category > 0, function ($query) use ($category) {
                 $query->where('f.category_id', $category);
+            })
+            ->when($fileType != 'all', function ($query) use ($fileType) {
+                $query->where('mime', 'like', $fileType . '%');
             })
             ->order('f.id desc')
             ->field('f.id,f.name,f.path,f.size,f.mime,f.storage_type,f.ext,f.is_content,f.created_at,c.name as category_name');

@@ -1,5 +1,6 @@
 <?php
 
+use app\admin\middleware\ActionLogMiddleware;
 use app\admin\middleware\Auth;
 use think\facade\Route;
 
@@ -165,4 +166,4 @@ Route::group($adminPrefix . '/api', function () {
     Route::post('user/update/:id', A('User@update'));
     Route::post('user/delete', A('User@delete'));
     Route::post('user/profile', A('User@profile'));
-})->middleware(Auth::class);
+})->middleware(Auth::class)->middleware(ActionLogMiddleware::class);

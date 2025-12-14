@@ -180,8 +180,8 @@ class FileService extends BaseService
     }
 
     // 文件列表
-    public function index($keyword = '', $category = 0, $page = 1, $perPage = 20)
+    public function index($keyword = '', $category = 0, $fileType = 'all', $page = 1, $perPage = 20)
     {
-        return $this->file->index($keyword, $category, $page, $perPage);
+        return $this->file->index($keyword, $category, $fileType, $page, $perPage);
     }
 }
