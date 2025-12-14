@@ -1,0 +1,54 @@
+{extend name="layout/main" /}
+
+{block name="content"}
+<div class="wrap-con">
+    <div class="con-header">
+        <h2>链接新增</h2>
+    </div>
+
+    <form class="layui-form" id="link-form">
+        <!-- id信息 -->
+        <input type="text" id="id" name="id" value="{$info.id}" hidden>
+
+        <!-- 标题 -->
+        <div class="layui-form-item">
+            <label class="layui-form-label">标题</label>
+            <div class="layui-input-block">
+                <input type="text" id="title" name="title" required lay-verify="required" placeholder="请输入标题"
+                    class="layui-input" autocomplete="off" value="{$info.title}">
+            </div>
+        </div>
+
+        <!-- 链接 -->
+        <div class="layui-form-item">
+            <label class="layui-form-label">链接</label>
+            <div class="layui-input-block">
+                <input type="url" id="url" name="url" required lay-verify="required" placeholder="请输入链接"
+                    class="layui-input" autocomplete="off" value="{$info.url}">
+            </div>
+        </div>
+
+        <!-- 提交按钮 -->
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button type="submit" class="layui-btn layui-btn-normal">提交</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    // 提交表单
+    document.getElementById('link-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const url = "/{$baseConfig.adminRoutePrefix}/api/link/update";
+
+        submitForm('link-form', url, {}, function () {
+            setTimeout(() => {
+                window.history.back();
+            }, 500);
+        });
+    });
+</script>
+{/block}

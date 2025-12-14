@@ -65,6 +65,29 @@ class NewsService extends BaseService
         return $this->news->update($data['id'], $newsData);
     }
 
+    // 详情
+    public function info($id)
+    {
+        $info = $this->news->info($id);
+
+        if (!$info) {
+            return [];
+        }
+
+        $info->cover_file = [];
+
+        if ($info->cover) {
+            $coverInfo = $this->file->info($info->cover);
+            if ($coverInfo) {
+                $info->cover_file = $coverInfo;
+            } else {
+                $info->cover = 0;
+            }
+        }
+
+        return $info->toArray();
+    }
+
     // 删除
     public function delete($ids)
     {

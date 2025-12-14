@@ -23,7 +23,11 @@ class ContactMessageService extends BaseService
     // 详情
     public function info($id)
     {
-        return $this->contactMessage->info($id);
+        $info = $this->contactMessage->info($id);
+        if (!$info) {
+            return [];
+        }
+        return $info->toArray();
     }
 
     // 检查状态

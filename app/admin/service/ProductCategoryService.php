@@ -23,7 +23,17 @@ class ProductCategoryService extends BaseService
 
     public function info($id)
     {
-        return $this->productCategory->info($id);
+        $info = $this->productCategory->info($id);
+        if (!$info) {
+            return [];
+        }
+        return $info->toArray();
+    }
+
+    // 列表
+    public function index($keyword = '', $page = 1, $perPage = 20)
+    {
+        return $this->productCategory->index($keyword, $page, $perPage);
     }
 
     // 新增

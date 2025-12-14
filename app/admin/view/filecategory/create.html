@@ -1,0 +1,51 @@
+{extend name="layout/main" /}
+
+{block name="content"}
+<div class="wrap-con">
+    <div class="con-header">
+        <h2>文件分类新增</h2>
+    </div>
+
+    <form class="layui-form" id="file-category-form">
+        <!-- 名称 -->
+        <div class="layui-form-item">
+            <label class="layui-form-label">名称</label>
+            <div class="layui-input-block">
+                <input type="text" id="name" name="name" required lay-verify="required" placeholder="请输入分类名称"
+                    class="layui-input" autocomplete="off">
+            </div>
+        </div>
+        
+        <!-- code -->
+        <div class="layui-form-item">
+            <label class="layui-form-label">CODE</label>
+            <div class="layui-input-block">
+                <input type="text" id="code" name="code" required lay-verify="required" placeholder="请输入分类CODE"
+                    class="layui-input" autocomplete="off">
+            </div>
+        </div>
+
+        <!-- 提交按钮 -->
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button type="submit" class="layui-btn layui-btn-normal">提交</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    // 提交表单
+    document.getElementById('file-category-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const url = "/{$baseConfig.adminRoutePrefix}/api/file-category/create";
+
+        submitForm('file-category-form', url, {}, function () {
+            setTimeout(() => {
+                window.history.back();
+            }, 500);
+        });
+    });
+</script>
+{/block}

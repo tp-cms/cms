@@ -35,6 +35,9 @@ Route::group($adminPrefix, function () {
     Route::get('product/index', A('Product@indexHtml'));
     Route::get('product/create', A('Product@createHtml'));
     Route::get('product/update/:id', A('Product@updateHtml'));
+    Route::get('product-category/index', A('ProductCategory@indexHtml'));
+    Route::get('product-category/create', A('ProductCategory@createHtml'));
+    Route::get('product-category/update/:id', A('ProductCategory@updateHtml'));
 
     // 新闻
     Route::get('news/index', A('News@indexHtml'));
@@ -43,7 +46,7 @@ Route::group($adminPrefix, function () {
 
     // 案例
     Route::get('project/index', A('Project@indexHtml'));
-    Route::get('project/create', A('Project@creaetHtml'));
+    Route::get('project/create', A('Project@createHtml'));
     Route::get('project/update/:id', A('Project@updateHtml'));
 
     // 客户
@@ -62,6 +65,9 @@ Route::group($adminPrefix, function () {
 
     // 文件
     Route::get('file/index', A('File@indexHtml'));
+    Route::get('file-category/index', A('FileCategory@indexHtml'));
+    Route::get('file-category/create', A('FileCategory@createHtml'));
+    Route::get('file-category/update/:id', A('FileCategory@updateHtml'));
 
     // 配置
     Route::get('config/index', A('Config@indexHtml'));
@@ -96,6 +102,10 @@ Route::group($adminPrefix . '/api', function () {
     Route::post('product/create', A('Product@create'));
     Route::post('product/update', A('Product@update'));
     Route::post('product/delete', A('Product@delete'));
+    Route::post('product-category/index', A('ProductCategory@index'));
+    Route::post('product-category/create', A('ProductCategory@create'));
+    Route::post('product-category/update', A('ProductCategory@update'));
+    Route::post('product-category/delete', A('ProductCategory@delete'));
 
     // 新闻
     Route::post('news/index', A('News@index'));
@@ -134,6 +144,11 @@ Route::group($adminPrefix . '/api', function () {
     Route::post('file/upload-multiple', A('File@uploadMultiple'));
     Route::post('file/update', A('File@update'));
     Route::post('file/delete', A('File@delete'));
+    Route::post('file/update-category', A('File@updateCategory'));
+    Route::post('file-category/index', A('FileCategory@index'));
+    Route::post('file-category/create', A('FileCategory@create'));
+    Route::post('file-category/update', A('FileCategory@update'));
+    Route::post('file-category/delete', A('FileCategory@delete'));
 
     // 配置
     Route::post('config/save', A('Config@save'));

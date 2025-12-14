@@ -72,4 +72,23 @@ class FileCategoryService extends BaseService
 
         return $this->fileCategory->delete($ids);
     }
+
+    public function checkSelect($ids)
+    {
+        if ($ids) {
+            $count = $this->fileCategory->selectCount($ids);
+            return count($ids) == $count;
+        }
+        return false;
+    }
+
+    // 详情
+    public function info($id)
+    {
+        $info = $this->fileCategory->info($id);
+        if (!$info) {
+            return [];
+        }
+        return $info->toArray();
+    }
 }

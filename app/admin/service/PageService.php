@@ -30,6 +30,9 @@ class PageService extends BaseService
     public function info($category)
     {
         $info =  $this->page->info($category);
+        if (!$info) {
+            return [];
+        }
         // 图片处理
         $info->image_file = [];
         if ($info->image) {

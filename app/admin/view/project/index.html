@@ -1,5 +1,56 @@
 {extend name="layout/main" /}
 
 {block name="content"}
-<p>案例</p>
+<div class="wrap-con">
+    <div class="con-header">
+        <div class="search-bar">
+            <div class="search-bar">
+                <input type="text" id="keyword" class="layui-input" placeholder="请输入搜索关键词"
+                    style="width: 200px; display: inline-block;" autocomplete="off">
+                <button class="layui-btn" id="search-btn">搜索</button>
+                <a class="layui-btn layui-btn-normal" href="/{$baseConfig.adminRoutePrefix}/project/create">新增</a>
+                <button class="layui-btn layui-btn-danger" id="delete-btn">删除</button>
+            </div>
+        </div>
+    </div>
+    <div class="table-wrap">
+        <table class="layui-table" id="table-id" layui-filter="filter"></table>
+    </div>
+</div>
+
+<script>
+    renderTable('#table-id', '/{$baseConfig.adminRoutePrefix}/api/project/index', {
+        actionWidth: 200,
+        checkbox: true,
+        filter: 'filter',
+        searchFormId: 'search-btn',
+        deleteBtnId: 'delete-btn',
+        actions: {
+            edit: '/{$baseConfig.adminRoutePrefix}/project/update/{id}',
+            delete: '/{$baseConfig.adminRoutePrefix}/api/project/delete'
+        },
+        cols: [
+            { field: 'title', title: '标题', width: 200 },
+            { field: 'summary', title: '简介', width: 200 },
+            { field: 'status', title: '状态', width: 100,
+                templet: function (d) {
+                    if (d.status) {
+                        return '<span class="layui-badge layui-bg-green">显示</span>';
+                    } else {
+                        return '<span class="layui-badge layui-bg-gray">隐藏</span>';
+                    }
+                }
+             },
+            { field: 'is_top', title: '置顶', width: 100,
+                 templet: function (d) {
+                    return d.status ? '是' : '否';
+                 }
+             },
+            { field: 'created_at', title: '创建时间', width: 100 },
+        ],
+        checkboxCallback: function (obj) {
+            console.log(obj)
+        }
+    })
+</script>
 {/block}

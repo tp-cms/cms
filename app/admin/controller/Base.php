@@ -35,6 +35,10 @@ class Base extends BaseController
                 [
                     'title' => 'Banner',
                     'url'   => '/' . $this->adminRoutePrefix . '/banner/index',
+                    'include' => [
+                        '/' . $this->adminRoutePrefix . '/banner/create',
+                        '/' . $this->adminRoutePrefix . '/banner/update/:id',
+                    ]
                 ],
                 [
                     'title' => '产品',
@@ -42,27 +46,49 @@ class Base extends BaseController
                     'include' => [
                         '/' . $this->adminRoutePrefix . '/product/create',
                         '/' . $this->adminRoutePrefix . '/product/update/:id',
+                        '/' . $this->adminRoutePrefix . '/product-category/index',
+                        '/' . $this->adminRoutePrefix . '/product-category/create',
+                        '/' . $this->adminRoutePrefix . '/product-category/update/:id',
                     ]
                 ],
                 [
                     'title' => '新闻',
                     'url'   => '/' . $this->adminRoutePrefix . '/news/index',
+                    'include' => [
+                        '/' . $this->adminRoutePrefix . '/news/create',
+                        '/' . $this->adminRoutePrefix . '/news/update/:id',
+                    ]
                 ],
                 [
                     'title' => '案例',
                     'url'   => '/' . $this->adminRoutePrefix . '/project/index',
+                    'include' => [
+                        '/' . $this->adminRoutePrefix . '/project/create',
+                        '/' . $this->adminRoutePrefix . '/project/update/:id',
+                    ]
                 ],
                 [
                     'title' => '客户',
                     'url'   => '/' . $this->adminRoutePrefix . '/customer/index',
+                    'include' => [
+                        '/' . $this->adminRoutePrefix . '/customer/create',
+                        '/' . $this->adminRoutePrefix . '/customer/update/:id',
+                    ]
                 ],
                 [
                     'title' => '网站留言',
                     'url'   => '/' . $this->adminRoutePrefix . '/contact-message/index',
+                    'include' => [
+                        '/' . $this->adminRoutePrefix . '/contact-message/update/:id',
+                    ]
                 ],
                 [
                     'title' => '友情链接',
                     'url'   => '/' . $this->adminRoutePrefix . '/link/index',
+                    'include' => [
+                        '/' . $this->adminRoutePrefix . '/link/create',
+                        '/' . $this->adminRoutePrefix . '/link/update/:id',
+                    ]
                 ],
                 [
                     'title' => '单页',
@@ -83,6 +109,11 @@ class Base extends BaseController
                         [
                             'title' => '文件',
                             'url'   => '/' . $this->adminRoutePrefix . '/file/index',
+                            'include' => [
+                                '/' . $this->adminRoutePrefix . '/file-category/index',
+                                '/' . $this->adminRoutePrefix . '/file-category/create',
+                                '/' . $this->adminRoutePrefix . '/file-category/update/:id',
+                            ]
                         ],
                         [
                             'title' => '配置',
@@ -91,6 +122,9 @@ class Base extends BaseController
                         [
                             'title' => '操作记录',
                             'url'   => '/' . $this->adminRoutePrefix . '/action-log/index',
+                            'include' => [
+                                '/' . $this->adminRoutePrefix . '/action-log/update/:id',
+                            ]
                         ],
                     ]
                 ]

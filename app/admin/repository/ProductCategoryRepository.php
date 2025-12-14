@@ -59,7 +59,12 @@ class ProductCategoryRepository extends BaseRepository
     // 详情
     public function info($id)
     {
-        return $this->productCategory->field('id,name,code')->where('id', $id)->find();
+        $info = $this->productCategory
+            ->field('id,name,code')
+            ->where(['id' => $id])
+            ->find();
+
+        return $info;
     }
 
     // 更新

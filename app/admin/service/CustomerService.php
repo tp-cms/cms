@@ -26,6 +26,9 @@ class CustomerService extends BaseService
     public function info($id)
     {
         $info = $this->customer->info($id);
+        if (!$info) {
+            return [];
+        }
         $info->logi_file = [];
         if ($info->logo) {
             $logoInfo = $this->file->info($info->logo);

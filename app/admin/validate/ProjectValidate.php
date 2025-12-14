@@ -27,7 +27,9 @@ class ProjectValidate extends Validate
      *
      * @var array
      */
-    protected $message = [
+    protected $message = [];
+
+    protected $scene = [
         'create' => ['title', 'url'],
         'update' => ['id', 'title', 'url']
     ];

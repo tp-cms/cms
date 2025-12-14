@@ -1,0 +1,127 @@
+{extend name="layout/main" /}
+
+{block name="content"}
+<div class="wrap-con">
+    <div class="con-header">
+        <h2>案例更新</h2>
+    </div>
+
+    <form class="layui-form" id="project-form">
+        <!-- id信息 -->
+        <input type="text" id="id" name="id" value="{$info.id}" hidden>
+
+        <!-- 标题 -->
+        <div class="layui-form-item">
+            <label class="layui-form-label">标题</label>
+            <div class="layui-input-block">
+                <input type="text" id="title" name="title" required lay-verify="required" placeholder="请输入案例标题"
+                    class="layui-input" autocomplete="off" value="{$info.title}">
+            </div>
+        </div>
+
+        <!-- 简介 -->
+        <div class="layui-form-item">
+            <label class="layui-form-label">简介</label>
+            <div class="layui-input-block">
+                <textarea id="summary" name="summary" lay-verify="required" placeholder="请输入简介"
+                    class="layui-textarea">{$info.summary}</textarea>
+            </div>
+        </div>
+
+        <!-- 封面 -->
+        <div class="layui-form-item">
+            <label class="layui-form-label">封面</label>
+            <div class="layui-input-block">
+                <button type="button" class="layui-btn file-upload" id="upload-cover" data-is-multiple="false"
+                    data-container-id="cover-preview" data-input-id="cover">上传封面</button>
+                <div id="cover-preview" class="preview-img">
+                    {volist name="info.cover_file" id="img"}
+                    <img src="/{$img.path}" data-file-id="{$img.id}">
+                    {/volist}
+                </div>
+                <input type="hidden" id="cover" name="cover" value="{$info.cover}">
+            </div>
+        </div>
+
+        <!-- 标签 -->
+        <div class="layui-form-item">
+            <label class="layui-form-label">标签</label>
+            <div class="layui-input-block">
+                <input type="text" id="tag" name="tag" placeholder="请输入案例标签"
+                 class="layui-input" autocomplete="off" value="{$info.tag}">
+            </div>
+        </div>
+
+        <!-- 置顶 -->
+        <div class="layui-form-item">
+            <label class="layui-form-label">置顶</label>
+            <div class="layui-input-block">
+                <select name="is_top" id="is_top">
+                    <option value="0" {if condition="$info.is_top == 0"} selected {/if}>否</option>
+                    <option value="1" {if condition="$info.is_top == 1"} selected {/if}>是</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- 状态 -->
+        <div class="layui-form-item">
+            <label class="layui-form-label">状态</label>
+            <div class="layui-input-block">
+                <input type="checkbox" id="switch-status" lay-skin="switch" lay-text="显示|隐藏" {if condition="$info.status"} checked {/if}>
+                <input type="text" id="status" name="status" hidden value="{$info.status}">
+            </div>
+        </div>
+
+        <!-- 内容 -->
+        <div class="layui-form-item">
+            <label class="layui-form-label">内容</label>
+            <div class="layui-input-block editor-wrapper">
+                <div id="content-toolbar-container" class="toobal-container"></div>
+                <div id="content-editor-container" class="editor-container"></div>
+            </div>
+        </div>
+
+
+        <!-- 提交按钮 -->
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button type="submit" class="layui-btn layui-btn-normal">提交</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- 文件上传 -->
+{include file="components/fileupload" /}
+
+<script>
+    document.getElementById('switch-status').addEventListener('change', function () {
+        document.getElementById('status').value = this.checked ? 1 : 0;
+    });
+
+    // 富文本编辑器初始化
+    const uploadURL = "/{$baseConfig.adminRoutePrefix}/api/file/upload";
+    const cEditor = initEditor(uploadURL, '#content-editor-container', '#content-toolbar-container', "{$info.content}");
+
+    // 文件上传
+    FileUploader.bind('.file-upload')
+
+    // 提交表单
+    document.getElementById('project-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const url = "/{$baseConfig.adminRoutePrefix}/api/project/update";
+
+        // 富文本框信息
+        const editorContents = {
+            content: cEditor.getHtml(),
+        };
+
+        submitForm('project-form', url, editorContents, function () {
+            setTimeout(() => {
+                window.history.back();
+            }, 500);
+        });
+    });
+</script>
+{/block}

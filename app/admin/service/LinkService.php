@@ -33,7 +33,11 @@ class LinkService extends BaseService
     // 详情
     public function info($id)
     {
-        return $this->link->info($id);
+        $info =  $this->link->info($id);
+        if (!$info) {
+            return [];
+        }
+        return $info->toArray();
     }
 
     // 更新

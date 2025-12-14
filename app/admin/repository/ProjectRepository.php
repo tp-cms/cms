@@ -20,7 +20,7 @@ class ProjectRepository extends BaseRepository
                 $query->where('title', 'like', '%' . $keyword . '%');
             })
             ->order('id desc')
-            ->field('id,title,summary,cover_id,status,is_top,tag,created_at');
+            ->field('id,title,summary,cover,status,is_top,tag,created_at');
 
         // 记录数
         $total = $query->count();

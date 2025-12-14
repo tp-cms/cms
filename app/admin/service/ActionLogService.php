@@ -18,4 +18,14 @@ class ActionLogService extends BaseService
     {
         return $this->actionLog->index($keyword, $userID, $page, $perPage);
     }
+
+    // 详情
+    public function info($id)
+    {
+        $info = $this->actionLog->info($id);
+        if (!$info) {
+            return [];
+        }
+        return $info->toArray();
+    }
 }

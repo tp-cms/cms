@@ -19,9 +19,75 @@ class ProductCategory extends Base
         return parent::__construct($app);
     }
 
+    // 列表
     public function indexHtml()
     {
         return View::fetch('admin@productcategory/index');
+    }
+
+    public function index()
+    {
+        $keyword = input('post.keyword', '');
+        $page = input('post.page', 1);
+        if (strlen($keyword) > 26) {
+            return $this->err('搜索内容不可超出26个字符');
+        }
+
+        $list = $this->productCategory->index($keyword, $page);
+        return $this->suc($list);
+    }
+
+    // 新增
+    public function createHtml()
+    {
+        return View::fetch('admin@productcategory/create');
+    }
+
+    public function create()
+    {
+        $param = $this->request->post();
+        if (!$this->productCategoryValidate->scene('create')->check($param)) {
+            return $this->err($this->productCategoryValidate->getError());
+        }
+
+        // 检查下是否重复
+        if ($this->productCategory->duplicate($param['name'], $param['code'])) {
+            return $this->err('名称/code已存在');
+        }
+
+        $userID = $this->request->user['id'];
+        $id = $this->productCategory->create($param, $userID);
+        if (!$id) {
+            return $this->err('新增失败');
+        }
+
+        return $this->suc();
+    }
+
+    // 更新
+    public function updateHtml()
+    {
+        $id = $this->request->route('id');
+        $info = $this->productCategory->info($id);
+        View::assign('info', $info);
+        return View::fetch('admin@productcategory/update');
+    }
+
+    public function update()
+    {
+        $param = $this->request->post();
+        if (!$this->productCategoryValidate->scene('update')->check($param)) {
+            return $this->err($this->productCategoryValidate->getError());
+        }
+
+        // 检查下是否重复
+        if ($this->productCategory->duplicate($param['name'], $param['code'], $param['id'])) {
+            return $this->err('名称/code已存在');
+        }
+
+        $this->productCategory->update($param);
+
+        return $this->suc();
     }
 
     // 删除
@@ -29,19 +95,19 @@ class ProductCategory extends Base
     {
         $ids = input('post.ids', []);
         if (!$ids && !is_array($ids)) {
-            return $this->err('未选择要删除产品');
+            return $this->err('未选择要删除分类');
         }
 
         // 是否选择正确
         $check = $this->productCategory->checkSelect($ids);
         if (!$check) {
-            return $this->err('产品选择错误');
+            return $this->err('分类选择错误');
         }
 
         // 删除前判断
         $hasProduct = $this->productCategory->checkDelete($ids);
         if ($hasProduct) {
-            return $this->err('请先删除分类下的产品信息');
+            return $this->err('请先删除分类下的分类信息');
         }
 
         $this->productCategory->delete($ids);

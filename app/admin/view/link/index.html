@@ -1,5 +1,50 @@
 {extend name="layout/main" /}
 
 {block name="content"}
-<p>友情链接</p>
+<div class="wrap-con">
+    <div class="con-header">
+        <div class="search-bar">
+            <div class="search-bar">
+                <input type="text" id="keyword" class="layui-input" placeholder="请输入搜索关键词"
+                    style="width: 200px; display: inline-block;" autocomplete="off">
+                <button class="layui-btn" id="search-btn">搜索</button>
+                <a class="layui-btn layui-btn-normal"
+                    href="/{$baseConfig.adminRoutePrefix}/link/create">新增</a>
+                <button class="layui-btn layui-btn-danger" id="delete-btn">删除</button>
+            </div>
+        </div>
+    </div>
+    <div class="table-wrap">
+        <table class="layui-table" id="table-id" layui-filter="filter"></table>
+    </div>
+</div>
+
+<script>
+    renderTable('#table-id', '/{$baseConfig.adminRoutePrefix}/api/link/index', {
+        actionWidth: 200,
+        checkbox: true,
+        filter: 'filter',
+        searchFormId: 'search-btn',
+        deleteBtnId: 'delete-btn',
+        actions: {
+            edit: '/{$baseConfig.adminRoutePrefix}/link/update/{id}',
+            delete: '/{$baseConfig.adminRoutePrefix}/api/link/delete'
+        },
+        cols: [
+            { field: 'title', title: '标题', width: 200 },
+            { field: 'url', title: '链接', width: 200,
+                templet: function (d) {
+                    if (d.url) {
+                        return `<a href="${d.url}" target="_blank">访问链接</a>`;
+                    } else {
+                        return '';
+                    }
+                }
+             },
+        ],
+        checkboxCallback: function (obj) {
+            console.log(obj)
+        }
+    })
+</script>
 {/block}

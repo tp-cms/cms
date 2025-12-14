@@ -47,4 +47,15 @@ class ActionLogRepository extends BaseRepository
             'count' => $total,
         ];
     }
+
+    // 详情
+    public function info($id)
+    {
+        $info = $this->actionLog
+            ->field('id,action,module,description,ip,user_agent,created_by,created_at')
+            ->where(['id' => $id])
+            ->find();
+
+        return $info;
+    }
 }

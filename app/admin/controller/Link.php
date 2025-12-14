@@ -29,7 +29,7 @@ class Link extends Base
         }
 
         $list = $this->link->index($keyword, $page);
-        $this->suc($list);
+        return $this->suc($list);
     }
 
     public function indexHtml()
@@ -43,6 +43,10 @@ class Link extends Base
         $param = $this->request->post();
         if (!$this->linkValidate->scene('create')->check($param)) {
             return $this->err($this->linkValidate->getError());
+        }
+
+        if ($this->link->duplicate($param['url'])) {
+            return $this->err('链接已存在');
         }
 
         $userID = $this->request->user['id'];
@@ -66,6 +70,10 @@ class Link extends Base
         $param = $this->request->post();
         if (!$this->linkValidate->scene('update')->check($param)) {
             return $this->err($this->linkValidate->getError());
+        }
+
+        if ($this->link->duplicate($param['url'], $param['id'])) {
+            return $this->err('链接已存在');
         }
 
         $this->link->update($param);
