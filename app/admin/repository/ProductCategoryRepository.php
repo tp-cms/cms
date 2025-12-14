@@ -77,4 +77,22 @@ class ProductCategoryRepository extends BaseRepository
             ->useSoftDelete('deleted_at', date('Y-m-d H:i:s'))
             ->delete();
     }
+
+    public function selectCount($ids)
+    {
+        return $this->productCategory->where('id', 'in', $ids)->count('id');
+    }
+
+    public function duplicate($name, $code, $id = 0)
+    {
+        return $this->productCategory
+            ->field('id')
+            ->when($id > 0, function ($query) use ($id) {
+                $query->where('id', '<>', $id);
+            })
+            ->where([
+                'name' => $name,
+                'code' => $code,
+            ])->find();
+    }
 }

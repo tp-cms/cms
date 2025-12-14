@@ -39,7 +39,7 @@ class ProductService extends BaseService
         }
 
         if ($info->content_image) {
-            $info->content_image_file = $this->file->info($info->content_image);
+            $info->content_image_file = $this->file->batchInfo($info->content_image);
         }
 
         return $info->toArray();
@@ -48,6 +48,13 @@ class ProductService extends BaseService
     // 新增
     public function create($data, $userID)
     {
+        if ($data['cover']) {
+            $coverInfo = $this->file->info($data['cover']);
+            if (!$coverInfo) {
+                $data['cover'] = 0;
+            }
+        }
+
         $productData = [
             'title' => $data['title'],
             'category_id' => $data['category_id'],
@@ -67,6 +74,13 @@ class ProductService extends BaseService
     // 更新
     public function update($data)
     {
+        if ($data['cover']) {
+            $coverInfo = $this->file->info($data['cover']);
+            if (!$coverInfo) {
+                $data['cover'] = 0;
+            }
+        }
+
         $productData = [
             'title' => $data['title'],
             'category_id' => $data['category_id'],
@@ -95,6 +109,10 @@ class ProductService extends BaseService
     // 删除
     public function delete($ids)
     {
+        if (!$ids) {
+            return false;
+        }
+
         return $this->product->delete($ids);
     }
 }

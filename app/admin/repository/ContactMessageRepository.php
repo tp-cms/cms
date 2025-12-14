@@ -54,10 +54,9 @@ class ContactMessageRepository extends BaseRepository
     }
 
     // 更新
-    public function update($id, $status = 1)
+    public function update($id, $status)
     {
         $data = [
-            'updated_at' => date('Y-m-d H:i:s'),
             'status' => $status,
         ];
         return $this->contactMessage->update($data, ['id' => $id]);

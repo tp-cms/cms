@@ -98,7 +98,8 @@ class File extends Base
     }
 
     // 文件上传（批量）
-    public function uploadMultiple(){
+    public function uploadMultiple()
+    {
         // 用户id
         $userID = $this->request->user['id'];
         // 文件信息
@@ -108,7 +109,7 @@ class File extends Base
             return $this->err('未选择文件',);
         }
 
-        foreach($files as $file){
+        foreach ($files as $file) {
             // 判断下
             $mime = $this->file->mimeType($file);
             $valid = false;

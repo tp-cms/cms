@@ -3,7 +3,6 @@
 namespace app\admin\controller;
 
 use app\admin\service\FileCategoryService;
-use app\admin\service\FileService;
 use app\admin\service\PageService;
 use think\App;
 use think\facade\View;

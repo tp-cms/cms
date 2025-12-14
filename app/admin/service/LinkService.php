@@ -20,11 +20,12 @@ class LinkService extends BaseService
     }
 
     // 新增
-    public function create($data)
+    public function create($data, $userID)
     {
         $linkData = [
             'title' => $data['title'],
             'url' => $data['url'],
+            'created_by' => $userID
         ];
         return $this->link->create($linkData);
     }
@@ -36,13 +37,13 @@ class LinkService extends BaseService
     }
 
     // 更新
-    public function update($id, $data)
+    public function update($data)
     {
         $linkData = [
             'title' => $data['title'],
             'url' => $data['url'],
         ];
-        return $this->link->update($id, $linkData);
+        return $this->link->update($data['id'], $linkData);
     }
 
     // 删除
@@ -51,8 +52,17 @@ class LinkService extends BaseService
         return $this->link->delete($ids);
     }
 
-    public function dublicate($url, $id = 0)
+    public function duplicate($url, $id = 0)
     {
-        return $this->link->dublicate($url, $id);
+        return $this->link->duplicate($url, $id);
+    }
+
+    public function checkSelect($ids)
+    {
+        if ($ids) {
+            $count = $this->link->selectCount($ids);
+            return count($ids) == $count;
+        }
+        return false;
     }
 }

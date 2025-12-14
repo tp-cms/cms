@@ -78,7 +78,7 @@ class LinkRepository extends BaseRepository
             ->delete();
     }
 
-    public function dublicate($url, $id = 0)
+    public function duplicate($url, $id = 0)
     {
         return $this->link
             ->where(['url' => $url])
@@ -87,5 +87,10 @@ class LinkRepository extends BaseRepository
             })
             ->field('id')
             ->find();
+    }
+
+    public function selectCount($ids)
+    {
+        return $this->link->where('id', 'in', $ids)->count('id');
     }
 }

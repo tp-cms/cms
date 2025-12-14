@@ -70,8 +70,24 @@ class FileRepository extends BaseRepository
     }
 
     // 获取文件信息
-    public function info($ids)
+    public function info($id)
+    {
+        return $this->file->where('id', $id)->field('id,path')->select();
+    }
+
+    public function batchInfo($ids)
     {
         return $this->file->whereIn('id', $ids)->field('id,path')->select();
+    }
+
+    public function selectCount($ids)
+    {
+        return $this->file->where('id', 'in', $ids)->count('id');
+    }
+
+    // 某个分类是否存在文件
+    public function foundFile($categoryIds)
+    {
+        return $this->file->field('id')->where('category_id', 'in', $categoryIds)->find();
     }
 }

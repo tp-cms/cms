@@ -98,7 +98,6 @@ class FileService extends BaseService
         ];
     }
 
-
     // 文件上传
     public function upload($file, $userID, $isContent = true)
     {

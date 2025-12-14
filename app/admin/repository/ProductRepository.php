@@ -87,4 +87,10 @@ class ProductRepository extends BaseRepository
             ->useSoftDelete('deleted_at', date('Y-m-d H:i:s'))
             ->delete();
     }
+
+    // 某个分类是否存在产品
+    public function foundProduct($categoryIds)
+    {
+        return $this->product->field('id')->where('category_id', 'in', $categoryIds)->find();
+    }
 }
