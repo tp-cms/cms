@@ -20,7 +20,7 @@ class ContactMessageRepository extends BaseRepository
                 $query->where('title', 'like', '%' . $keyword . '%');
             })
             ->order('id desc')
-            ->field('id,name,email,phone,content,status,ip,useragent,created_at');
+            ->field('id,name,email,phone,content,status,ip,user_agent,created_at');
 
         // 记录数
         $total = $query->count();
@@ -46,7 +46,7 @@ class ContactMessageRepository extends BaseRepository
     public function info($id)
     {
         $info = $this->contactMessage
-            ->field('id,name,email,phone,content,status,ip,useragent,created_at')
+            ->field('id,name,email,phone,content,status,ip,user_agent,created_at')
             ->where(['id' => $id])
             ->find();
 
@@ -60,5 +60,20 @@ class ContactMessageRepository extends BaseRepository
             'status' => $status,
         ];
         return $this->contactMessage->update($data, ['id' => $id]);
+    }
+
+    // 检查产品id选择情况
+    public function selectCount($ids)
+    {
+        return $this->contactMessage->where('id', 'in', $ids)->count('id');
+    }
+
+    // 删除
+    public function delete($ids)
+    {
+        return $this->contactMessage
+            ->where('id', 'in', $ids)
+            ->useSoftDelete('deleted_at', date('Y-m-d H:i:s'))
+            ->delete();
     }
 }

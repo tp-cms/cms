@@ -79,4 +79,15 @@ class CustomerRepository extends BaseRepository
     {
         return $this->customer->where('id', 'in', $ids)->count('id');
     }
+
+    public function duplicate($name, $id = 0)
+    {
+        return $this->customer
+            ->where(['name' => $name])
+            ->when($id > 0, function ($query) use ($id) {
+                $query->where('id', '<>', $id);
+            })
+            ->field('id')
+            ->find();
+    }
 }

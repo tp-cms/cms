@@ -1,0 +1,104 @@
+{extend name="layout/main" /}
+
+{block name="content"}
+    <div class="wrap-con">
+        <div class="con-header">
+            <h2>留言编辑</h2>
+        </div>
+
+        <form class="layui-form" id="contact-message-form">
+            <!-- id信息 -->
+            <input type="text" id="id" name="id" value="{$info.id}" hidden>
+
+            <!-- 姓名 -->
+            <div class="layui-form-item">
+                <label class="layui-form-label">名称</label>
+                <div class="layui-input-block">
+                    <input type="text" id="name" name="name" required lay-verify="required"
+                        class="layui-input" autocomplete="off" value="{$info.name}" disabled>
+                </div>
+            </div>
+
+            <!-- 邮箱 -->
+            <div class="layui-form-item">
+                <label class="layui-form-label">邮箱</label>
+                <div class="layui-input-block">
+                    <input type="text" id="email" name="email" required lay-verify="required" class="layui-input" autocomplete="off"
+                        value="{$info.email}" disabled>
+                </div>
+            </div>
+
+            <!-- 电话 -->
+            <div class="layui-form-item">
+                <label class="layui-form-label">电话</label>
+                <div class="layui-input-block">
+                    <input type="text" id="phone" name="phone" required lay-verify="required" class="layui-input" autocomplete="off"
+                        value="{$info.phone}" disabled>
+                </div>
+            </div>
+
+            <!-- 留言内容 -->
+            <div class="layui-form-item">
+                <label class="layui-form-label">留言</label>
+                <div class="layui-input-block">
+                    <textarea id="content" name="content" lay-verify="required"
+                        class="layui-textarea" disabled>{$info.content}</textarea>
+                </div>
+            </div>
+
+            <!-- ip -->
+            <div class="layui-form-item">
+                <label class="layui-form-label">IP</label>
+                <div class="layui-input-block">
+                    <input type="text" id="ip" name="ip" required lay-verify="required" class="layui-input" autocomplete="off"
+                        value="{$info.ip}" disabled>
+                </div>
+            </div>
+
+            <!-- 设备 -->
+            <div class="layui-form-item">
+                <label class="layui-form-label">设备</label>
+                <div class="layui-input-block">
+                    <input type="text" id="user_agent" name="user_agent" required lay-verify="required" class="layui-input" autocomplete="off"
+                        value="{$info.user_agent}" disabled>
+                </div>
+            </div>
+
+            <!-- 状态 -->
+            <div class="layui-form-item">
+                <label class="layui-form-label">状态</label>
+                <div class="layui-input-block">
+                    <select id="status" name="status" lay-verify="required" {if condition="$info.status == 2"} disabled {/if}>
+                        <option {if condition="$info.status == '1'" }selected{/if} value="1">未处理</option>
+                        <option {if condition="$info.status == '2'" }selected{/if} value="2">已处理</option>
+                        <option {if condition="$info.status == '3'" }selected{/if} value="3">没有价值</option>
+                    </select>
+                </div>
+            </div>
+
+            {if condition="$info.status == 1"}
+                <!-- 提交按钮 -->
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button type="submit" class="layui-btn layui-btn-normal">提交</button>
+                    </div>
+                </div>
+            {/if}
+        </form>
+    </div>
+
+    <script>
+        // 提交表单
+        document.getElementById('contact-message-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const url = "/{$baseConfig.adminRoutePrefix}/api/contact-message/update";
+
+            submitForm('contact-message-form', url, {}, function () {
+                setTimeout(() => {
+                    window.history.back();
+                }, 500);
+            });
+        });
+    </script>
+{/block}

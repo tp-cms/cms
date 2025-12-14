@@ -35,11 +35,21 @@ class ProductService extends BaseService
         $info->content_image_file = [];
 
         if ($info->cover) {
-            $info->cover_file = $this->file->info($info->cover);
+            $coverInfo = $this->file->info($info->cover);
+            if ($coverInfo) {
+                $info->cover_file = $coverInfo;
+            } else {
+                $info->cover = 0;
+            }
         }
 
         if ($info->content_image) {
-            $info->content_image_file = $this->file->batchInfo($info->content_image);
+            $contentImageInfo = $this->file->batchInfo($info->content_image);
+            if ($contentImageInfo) {
+                $info->content_image_file = $contentImageInfo;
+            } else {
+                $info->content_image = 0;
+            }
         }
 
         return $info->toArray();

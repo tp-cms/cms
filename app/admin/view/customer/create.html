@@ -1,0 +1,67 @@
+{extend name="layout/main" /}
+
+{block name="content"}
+    <div class="wrap-con">
+        <div class="con-header">
+            <h2>客户新增</h2>
+        </div>
+
+        <form class="layui-form" id="customer-form">
+            <!-- 名称 -->
+            <div class="layui-form-item">
+                <label class="layui-form-label">名称</label>
+                <div class="layui-input-block">
+                    <input type="text" id="name" name="name" required lay-verify="required" placeholder="请输入客户名称"
+                        class="layui-input" autocomplete="off">
+                </div>
+            </div>
+
+            <!-- 官网 -->
+            <div class="layui-form-item">
+                <label class="layui-form-label">官网</label>
+                <div class="layui-input-block">
+                    <input type="url" id="url" name="url" placeholder="请输入客户官网"
+                        class="layui-input" autocomplete="off">
+                </div>
+            </div>
+
+            <!-- logo -->
+            <div class="layui-form-item">
+                <label class="layui-form-label">LOGO</label>
+                <div class="layui-input-block cover-con">
+                    <button type="button" class="layui-btn file-upload" id="upload-logo" data-is-multiple="false"
+                        data-container-id="logo-file-preview" data-input-id="logo">上传LOGO</button>
+                    <div id="logo-file-preview" class="preview-img"></div>
+                    <input type="hidden" id="logo" name="logo">
+                </div>
+            </div>
+
+            <!-- 提交按钮 -->
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button type="submit" class="layui-btn layui-btn-normal">提交</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- 文件上传 -->
+    {include file="components/fileupload" /}
+
+    <script>
+        FileUploader.bind('.file-upload')
+
+        // 提交表单
+        document.getElementById('customer-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const url = "/{$baseConfig.adminRoutePrefix}/api/customer/create";
+
+            submitForm('customer-form', url, {}, function () {
+                setTimeout(() => {
+                    window.history.back();
+                }, 500);
+            });
+        });
+    </script>
+{/block}

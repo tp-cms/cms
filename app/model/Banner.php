@@ -10,6 +10,9 @@ class Banner extends Base
 
     protected $table = 'banner';
 
+    // 指定软删除字段
+    protected $deleteTime = 'deleted_at';
+
     // 相应的轮播图分类
     // 首页
     public const bannerIndex = 'index';

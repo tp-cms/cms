@@ -37,12 +37,12 @@
             <label class="layui-form-label">{$config.cfg_label}</label>
             <div class="layui-input-block cover-con">
                 <button type="button" class="layui-btn file-upload" id="upload-{$config.cfg_key}"
-                    data-is-multiple="false" data-container-id="{$config.cfg_key}-img-preview"
+                    data-is-multiple="false" data-container-id="{$config.cfg_key}-file-preview"
                     data-input-id="{$config.cfg_key}">
                     上传图片
                 </button>
 
-                <div id="{$config.cfg_key}-img-preview" class="preview-img">
+                <div id="{$config.cfg_key}-file-preview" class="preview-img">
                     {volist name="config.cfg_val_file" id="img"}
                     <img src="/{$img.path}" data-file-id="{$img.id}">
                     {/volist}

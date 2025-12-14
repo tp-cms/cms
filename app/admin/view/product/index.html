@@ -6,15 +6,15 @@
     <div class="con-header">
         <!-- 搜索框和分类筛选框 -->
         <div class="search-bar">
-            <input type="text" id="keyword" class="layui-input" placeholder="请输入关键词"
-                style="width: 200px; display: inline-block;">
+            <input type="text" id="keyword" class="layui-input" placeholder="请输入搜索关键词"
+                style="width: 200px; display: inline-block;" autocomplete="off">
             <select id="category" class="layui-select" style="width: 150px; display: inline-block;">
                 <option value="">选择分类</option>
                 {volist name="productCategory" id="category" key="id"}
                 <option value="{$id}">{$category}</option>
                 {/volist}
             </select>
-            <button class="layui-btn" id="searchBtn">搜索</button>
+            <button class="layui-btn" id="search-btn">搜索</button>
             <a class="layui-btn layui-btn-normal" href="/{$baseConfig.adminRoutePrefix}/product/create">新增</a>
             <button class="layui-btn layui-btn-danger" id="deleteBtn">删除</button>
         </div>
@@ -35,8 +35,8 @@
         actionWidth: 200,
         checkbox: true,
         filter: 'filter',
-        searchFormId: 'searchBtn',
-        deleteBtnId: 'deleteBtn',
+        searchFormId: 'search-btn',
+        deleteBtnId: 'delete-btn',
         actions: {
             edit: '/{$baseConfig.adminRoutePrefix}/product/update/{id}',
             editText: '编辑',

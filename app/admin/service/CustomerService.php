@@ -22,6 +22,21 @@ class CustomerService extends BaseService
         return $this->customer->index($keyword, $page, $perPage);
     }
 
+    // 详情
+    public function info($id)
+    {
+        $info = $this->customer->info($id);
+        $info->logi_file = [];
+        if ($info->logo) {
+            $logoInfo = $this->file->info($info->logo);
+            if ($logoInfo) {
+                $info->logo_file = $logoInfo;
+            }
+        }
+
+        return $info->toArray();
+    }
+
     // 新增
     public function create($data, $userID)
     {
@@ -69,5 +84,14 @@ class CustomerService extends BaseService
         }
 
         return $this->customer->delete($ids);
+    }
+
+    public function checkSelect($ids)
+    {
+        if ($ids) {
+            $count = $this->customer->selectCount($ids);
+            return count($ids) == $count;
+        }
+        return false;
     }
 }

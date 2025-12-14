@@ -1,0 +1,125 @@
+{extend name="layout/main" /}
+
+{block name="content"}
+<div class="wrap-con">
+    <div class="con-header">
+        <h2>banner 新增</h2>
+    </div>
+    <form class="layui-form" id="banner-form">
+        <!-- 名称 -->
+        <div class="layui-form-item">
+            <label class="layui-form-label">名称</label>
+            <div class="layui-input-block">
+                <input type="text" id="title" name="title" required lay-verify="required" placeholder="请输入产品名称"
+                    class="layui-input" autocomplete="off">
+            </div>
+        </div>
+
+        <!-- 分类 -->
+        <div class="layui-form-item">
+            <label class="layui-form-label">分类</label>
+            <div class="layui-input-block">
+                <select id="category" name="category" lay-verify="required">
+                    <option value="">选择分类</option>
+                    <option value="index">首页</option>
+                    <option value="product">产品</option>
+                    <option value="news">新闻</option>
+                    <option value="project">案例</option>
+                    <option value="customer">客户</option>
+                    <option value="contact">联系我们</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- 简介 -->
+        <div class="layui-form-item">
+            <label class="layui-form-label">简介</label>
+            <div class="layui-input-block">
+                <textarea id="summary" name="summary" lay-verify="required" placeholder="请输入简介"
+                    class="layui-textarea"></textarea>
+            </div>
+        </div>
+
+        <!-- 图片 -->
+        <div class="layui-form-item">
+            <label class="layui-form-label">图片</label>
+            <div class="layui-input-block cover-con">
+                <button type="button" class="layui-btn file-upload" id="upload-image" data-is-multiple="false"
+                    data-container-id="image-file-preview" data-input-id="image">上传图片</button>
+                <div id="image-file-preview" class="preview-img"></div>
+                <input type="hidden" id="image" name="image">
+            </div>
+        </div>
+
+        <!-- 视频 -->
+        <div class="layui-form-item">
+            <label class="layui-form-label">视频</label>
+            <div class="layui-input-block cover-con">
+                <button type="button" class="layui-btn file-upload" id="upload-video" data-is-multiple="false"
+                    data-container-id="video-file-preview" data-input-id="video">上传视频</button>
+                <div id="video-file-preview" class="preview-img"></div>
+                <input type="hidden" id="video" name="video">
+            </div>
+        </div>
+
+        <!-- url -->
+        <div class="layui-form-item">
+            <label class="layui-form-label">链接</label>
+            <div class="layui-input-block">
+                <input type="text" id="url" name="url" placeholder="请输入链接"
+                    class="layui-input" autocomplete="off">
+            </div>
+        </div>
+
+        <!-- 排序 -->
+        <div class="layui-form-item">
+            <label class="layui-form-label">排序</label>
+            <div class="layui-input-block">
+                <input type="number" id="sorted" name="sorted" required lay-verify="required" placeholder="请输入排序"
+                    class="layui-input price-input" autocomplete="off" value="0">
+            </div>
+        </div>
+
+        <!-- 状态 -->
+        <div class="layui-form-item">
+            <label class="layui-form-label">状态</label>
+            <div class="layui-input-block">
+                <input type="checkbox" id="switch-status" lay-skin="switch" lay-text="显示|隐藏" checked>
+                <input type="text" id="status" name="status" hidden value="1">
+            </div>
+        </div>
+
+        <!-- 提交按钮 -->
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button type="submit" class="layui-btn layui-btn-normal">提交</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- 文件上传 -->
+{include file="components/fileupload" /}
+
+<script>
+    FileUploader.bind('.file-upload')
+    clearDefaultValueOnFocus('.price-input', '0')
+
+    document.getElementById('switch-status').addEventListener('change', function () {
+        document.getElementById('status').value = this.checked ? 1 : 0;
+    });
+
+    // 提交表单
+    document.getElementById('banner-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const url = "/{$baseConfig.adminRoutePrefix}/api/banner/create";
+
+        submitForm('banner-form', url, {}, function () {
+            setTimeout(() => {
+                window.history.back();
+            }, 500);
+        });
+    });
+</script>
+{/block}

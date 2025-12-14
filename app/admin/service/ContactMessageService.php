@@ -41,4 +41,24 @@ class ContactMessageService extends BaseService
     {
         return $this->contactMessage->update($id, $status);
     }
+
+    // 检查选择
+    public function checkSelect($ids)
+    {
+        if ($ids) {
+            $count = $this->contactMessage->selectCount($ids);
+            return count($ids) == $count;
+        }
+        return false;
+    }
+
+    // 删除
+    public function delete($ids)
+    {
+        if (!$ids) {
+            return false;
+        }
+
+        return $this->contactMessage->delete($ids);
+    }
 }

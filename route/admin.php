@@ -28,6 +28,8 @@ Route::group($adminPrefix, function () {
 
     // banner
     Route::get('banner/index', A('Banner@indexHtml'));
+    Route::get('banner/create', A('Banner@createHtml'));
+    Route::get('banner/update/:id', A('Banner@updateHtml'));
 
     // 产品
     Route::get('product/index', A('Product@indexHtml'));
@@ -114,7 +116,9 @@ Route::group($adminPrefix . '/api', function () {
     Route::post('customer/delete', A('Customer@delete'));
 
     // 网站留言
-    Route::post('contact-message/index', A('CcontactMessage@index'));
+    Route::post('contact-message/index', A('ContactMessage@index'));
+    Route::post('contact-message/update', A('ContactMessage@update'));
+    Route::post('contact-message/delete', A('ContactMessage@delete'));
 
     // 友情链接
     Route::post('link/index', A('Link@index'));

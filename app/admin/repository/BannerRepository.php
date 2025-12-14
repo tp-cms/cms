@@ -13,14 +13,17 @@ class BannerRepository extends BaseRepository
         $this->banner = new Banner();
     }
 
-    public function index($keyword = '', $page = 1, $perPage = 20)
+    public function index($keyword = '', $category = '', $page = 1, $perPage = 20)
     {
         $query = $this->banner
             ->when($keyword, function ($query) use ($keyword) {
                 $query->where('title', 'like', '%' . $keyword . '%');
             })
+            ->when($category, function ($query) use ($category) {
+                $query->where('category', $category);
+            })
             ->order('id desc, category, sorted')
-            ->field('id,category,title,image,status,video,created_at');
+            ->field('id,category,title,image,status,video,summary,created_at');
 
         // 记录数
         $total = $query->count();

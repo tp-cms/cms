@@ -1,5 +1,57 @@
 {extend name="layout/main" /}
 
 {block name="content"}
-<p>网站留言</p>
+<div class="wrap-con">
+    <div class="con-header">
+        <div class="search-bar">
+            <input type="text" id="keyword" class="layui-input" placeholder="请输入搜索关键词" 
+            style="width: 200px; display: inline-block;" autocomplete="off">
+            <button class="layui-btn" id="search-btn">搜索</button>
+            <button class="layui-btn layui-btn-danger" id="delete-btn">删除</button>
+        </div>
+    </div>
+
+    <div class="table-wrap">
+        <table class="layui-table" id="table-id" layui-filter="filter"></table>
+    </div>
+</div>
+
+<script>
+    renderTable('#table-id', '/{$baseConfig.adminRoutePrefix}/api/contact-message/index', {
+        actionWidth: 200,
+        checkbox: true,
+        filter: 'filter',
+        searchFormId: 'search-btn',
+        deleteBtnId: 'delete-btn',
+        actions: {
+            edit: '/{$baseConfig.adminRoutePrefix}/contact-message/update/{id}',
+            delete: '/{$baseConfig.adminRoutePrefix}/api/contact-message/delete'
+        },
+        cols: [
+            { field: 'status', title: '状态', width: 100, 
+                templet: function(d){
+                    switch (d.status) {
+                        case 1:
+                            return '<span class="layui-badge layui-bg-orange">未处理</span>';
+                        case 2:
+                            return '<span class="layui-badge layui-bg-green">已处理</span>';
+                        case 3:
+                            return '<span class="layui-badge layui-bg-gray">没有价值</span>';
+                        default:
+                            return '<span class="layui-badge layui-bg-blue">未知</span>';
+                    }
+                }  
+            },
+            { field: 'name', title: '姓名', width: 200 },
+            { field: 'phone', title: '电话', width: 200 },
+            { field: 'email', title: '邮箱', width: 200 },
+            { field: 'content', title: '内容', width: 300 },
+            { field: 'ip', title: 'IP地址', width: 300 },
+            { field: 'user_agent', title: '设备信息   ', width: 300 },
+        ],
+        checkboxCallback: function (obj) {
+            console.log(obj)
+        }
+    })
+</script>
 {/block}

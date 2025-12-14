@@ -40,6 +40,9 @@ class Product extends Base
         $page = input('post.p', 1);
         $keyword = input('post.keyword', '');
         $categoryId = input('post.category', 0);
+        if (strlen($keyword) > 26) {
+            return $this->err('搜索内容不可超出26个字符');
+        }
         $list = $this->product->index($keyword, $categoryId, $page);
         return $this->suc($list);
     }

@@ -33,7 +33,12 @@ class PageService extends BaseService
         // 图片处理
         $info->image_file = [];
         if ($info->image) {
-            $info->image_file = $this->file->info($info->image);
+            $imageInfo = $this->file->info($info->image);
+            if ($imageInfo) {
+                $info->image_file = $imageInfo;
+            } else {
+                $info->image = 0;
+            }
         }
         return $info->toArray();
     }
