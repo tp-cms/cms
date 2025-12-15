@@ -44,17 +44,20 @@ class ActionLogMiddleware
                 break;
         }
 
-        $log = [
-            'created_by' => $userId,
-            'action' => $action,
-            'module' => $pathInfo,
-            'ip' => request()->header('X-Forwarded-For') ?: request()->ip(),
-            'user_agent' => request()->header('User-Agent'),
-            'description' => ''
-        ];
-        // 操作记录repo
-        $actionLog = new ActionLog();
-        $actionLog->save($log);
+        // 这里先暂不记录，列表查看记录
+        if ($action != ActionLog::ActionLogActionIndex) {
+            $log = [
+                'created_by' => $userId,
+                'action' => $action,
+                'module' => $pathInfo,
+                'ip' => request()->header('X-Forwarded-For') ?: request()->ip(),
+                'user_agent' => request()->header('User-Agent'),
+                'description' => ''
+            ];
+            // 操作记录repo
+            $actionLog = new ActionLog();
+            $actionLog->save($log);
+        }
 
         return $next($request);
     }
