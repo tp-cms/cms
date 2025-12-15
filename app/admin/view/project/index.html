@@ -14,7 +14,7 @@
         </div>
     </div>
     <div class="table-wrap">
-        <table class="layui-table" id="table-id" layui-filter="filter"></table>
+        <table class="layui-table" id="table-id" lay-filter="filter"></table>
     </div>
 </div>
 
@@ -32,7 +32,8 @@
         cols: [
             { field: 'title', title: '标题', width: 200 },
             { field: 'summary', title: '简介', width: 200 },
-            { field: 'status', title: '状态', width: 100,
+            {
+                field: 'status', title: '状态', width: 100,
                 templet: function (d) {
                     if (d.status) {
                         return '<span class="layui-badge layui-bg-green">显示</span>';
@@ -40,12 +41,13 @@
                         return '<span class="layui-badge layui-bg-gray">隐藏</span>';
                     }
                 }
-             },
-            { field: 'is_top', title: '置顶', width: 100,
-                 templet: function (d) {
+            },
+            {
+                field: 'is_top', title: '置顶', width: 100,
+                templet: function (d) {
                     return d.status ? '是' : '否';
-                 }
-             },
+                }
+            },
             { field: 'created_at', title: '创建时间', width: 100 },
         ],
         checkboxCallback: function (obj) {

@@ -8,14 +8,13 @@
                 <input type="text" id="keyword" class="layui-input" placeholder="请输入搜索关键词"
                     style="width: 200px; display: inline-block;" autocomplete="off">
                 <button class="layui-btn" id="search-btn">搜索</button>
-                <a class="layui-btn layui-btn-normal"
-                    href="/{$baseConfig.adminRoutePrefix}/file-category/create">新增</a>
+                <a class="layui-btn layui-btn-normal" href="/{$baseConfig.adminRoutePrefix}/file-category/create">新增</a>
                 <button class="layui-btn layui-btn-danger" id="delete-btn">删除</button>
             </div>
         </div>
     </div>
     <div class="table-wrap">
-        <table class="layui-table" id="table-id" layui-filter="filter"></table>
+        <table class="layui-table" id="table-id" lay-filter="filter"></table>
     </div>
 </div>
 

@@ -14,7 +14,7 @@
         </div>
     </div>
     <div class="table-wrap">
-        <table class="layui-table" id="table-id" layui-filter="filter"></table>
+        <table class="layui-table" id="table-id" lay-filter="filter"></table>
     </div>
 </div>
 
@@ -31,15 +31,16 @@
         },
         cols: [
             { field: 'name', title: '名称', width: 200 },
-            { field: 'url', title: '官网', width: 200,
-                templet:function(d){
-                    if(d.url){
+            {
+                field: 'url', title: '官网', width: 200,
+                templet: function (d) {
+                    if (d.url) {
                         return `<a href="${d.url}" target="_blank">访问官网</a>`;
-                    }else{
+                    } else {
                         return '暂无官网';
                     }
                 }
-             },
+            },
         ],
         checkboxCallback: function (obj) {
             console.log(obj)

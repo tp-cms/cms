@@ -4,15 +4,15 @@
 <div class="wrap-con">
     <div class="con-header">
         <div class="search-bar">
-            <input type="text" id="keyword" class="layui-input" placeholder="请输入搜索关键词" 
-            style="width: 200px; display: inline-block;" autocomplete="off">
+            <input type="text" id="keyword" class="layui-input" placeholder="请输入搜索关键词"
+                style="width: 200px; display: inline-block;" autocomplete="off">
             <button class="layui-btn" id="search-btn">搜索</button>
             <button class="layui-btn layui-btn-danger" id="delete-btn">删除</button>
         </div>
     </div>
 
     <div class="table-wrap">
-        <table class="layui-table" id="table-id" layui-filter="filter"></table>
+        <table class="layui-table" id="table-id" lay-filter="filter"></table>
     </div>
 </div>
 
@@ -28,8 +28,9 @@
             delete: '/{$baseConfig.adminRoutePrefix}/api/contact-message/delete'
         },
         cols: [
-            { field: 'status', title: '状态', width: 100, 
-                templet: function(d){
+            {
+                field: 'status', title: '状态', width: 100,
+                templet: function (d) {
                     switch (d.status) {
                         case 1:
                             return '<span class="layui-badge layui-bg-orange">未处理</span>';
@@ -40,7 +41,7 @@
                         default:
                             return '<span class="layui-badge layui-bg-blue">未知</span>';
                     }
-                }  
+                }
             },
             { field: 'name', title: '姓名', width: 200 },
             { field: 'phone', title: '电话', width: 200 },

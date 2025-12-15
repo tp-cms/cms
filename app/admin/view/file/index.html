@@ -2,11 +2,12 @@
 
 {block name="content"}
 <style>
-    .file-table td{
+    .file-table td {
         height: 120px;
     }
+
     /* 默认的行样式 */
-    .layui-table-cell{
+    .layui-table-cell {
         height: auto;
     }
 </style>
@@ -24,7 +25,7 @@
         </div>
     </div>
     <div class="table-wrap file-table">
-        <table class="layui-table" id="table-id" layui-filter="filter"></table>
+        <table class="layui-table" id="table-id" lay-filter="filter"></table>
     </div>
 </div>
 
@@ -87,34 +88,37 @@
         cols: [
             { field: 'name', title: '文件名', width: 200 },
             { field: 'category_name', title: '分类', width: 200 },
-            { field: 'path', title: '文件预览', width: 200,
-                templet:function(d){
+            {
+                field: 'path', title: '文件预览', width: 200,
+                templet: function (d) {
                     const fileType = getFileType(d.mime);
                     const fileIcon = fileType === 'image' ? window.origin + '/' + d.path : getFileIcon(fileType);
-                    if(fileType == 'image'){
+                    if (fileType == 'image') {
                         return `<a href="${fileIcon}" target="_blank" class="table-preview-img"><img src="${fileIcon}"></a>`;
-                    }else{
+                    } else {
                         return `<a class="table-preview-img"><img src="${fileIcon}" alt="${d.name}"></a>`;
                     }
                 }
             },
-            { field: 'size', title: '大小', width: 200,
-                templet:function(d){
+            {
+                field: 'size', title: '大小', width: 200,
+                templet: function (d) {
                     // 字节转kb
                     return (d.size / 1024).toFixed(2) + 'KB';
                 }
-             },
+            },
             { field: 'mime', title: '文件类型', width: 200 },
-            { field: 'is_content', title: '是否内容上传', width: 200,
-                templet:function(d){
-                    if(d.is_content){
+            {
+                field: 'is_content', title: '是否内容上传', width: 200,
+                templet: function (d) {
+                    if (d.is_content) {
                         return '是';
-                    }else{
+                    } else {
                         return '否';
                     }
                 }
-             },
-             { field: 'created_at', title: '创建时间', width: 200 }
+            },
+            { field: 'created_at', title: '创建时间', width: 200 }
         ],
         checkboxCallback: function (obj) {
             console.log(obj)
