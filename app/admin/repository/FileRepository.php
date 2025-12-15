@@ -73,7 +73,7 @@ class FileRepository extends BaseRepository
     }
 
     // 获取文件信息
-    public function info($id)
+    public function pathInfo($id)
     {
         return $this->file->where('id', $id)->field('id,path')->select();
     }
@@ -98,5 +98,17 @@ class FileRepository extends BaseRepository
     public function updateCategory($ids, $categoryId)
     {
         return $this->file->where('id', 'in', $ids)->update(['category_id' => $categoryId]);
+    }
+
+    // 详情
+    public function info($id)
+    {
+        return $this->file->where('id', $id)->field('id,name,category_id')->find();
+    }
+
+    // 更新
+    public function update($id, $data)
+    {
+        return $this->file->update($data, ['id' => $id]);
     }
 }

@@ -4,6 +4,7 @@ namespace app\admin\controller;
 
 use app\admin\service\FileCategoryService;
 use app\admin\service\FileService;
+use app\admin\validate\FileValidate;
 use app\trait\ResponseTrait;
 use think\App;
 use think\facade\View;
@@ -26,12 +27,14 @@ class File extends Base
     use ResponseTrait;
     protected FileService $file;
     protected FileCategoryService $fileCategory;
+    protected FileValidate $fileValidate;
     protected $allowedPrefixes;
 
     public function __construct(App $app)
     {
         $this->file = new FileService();
         $this->fileCategory = new FileCategoryService();
+        $this->fileValidate = new FileValidate();
         $this->allowedPrefixes = [
             'image/',      // png, jpg, jpeg, gif, webp
             'video/',      // mp4, mov, avi...
@@ -164,6 +167,56 @@ class File extends Base
         }
 
         $this->file->updateCategory($ids, $categoryId);
+
+        return $this->suc();
+    }
+
+    // 更新
+    public function updateHtml()
+    {
+        $fileCategory = $this->fileCategory->all();
+        View::assign('fileCategory', $fileCategory);
+        $id = $this->request->route('id');
+        $info = $this->file->info($id);
+        View::assign('info', $info);
+        return View::fetch('admin@file/update');
+    }
+
+    public function update()
+    {
+        $param = $this->request->post();
+        if (!$this->fileValidate->scene('update')->check($param)) {
+            return $this->err($this->fileValidate->getError());
+        }
+
+        // 文件分类是否存在
+        $fileCategory = $this->fileCategory->info($param['category_id']);
+        if (!$fileCategory) {
+            return $this->err('文件分类选择错误');
+        }
+
+        $this->file->update($param);
+
+        return $this->suc();
+    }
+
+    // 删除
+    // 这里先不处理物理删除
+    // TODO:定时任务/彻底删除时再操作
+    public function delete()
+    {
+        $ids = input('post.ids', []);
+        if (!$ids && !is_array($ids)) {
+            return $this->err('未选择要删除文件');
+        }
+
+        // 是否选择正确
+        $check = $this->file->checkSelect($ids);
+        if (!$check) {
+            return $this->err('文件选择错误');
+        }
+
+        $this->file->delete($ids);
 
         return $this->suc();
     }

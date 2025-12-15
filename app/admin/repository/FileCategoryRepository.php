@@ -80,7 +80,6 @@ class FileCategoryRepository extends BaseRepository
     // 更新
     public function update($id, $data)
     {
-        $data['updated_at'] = date('Y-m-d H:i:s');
         return $this->fileCategory->update($data, ['id' => $id]);
     }
 

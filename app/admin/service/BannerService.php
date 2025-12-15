@@ -44,7 +44,7 @@ class BannerService extends BaseService
     {
         // 图片处理
         if ($data['image']) {
-            $imageInfo = $this->file->info($data['image']);
+            $imageInfo = $this->file->pathInfo($data['image']);
             if (!$imageInfo) {
                 $data['image'] = 0;
             }
@@ -52,7 +52,7 @@ class BannerService extends BaseService
 
         // 视频处理
         if ($data['video']) {
-            $videoInfo = $this->file->info($data['video']);
+            $videoInfo = $this->file->pathInfo($data['video']);
             if (!$videoInfo) {
                 $data['video'] = 0;
             }
@@ -78,7 +78,7 @@ class BannerService extends BaseService
     {
         // 图片处理
         if ($data['image']) {
-            $imageInfo = $this->file->info($data['image']);
+            $imageInfo = $this->file->pathInfo($data['image']);
             if (!$imageInfo) {
                 $data['image'] = 0;
             }
@@ -86,7 +86,7 @@ class BannerService extends BaseService
 
         // 视频处理
         if ($data['video']) {
-            $videoInfo = $this->file->info($data['video']);
+            $videoInfo = $this->file->pathInfo($data['video']);
             if (!$videoInfo) {
                 $data['video'] = 0;
             }
@@ -119,7 +119,7 @@ class BannerService extends BaseService
         $info->video_file = [];
 
         if ($info->image) {
-            $imageInfo = $this->file->info($info->image);
+            $imageInfo = $this->file->pathInfo($info->image);
             if ($imageInfo) {
                 $info->image_file = $imageInfo;
             } else {

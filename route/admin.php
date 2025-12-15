@@ -66,6 +66,7 @@ Route::group($adminPrefix, function () {
 
     // 文件
     Route::get('file/index', A('File@indexHtml'));
+    Route::get('file/update/:id', A('File@updateHtml'));
     Route::get('file-category/index', A('FileCategory@indexHtml'));
     Route::get('file-category/create', A('FileCategory@createHtml'));
     Route::get('file-category/update/:id', A('FileCategory@updateHtml'));

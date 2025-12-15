@@ -200,4 +200,36 @@ class FileService extends BaseService
     {
         return $this->file->updateCategory($ids, $categoryId);
     }
+
+    // 文件详情
+    public function info($id)
+    {
+        $info = $this->file->info($id);
+        if (!$info) {
+            return [];
+        }
+
+        return $info->toArray();
+    }
+
+    // 更新
+    public function update($data)
+    {
+        $fileData = [
+            'category_id' => $data['category_id'],
+            'name' => $this->fileSafeName($data['name'])
+        ];
+
+        return $this->file->update($data['id'], $fileData);
+    }
+
+    // 删除
+    public function delete($ids)
+    {
+        if (!$ids) {
+            return false;
+        }
+
+        return $this->file->delete($ids);
+    }
 }

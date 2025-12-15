@@ -25,7 +25,7 @@ class ConfigService extends BaseService
         foreach ($configs as &$config) {
             if ($config['cfg_type'] == 'img') {
                 $val = $config['cfg_val'];
-                $config['cfg_val_file'] = $val ? $this->file->info($val) : [];
+                $config['cfg_val_file'] = $val ? $this->file->pathInfo($val) : [];
             }
         }
 
@@ -55,7 +55,7 @@ class ConfigService extends BaseService
     {
         // 图片处理
         if ($param['logo']) {
-            $logoInfo = $this->file->info($param['logo']);
+            $logoInfo = $this->file->pathInfo($param['logo']);
             if (!$logoInfo) {
                 $param['logo'] = 0;
             }
@@ -63,7 +63,7 @@ class ConfigService extends BaseService
 
         // 抖音二维码
         if ($param['douyin']) {
-            $douyinInfo = $this->file->info($param['douyin']);
+            $douyinInfo = $this->file->pathInfo($param['douyin']);
             if (!$douyinInfo) {
                 $param['douyin'] = 0;
             }
@@ -71,7 +71,7 @@ class ConfigService extends BaseService
 
         // 微信二维码
         if ($param['wechat']) {
-            $wechatInfo = $this->file->info($param['wechat']);
+            $wechatInfo = $this->file->pathInfo($param['wechat']);
             if (!$wechatInfo) {
                 $param['wechat'] = 0;
             }

@@ -35,7 +35,7 @@ class ProductService extends BaseService
         $info->content_image_file = [];
 
         if ($info->cover) {
-            $coverInfo = $this->file->info($info->cover);
+            $coverInfo = $this->file->pathInfo($info->cover);
             if ($coverInfo) {
                 $info->cover_file = $coverInfo;
             } else {
@@ -59,7 +59,7 @@ class ProductService extends BaseService
     public function create($data, $userID)
     {
         if ($data['cover']) {
-            $coverInfo = $this->file->info($data['cover']);
+            $coverInfo = $this->file->pathInfo($data['cover']);
             if (!$coverInfo) {
                 $data['cover'] = 0;
             }
@@ -85,7 +85,7 @@ class ProductService extends BaseService
     public function update($data)
     {
         if ($data['cover']) {
-            $coverInfo = $this->file->info($data['cover']);
+            $coverInfo = $this->file->pathInfo($data['cover']);
             if (!$coverInfo) {
                 $data['cover'] = 0;
             }

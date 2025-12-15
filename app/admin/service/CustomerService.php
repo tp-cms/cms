@@ -31,7 +31,7 @@ class CustomerService extends BaseService
         }
         $info->logi_file = [];
         if ($info->logo) {
-            $logoInfo = $this->file->info($info->logo);
+            $logoInfo = $this->file->pathInfo($info->logo);
             if ($logoInfo) {
                 $info->logo_file = $logoInfo;
             }
@@ -44,7 +44,7 @@ class CustomerService extends BaseService
     public function create($data, $userID)
     {
         if ($data['logo']) {
-            $logoFile = $this->file->info($data['logo']);
+            $logoFile = $this->file->pathInfo($data['logo']);
             if (!$logoFile) {
                 $data['logo'] = 0;
             }
@@ -64,7 +64,7 @@ class CustomerService extends BaseService
     public function update($data)
     {
         if ($data['logo']) {
-            $logoFile = $this->file->info($data['logo']);
+            $logoFile = $this->file->pathInfo($data['logo']);
             if (!$logoFile) {
                 $data['logo'] = 0;
             }

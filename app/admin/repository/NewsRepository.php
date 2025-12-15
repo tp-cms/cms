@@ -61,7 +61,6 @@ class NewsRepository extends BaseRepository
     // 更新
     public function update($id, $data)
     {
-        $data['updated_at'] = date('Y-m-d H:i:s');
         return $this->news->update($data, ['id' => $id]);
     }
 

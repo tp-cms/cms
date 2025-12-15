@@ -1,0 +1,56 @@
+{extend name="layout/main" /}
+
+{block name="content"}
+<div class="wrap-con">
+    <div class="con-header">
+        <h2>文件更新</h2>
+    </div>
+
+    <form class="layui-form" id="file-form">
+        <!-- id信息 -->
+        <input type="text" id="id" name="id" value="{$info.id}" hidden>
+        
+        <!-- 名称 -->
+        <div class="layui-form-item">
+            <label class="layui-form-label">名称</label>
+            <div class="layui-input-block">
+                <input type="text" id="name" name="name" required lay-verify="required" placeholder="请输入文件名称"
+                    class="layui-input" autocomplete="off" value="{$info.name}">
+            </div>
+        </div>
+
+        <!-- 分类 -->
+        <div class="layui-form-item">
+            <label class="layui-form-label">分类</label>
+            <div class="layui-input-block">
+                <select id="category_id" name="category_id" lay-verify="required">
+                    <option value="" {if condition="$info.category_id == 0"} selected {/if}>选择分类</option>
+                    {volist name="fileCategory" id="category" key="id"}
+                    <option value="{$id}" {if condition="$info.category_id == $id" }selected{/if}>{$category}</option>
+                    {/volist}
+                </select>
+            </div>
+        </div>
+
+        <!-- 提交按钮 -->
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button type="submit" class="layui-btn layui-btn-normal">提交</button>
+            </div>
+        </div>
+    </form>
+
+<script>
+    document.getElementById('file-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const url = "/{$baseConfig.adminRoutePrefix}/api/file/update";
+
+        submitForm('file-form', url, {}, function () {
+            setTimeout(() => {
+                window.history.back();
+            }, 500);
+        });
+    });
+</script>
+{/block}

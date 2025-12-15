@@ -36,7 +36,7 @@ class PageService extends BaseService
         // 图片处理
         $info->image_file = [];
         if ($info->image) {
-            $imageInfo = $this->file->info($info->image);
+            $imageInfo = $this->file->pathInfo($info->image);
             if ($imageInfo) {
                 $info->image_file = $imageInfo;
             } else {
@@ -52,7 +52,7 @@ class PageService extends BaseService
         // 文件信息处理
         $image = $data['image'];
         if ($image) {
-            $imageFile = $this->file->info($data['image']);
+            $imageFile = $this->file->pathInfo($data['image']);
             if (!$imageFile) {
                 $data['image'] = 0;
             }

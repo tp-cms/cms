@@ -65,7 +65,6 @@ class LinkRepository extends BaseRepository
     // 更新
     public function update($id, $data)
     {
-        $data['updated_at'] = date('Y-m-d H:i:s');
         return $this->link->update($data, ['id' => $id]);
     }
 
