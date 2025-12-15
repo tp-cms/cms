@@ -139,4 +139,32 @@ class File extends Base
             return $this->err($e->getMessage());
         }
     }
+
+    // 修改文件分类
+    public function updateCategory()
+    {
+        $ids = input('post.ids', []);
+        $categoryId = input('post.category_id', 0);
+        if (!$ids && !is_array($ids)) {
+            return $this->err('未选择要修改的文件');
+        }
+
+        // 分类信息
+        if ($categoryId == 0) {
+            return $this->err('文件分类选择错误');
+        }
+        $category = $this->fileCategory->info($categoryId);
+        if (!$category) {
+            return $this->err('文件分类选择错误');
+        }
+
+        // 文件选择是否正确
+        if (!$this->file->checkSelect($ids)) {
+            return $this->err('文件和选择错误');
+        }
+
+        $this->file->updateCategory($ids, $categoryId);
+
+        return $this->suc();
+    }
 }

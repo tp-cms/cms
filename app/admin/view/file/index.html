@@ -17,9 +17,16 @@
             <div class="search-bar">
                 <input type="text" id="keyword" class="layui-input" placeholder="请输入搜索关键词"
                     style="width: 200px; display: inline-block;" autocomplete="off">
+                <select id="category" class="layui-select" style="width: 150px; display: inline-block;">
+                    <option value="">选择分类</option>
+                    {volist name="fileCategory" id="category" key="id"}
+                        <option value="{$id}">{$category}</option>
+                    {/volist}
+                </select>
                 <button class="layui-btn" id="search-btn">搜索</button>
                 <a class="layui-btn layui-btn-normal" href="/{$baseConfig.adminRoutePrefix}/file-category/index">分类</a>
                 <button class="layui-btn" id="index-upload-btn">上传文件</button>
+                <button class="layui-btn layui-bg-orange" id="update-file-category">修改分类</button>
                 <button class="layui-btn layui-btn-danger" id="delete-btn">删除</button>
             </div>
         </div>
@@ -29,12 +36,28 @@
     </div>
 </div>
 
+<!-- 修改文件分类jqconfim弹框 -->
+<!-- 这里不使用layui的select，不然会多一步在onOpen中添加layui.form.render(); -->
+<div id="update-file-category-alert" class="jqconfirm-alert">
+    <div class="jqconfirm-alert-con">
+        <div class="jqconfirm-alert-item">
+            <label>分类</label>
+            <select id="_category" name="_category" lay-verify="required">
+                {volist name="fileCategory" id="category" key="id"}
+                    <option value="{$id}">{$category}</option>
+                {/volist}
+            </select>
+        </div>
+    </div>
+</div>
+
 <script>
     layui.use(['table'], function () {
         const table = layui.table;
 
         // 绑定按钮点击事件
         document.getElementById('index-upload-btn').addEventListener('click', _fileUpload);
+        document.getElementById('update-file-category').addEventListener('click', updateFileCategory);
 
         // 文件上传
         function _fileUpload() {
@@ -72,6 +95,65 @@
                     $.alert({ title: '错误', content: '上传失败，请重试', boxWidth: '300px', useBootstrap: false });
                 }
             });
+        }
+
+        // 复选框
+        function handleCheckboxChange() {
+            let checkStatus = table.checkStatus('table-id');
+            let selectedIds = [];
+
+            checkStatus.data.forEach(function (item) {
+                selectedIds.push(item.id);
+            });
+
+            return selectedIds;
+        }
+
+        function updateFileCategory() {
+            const selectedIds = handleCheckboxChange();
+            if(selectedIds.length == 0){
+                layer.msg('请先选择文件');
+                return;
+            }
+
+            let url = "/{$baseConfig.adminRoutePrefix}/api/file/update-category";
+            $.confirm({
+                title:'更新文件分类',
+                content:$('#update-file-category-alert').html(),
+                boxWidth: '500px',
+                useBootstrap: false,
+                buttons:{
+                    action:{
+                        text:'确定',
+                        btnClass:'jqconfirm-btn-action',
+                        action:function(){
+                            const category = this.$content.find('#_category').val();
+                            layer.confirm('确认更新选中项分类吗？', { icon: 3, title: '更新确认' }, function (index) {
+                                $.post(url, {ids:selectedIds, category_id:category}, function(res){
+                                    if (res.status) {
+                                        layer.msg('更新成功')
+                                        table.reload('table-id')
+                                    } else {
+                                        layer.msg(res.message || '更新失败')
+                                    }
+                                }).fail(() => layer.msg('网络错误，请重试'))
+                                layer.close(index)
+                            })
+                        }
+                    },
+                    close:{
+                        text:'取消'
+                    }
+                },
+                onOpen: function () {
+                    // // 弹框打开后，手动初始化 layui 表单元素
+                    // layui.form.render();
+
+                    this.$content.css({
+                        'min-height': '200px',
+                    });
+                }
+            })
         }
     });
 
@@ -119,10 +201,7 @@
                 }
             },
             { field: 'created_at', title: '创建时间', width: 200 }
-        ],
-        checkboxCallback: function (obj) {
-            console.log(obj)
-        }
+        ]
     })
 </script>
 {/block}

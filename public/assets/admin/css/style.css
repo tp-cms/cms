@@ -56,3 +56,41 @@ body {
 	border: 1px solid #ddd;
 	border-radius: 6px;
 }
+
+/* jqconfirm相关 */
+/* 弹出框 */
+.jqconfirm-alert {
+	display: none;
+}
+/* 按钮 */
+.jqconfirm-btn-action {
+	background-color: #1e9fff;
+	color: #fff;
+}
+
+.jqconfirm-alert-item{
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.jqconfirm-alert-item label{
+	width: 74px;
+	text-align: center;
+	background-color: #f6f8fa;
+	color: #25292e;
+	padding: 10px;
+	border-radius: 6px;
+}
+
+.jqconfirm-alert-item select {
+	width: 150px;
+	display: inline-block;
+	height: 38px;
+	line-height: 1.3;
+	background-color: #fff;
+	border-radius: 2px;
+	color: #1f2328;
+	border-width: 1px;
+	border-style: solid;
+}

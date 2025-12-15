@@ -93,4 +93,10 @@ class FileRepository extends BaseRepository
     {
         return $this->file->field('id')->where('category_id', 'in', $categoryIds)->find();
     }
+
+    // 更新文件分类
+    public function updateCategory($ids, $categoryId)
+    {
+        return $this->file->where('id', 'in', $ids)->update(['category_id' => $categoryId]);
+    }
 }

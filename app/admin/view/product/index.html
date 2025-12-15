@@ -28,10 +28,6 @@
 
 <!-- 将layui-table的配置提取到一个JavaScript对象中 -->
 <script>
-    layui.use(['table', 'layer'], function () {
-        const table = layui.table
-        table.reload('table-id')
-    })
     renderTable('#table-id', '/{$baseConfig.adminRoutePrefix}/api/product/index', {
         actionWidth: 200,
         checkbox: true,

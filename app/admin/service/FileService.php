@@ -184,4 +184,20 @@ class FileService extends BaseService
     {
         return $this->file->index($keyword, $category, $fileType, $page, $perPage);
     }
+
+    // 选择情况
+    public function checkSelect($ids)
+    {
+        if ($ids) {
+            $count = $this->file->selectCount($ids);
+            return count($ids) == $count;
+        }
+        return false;
+    }
+
+    // 更新文件分类
+    public function updateCategory($ids, $categoryId)
+    {
+        return $this->file->updateCategory($ids, $categoryId);
+    }
 }

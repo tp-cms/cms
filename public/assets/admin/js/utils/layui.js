@@ -85,7 +85,14 @@ function renderTable(elem, url, options = {}) {
 		// 复选框事件
 		if (options.checkboxCallback) {
 			table.on('checkbox(' + (options.filter || 'filter') + ')', function (obj) {
-				options.checkboxCallback(obj)
+				// 选中id信息
+				var checkStatus = table.checkStatus(tableId)
+				var selectedIds = []
+
+				checkStatus.data.forEach(function (item) {
+					selectedIds.push(item.id)
+				})
+				options.checkboxCallback(obj, selectedIds)
 			})
 		}
 
