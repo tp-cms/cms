@@ -1,7 +1,7 @@
 <?php
 
 use app\admin\middleware\ActionLogMiddleware;
-use app\admin\middleware\Auth;
+use app\admin\middleware\AuthMiddleware;
 use think\facade\Route;
 
 // 后台路由
@@ -88,7 +88,7 @@ Route::group($adminPrefix, function () {
     Route::get('user/create', A('User@createHtml'));
     Route::get('user/update/:id', A('User@updateHtml'));
     Route::get('user/profile', A('User@profileHtml'));
-})->middleware(Auth::class);
+})->middleware(AuthMiddleware::class);
 
 
 // 需要登录的（接口）
@@ -167,4 +167,4 @@ Route::group($adminPrefix . '/api', function () {
     Route::post('user/update/:id', A('User@update'));
     Route::post('user/delete', A('User@delete'));
     Route::post('user/profile', A('User@profile'));
-})->middleware(Auth::class)->middleware(ActionLogMiddleware::class);
+})->middleware(AuthMiddleware::class)->middleware(ActionLogMiddleware::class);

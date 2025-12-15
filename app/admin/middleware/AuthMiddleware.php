@@ -7,7 +7,7 @@ use app\trait\JWTTrait;
 use think\facade\Cache;
 use think\facade\Cookie;
 
-class Auth
+class AuthMiddleware
 {
     use JWTTrait;
 

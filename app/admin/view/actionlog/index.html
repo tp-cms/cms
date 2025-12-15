@@ -1,5 +1,56 @@
 {extend name="layout/main" /}
 
 {block name="content"}
-<p>操作记录</p>
+<div class="wrap-con">
+    <div class="con-header">
+        <div class="search-bar">
+            <input type="text" id="keyword" class="layui-input" placeholder="请输入搜索关键词"
+                style="width: 200px; display: inline-block;" autocomplete="off">
+            <button class="layui-btn" id="search-btn">搜索</button>
+        </div>
+    </div>
+
+    <div class="table-wrap">
+        <table class="layui-table" id="table-id" lay-filter="filter"></table>
+    </div>
+</div>
+
+<script>
+    renderTable('#table-id', '/{$baseConfig.adminRoutePrefix}/api/action-log/index', {
+        actionWidth: 200,
+        checkbox: true,
+        filter: 'filter',
+        searchFormId: 'search-btn',
+        actions: {
+            edit: '/{$baseConfig.adminRoutePrefix}/action-log/update/{id}',
+        },
+        cols: [
+            { field: 'action', title: '操作', width: 200,
+                templet:function(d){
+                    switch(d.action){
+                        case 0:
+                            return '其他';
+                            break;
+                        case 1:
+                            return '查看';
+                            break;
+                        case 2:
+                            return '新增';
+                            break;
+                        case 3:
+                            return '更新';
+                            break;
+                        case 4:
+                            return '删除';
+                            break;
+                    }
+                }
+             },
+            { field: 'module', title: '模块', width: 200 },
+            { field: 'ip', title: 'IP', width: 300 },
+            { field: 'user_agent', title: '设备', width: 300 },
+            { field: 'created_at', title: '操作时间', width: 300 },
+        ]
+    })
+</script>
 {/block}

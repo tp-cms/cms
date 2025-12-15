@@ -18,14 +18,16 @@ class ActionLogRepository extends BaseRepository
         $query = $this->actionLog
             ->when($keyword, function ($query) use ($keyword) {
                 $query->where(function ($q) use ($keyword) {
-                    $q->whereLike('ip', '%' . $keyword . '%')
-                        ->whereOrLike('module', '%' . $keyword . '%');
+                    // https://doc.thinkphp.cn/v8_0/adv_query.html
+                    $ipMap = ['ip', 'like', '%' . $keyword . '%'];
+                    $moduleMap = ['module', 'like', '%' . $keyword . '%'];
+                    $q->whereOr([$ipMap, $moduleMap]);
                 });
             })
             ->when($userID, function ($query) use ($userID) {
                 $query->where('created_by', $userID);
             })
-            ->order('id desc, category, sorted')
+            ->order('id desc')
             ->field('id,action,module,description,ip,user_agent,created_at,created_by');
 
         // 记录数
