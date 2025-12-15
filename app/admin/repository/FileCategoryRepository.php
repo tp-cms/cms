@@ -105,9 +105,10 @@ class FileCategoryRepository extends BaseRepository
             ->when($id > 0, function ($query) use ($id) {
                 $query->where('id', '<>', $id);
             })
-            ->where([
-                'name' => $name,
-                'code' => $code,
-            ])->find();
+            ->where(function ($query) use ($name, $code) {
+                $query->where('name', $name)
+                    ->whereOr('code', $code);
+            })
+            ->find();
     }
 }
