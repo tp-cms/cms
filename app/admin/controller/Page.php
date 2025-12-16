@@ -27,6 +27,7 @@ class Page extends Base
         View::assign('fileCategory', $fileCategory);
         // 获取关于我们信息
         $info = $this->page->info('about_us');
+        View::assign('info', $info);
         return View::fetch('admin@page/aboutus');
     }
 
@@ -38,6 +39,7 @@ class Page extends Base
         View::assign('fileCategory', $fileCategory);
         // 获取关于我们信息
         $info = $this->page->info('privacy');
+        View::assign('info', $info);
         return View::fetch('admin@page/privacy');
     }
 
