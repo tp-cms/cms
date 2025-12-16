@@ -27,7 +27,16 @@ class CustomerValidate extends Validate
      *
      * @var array
      */
-    protected $message = [];
+    protected $message = [
+        'id.require' => 'ID是必填项',
+        'id.number'  => 'ID必须为数字',
+        'id.gt'      => 'ID必须大于0',
+        'name.require' => '名称是必填项',
+        'name.max'     => '名称不能超过100个字符',
+        'logo.number' => 'Logo字段必须为数字',
+        'url.max' => 'URL不能超过200个字符'
+    ];
+
 
     protected $scene = [
         'create' => ['name', 'logo', 'url'],

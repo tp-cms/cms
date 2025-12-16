@@ -26,7 +26,16 @@ class LinkValidate extends Validate
      *
      * @var array
      */
-    protected $message = [];
+    protected $message = [
+        'id.require' => 'ID是必填项',
+        'id.number'  => 'ID必须为数字',
+        'id.gt'      => 'ID必须大于0',
+        'title.require' => '标题是必填项',
+        'title.max'     => '标题不能超过100个字符',
+        'url.require' => 'URL是必填项',
+        'url.max'     => 'URL不能超过200个字符'
+    ];
+
 
     protected $scene = [
         'create' => ['title', 'url'],

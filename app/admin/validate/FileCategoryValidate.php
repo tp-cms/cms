@@ -26,7 +26,15 @@ class FileCategoryValidate extends Validate
      *
      * @var array
      */
-    protected $message = [];
+    protected $message = [
+        'id.require' => 'ID是必填项',
+        'id.number'  => 'ID必须为数字',
+        'id.gt'      => 'ID必须大于0',
+        'name.require' => '名称是必填项',
+        'name.max'     => '名称不能超过26个字符',
+        'code.require' => 'CODE是必填项',
+        'code.max'     => 'CODE不能超过50个字符'
+    ];
 
     protected $scene = [
         'create' => ['name', 'code'],

@@ -24,7 +24,11 @@ class ContactMessageValidate extends Validate
      *
      * @var array
      */
-    protected $message = [];
+    protected $message = [
+        'id.require' => 'ID是必填项',
+        'id.number'  => 'ID必须为数字',
+        'id.gt'      => 'ID必须大于0',
+    ];
 
     protected $scene = [
         'update' => ['id']
