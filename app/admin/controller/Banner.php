@@ -42,7 +42,15 @@ class Banner extends Base
         return $this->suc($list);
     }
 
-    // 新增
+    // 添加
+    public function createHtml()
+    {
+        // 文件分类
+        $fileCategory = $this->fileCategory->all();
+        View::assign('fileCategory', $fileCategory);
+        return View::fetch('admin@banner/create');
+    }
+
     public function create()
     {
         $param = $this->request->post();
@@ -59,15 +67,21 @@ class Banner extends Base
         return $this->suc();
     }
 
-    public function createHtml()
+    // 更新
+    public function updateHtml()
     {
+        $id = $this->request->route('id');
+        $info = $this->banner->info($id);
+        if (!$info) {
+            return View::fetch('admin@tips/notfound');
+        }
+        View::assign('info', $info);
         // 文件分类
         $fileCategory = $this->fileCategory->all();
         View::assign('fileCategory', $fileCategory);
-        return View::fetch('admin@banner/create');
+        return View::fetch('admin@banner/update');
     }
 
-    // 更新
     public function update()
     {
         $param = $this->request->post();
@@ -80,17 +94,6 @@ class Banner extends Base
         return $this->suc();
     }
 
-    public function updateHtml()
-    {
-        // 文件分类
-        $fileCategory = $this->fileCategory->all();
-        View::assign('fileCategory', $fileCategory);
-        $id = $this->request->route('id');
-        $info = $this->banner->info($id);
-        View::assign('info', $info);
-        return View::fetch('admin@banner/update');
-    }
-
     // 删除
     public function delete()
     {
@@ -100,7 +103,7 @@ class Banner extends Base
         }
 
         // 是否选择正确
-        $check = $this->banner->checkSelect($ids);
+        $check = $this->banner->selectedCount($ids);
         if (!$check) {
             return $this->err('轮播图选择错误');
         }

@@ -13,6 +13,7 @@ class NewsRepository extends BaseRepository
         $this->news = new News();
     }
 
+    // 列表
     public function index($keyword = '', $page = 1, $perPage = 20)
     {
         $query = $this->news
@@ -42,11 +43,6 @@ class NewsRepository extends BaseRepository
         ];
     }
 
-    public function create($data)
-    {
-        return $this->news->insertGetId($data);
-    }
-
     // 详情
     public function info($id)
     {
@@ -56,6 +52,12 @@ class NewsRepository extends BaseRepository
             ->find();
 
         return $info;
+    }
+
+    // 添加
+    public function create($data)
+    {
+        return $this->news->insertGetId($data);
     }
 
     // 更新
@@ -71,10 +73,5 @@ class NewsRepository extends BaseRepository
             ->where('id', 'in', $ids)
             ->useSoftDelete('deleted_at', date('Y-m-d H:i:s'))
             ->delete();
-    }
-
-    public function selectCount($ids)
-    {
-        return $this->news->where('id', 'in', $ids)->count('id');
     }
 }

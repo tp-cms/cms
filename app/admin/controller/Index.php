@@ -6,6 +6,7 @@ use think\facade\View;
 
 class Index extends Base
 {
+    // 首页
     public function indexHtml()
     {
         View::assign('content', '首页');

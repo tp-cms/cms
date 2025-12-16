@@ -51,6 +51,7 @@ class File extends Base
         return parent::__construct($app);
     }
 
+    // 列表
     public function indexHtml()
     {
         $fileCategory = $this->fileCategory->all();
@@ -58,7 +59,6 @@ class File extends Base
         return View::fetch('admin@file/index');
     }
 
-    // 文件列表
     public function index()
     {
         $page = input('post.p', 1);
@@ -86,7 +86,7 @@ class File extends Base
         }
 
         // 判断下
-        $mime = $this->file->mimeType($file);
+        $mime = mimeType($file);
         $valid = false;
         foreach ($this->allowedPrefixes as $prefix) {
             if (str_starts_with($mime, $prefix)) {
@@ -121,7 +121,7 @@ class File extends Base
 
         foreach ($files as $file) {
             // 判断下
-            $mime = $this->file->mimeType($file);
+            $mime = mimeType($file);
             $valid = false;
             foreach ($this->allowedPrefixes as $prefix) {
                 if (str_starts_with($mime, $prefix)) {
@@ -143,42 +143,17 @@ class File extends Base
         }
     }
 
-    // 修改文件分类
-    public function updateCategory()
-    {
-        $ids = input('post.ids', []);
-        $categoryId = input('post.category_id', 0);
-        if (!$ids && !is_array($ids)) {
-            return $this->err('未选择要修改的文件');
-        }
-
-        // 分类信息
-        if ($categoryId == 0) {
-            return $this->err('文件分类选择错误');
-        }
-        $category = $this->fileCategory->info($categoryId);
-        if (!$category) {
-            return $this->err('文件分类选择错误');
-        }
-
-        // 文件选择是否正确
-        if (!$this->file->checkSelect($ids)) {
-            return $this->err('文件和选择错误');
-        }
-
-        $this->file->updateCategory($ids, $categoryId);
-
-        return $this->suc();
-    }
-
     // 更新
     public function updateHtml()
     {
-        $fileCategory = $this->fileCategory->all();
-        View::assign('fileCategory', $fileCategory);
         $id = $this->request->route('id');
         $info = $this->file->info($id);
+        if (!$info) {
+            return View::fetch('admin@tips/notfound');
+        }
         View::assign('info', $info);
+        $fileCategory = $this->fileCategory->all();
+        View::assign('fileCategory', $fileCategory);
         return View::fetch('admin@file/update');
     }
 
@@ -200,6 +175,34 @@ class File extends Base
         return $this->suc();
     }
 
+    // 修改文件分类
+    public function updateCategory()
+    {
+        $ids = input('post.ids', []);
+        $categoryId = input('post.category_id', 0);
+        if (!$ids && !is_array($ids)) {
+            return $this->err('未选择要修改的文件');
+        }
+
+        // 分类信息
+        if ($categoryId == 0) {
+            return $this->err('文件分类选择错误');
+        }
+        $category = $this->fileCategory->info($categoryId);
+        if (!$category) {
+            return $this->err('文件分类选择错误');
+        }
+
+        // 文件选择是否正确
+        if (!$this->file->selectedCount($ids)) {
+            return $this->err('文件和选择错误');
+        }
+
+        $this->file->updateCategory($ids, $categoryId);
+
+        return $this->suc();
+    }
+
     // 删除
     // 这里先不处理物理删除
     // TODO:定时任务/彻底删除时再操作
@@ -211,7 +214,7 @@ class File extends Base
         }
 
         // 是否选择正确
-        $check = $this->file->checkSelect($ids);
+        $check = $this->file->selectedCount($ids);
         if (!$check) {
             return $this->err('文件选择错误');
         }

@@ -22,6 +22,7 @@ class Config extends Base
         return parent::__construct($app);
     }
 
+    // 列表
     public function indexHtml()
     {
         // 配置项

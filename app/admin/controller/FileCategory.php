@@ -69,6 +69,9 @@ class FileCategory extends Base
     {
         $id = $this->request->route('id');
         $info = $this->fileCategory->info($id);
+        if (!$info) {
+            return View::fetch('admin@tips/notfound');
+        }
         View::assign('info', $info);
         return View::fetch('admin@filecategory/update');
     }
@@ -99,13 +102,13 @@ class FileCategory extends Base
         }
 
         // 是否选择正确
-        $check = $this->fileCategory->checkSelect($ids);
+        $check = $this->fileCategory->selectedCount($ids);
         if (!$check) {
             return $this->err('分类选择错误');
         }
 
         // 删除前判断
-        $hasProduct = $this->fileCategory->checkDelete($ids);
+        $hasProduct = $this->fileCategory->hasFileInCategory($ids);
         if ($hasProduct) {
             return $this->err('请先删除分类下的分类信息');
         }

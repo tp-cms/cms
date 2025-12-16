@@ -16,11 +16,31 @@ class ProductCategoryService extends BaseService
         $this->product = new ProductRepository();
     }
 
+    // 产品分类（全部）
     public function all()
     {
         return $this->productCategory->all();
     }
 
+    // 列表
+    public function index($keyword = '', $page = 1, $perPage = 20)
+    {
+        return $this->productCategory->index($keyword, $page, $perPage);
+    }
+
+    // 某个分类是否存在产品
+    public function hasProductInCategory($ids)
+    {
+        return $this->product->hasProductInCategory($ids);
+    }
+
+    // 名称/CODE是否重复
+    public function duplicate($name, $code, $id = 0)
+    {
+        return $this->productCategory->duplicate($name, $code, $id);
+    }
+
+    // 详情
     public function info($id)
     {
         $info = $this->productCategory->info($id);
@@ -30,13 +50,7 @@ class ProductCategoryService extends BaseService
         return $info->toArray();
     }
 
-    // 列表
-    public function index($keyword = '', $page = 1, $perPage = 20)
-    {
-        return $this->productCategory->index($keyword, $page, $perPage);
-    }
-
-    // 新增
+    // 添加
     public function create($data, $userID)
     {
         $productCategoryData = [
@@ -59,10 +73,11 @@ class ProductCategoryService extends BaseService
         return $this->productCategory->update($data['id'], $productCategoryData);
     }
 
-    public function checkSelect($ids)
+    // 选择有效记录数量
+    public function selectedCount($ids)
     {
         if ($ids) {
-            $count = $this->productCategory->selectCount($ids);
+            $count = $this->productCategory->selectedCount('product_category', $ids);
             return count($ids) == $count;
         }
         return false;
@@ -72,17 +87,5 @@ class ProductCategoryService extends BaseService
     public function delete($ids)
     {
         return $this->productCategory->delete($ids);
-    }
-
-    // 删除前判断
-    public function checkDelete($ids)
-    {
-        return $this->product->foundProduct($ids);
-    }
-
-    // 是否重复
-    public function duplicate($name, $code, $id = 0)
-    {
-        return $this->productCategory->duplicate($name, $code, $id);
     }
 }

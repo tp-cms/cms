@@ -5,7 +5,6 @@ namespace app\admin\controller;
 use app\admin\service\FileCategoryService;
 use app\admin\service\ProjectService;
 use app\admin\validate\ProjectValidate;
-use PDO;
 use think\App;
 use think\facade\View;
 
@@ -41,7 +40,7 @@ class Project extends Base
         return $this->suc($list);
     }
 
-    // 新增
+    // 添加
     public function createHtml()
     {
         $fileCategory = $this->fileCategory->all();
@@ -70,6 +69,9 @@ class Project extends Base
     {
         $id = $this->request->route('id');
         $info = $this->project->info($id);
+        if (!$info) {
+            return View::fetch('admin@tips/notfound');
+        }
         View::assign('info', $info);
         // 文件分类
         $fileCategory = $this->fileCategory->all();
@@ -99,7 +101,7 @@ class Project extends Base
         }
 
         // 是否选择正确
-        $check = $this->project->checkSelect($ids);
+        $check = $this->project->selectedCount($ids);
         if (!$check) {
             return $this->err('案例选择错误');
         }

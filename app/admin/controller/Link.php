@@ -37,7 +37,7 @@ class Link extends Base
         return View::fetch('admin@link/index');
     }
 
-    // 新增
+    // 添加
     public function create()
     {
         $param = $this->request->post();
@@ -84,6 +84,9 @@ class Link extends Base
     {
         $id = $this->request->route('id');
         $info = $this->link->info($id);
+        if (!$info) {
+            return View::fetch('admin@tips/notfound');
+        }
         View::assign('info', $info);
         return View::fetch('admin@link/update');
     }
@@ -97,7 +100,7 @@ class Link extends Base
         }
 
         // 是否选择正确
-        $check = $this->link->checkSelect($ids);
+        $check = $this->link->selectedCount($ids);
         if (!$check) {
             return $this->err('链接选择错误');
         }

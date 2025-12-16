@@ -49,7 +49,7 @@ class Captcha extends Base
         }
 
         // 生成验证码字符串
-        $code = $this->randomCode(4);
+        $code = randomCode(4);
 
         $captchaKey = Cookie::get(CacheKeyEnum::CaptchaCookie->value);
         if ($captchaKey) {
@@ -62,17 +62,6 @@ class Captcha extends Base
             return $this->err('异常请求');
         }
         return $this->err('仅登录时使用');
-    }
-
-    // 随机验证码字符串
-    private function randomCode($length = 4)
-    {
-        $chars = '345678abcdefhkmnpqrstwxyABCDEFGHKMNPQRTWXY';
-        $str = '';
-        for ($i = 0; $i < $length; $i++) {
-            $str .= $chars[mt_rand(0, strlen($chars) - 1)];
-        }
-        return $str;
     }
 
     private function createImage($code)

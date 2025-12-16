@@ -25,7 +25,7 @@ class Product extends Base
         return parent::__construct($app);
     }
 
-    // 产品列表（页面）
+    // 列表
     public function indexHtml()
     {
         // 产品分类
@@ -34,7 +34,6 @@ class Product extends Base
         return View::fetch('admin@product/index');
     }
 
-    // 产品列表（接口）
     public function index()
     {
         $page = input('post.p', 1);
@@ -47,7 +46,7 @@ class Product extends Base
         return $this->suc($list);
     }
 
-    // 产品新增（页面）
+    // 添加
     public function createHtml()
     {
         // 产品分类
@@ -59,7 +58,6 @@ class Product extends Base
         return View::fetch('admin@product/create');
     }
 
-    // 产品新增
     public function create()
     {
         // 简单验证下参数
@@ -77,23 +75,24 @@ class Product extends Base
         return $this->suc();
     }
 
-    // 产品编辑（页面）
+    // 更新
     public function updateHtml($id = 0)
     {
+        $id = $this->request->route('id');
+        $info = $this->product->info($id);
+        if (!$info) {
+            return View::fetch('admin@tips/notfound');
+        }
+        View::assign('info', $info);
         // 产品分类
         $all = $this->productCategory->all();
         View::assign('productCategory', $all);
         // 文件分类
         $fileCategory = $this->fileCategory->all();
         View::assign('fileCategory', $fileCategory);
-
-        $id = $this->request->route('id');
-        $info = $this->product->info($id);
-        View::assign('info', $info);
         return View::fetch('admin@product/update');
     }
 
-    // 产品编辑
     public function update()
     {
         // 简单验证下参数
@@ -106,7 +105,7 @@ class Product extends Base
         return $this->suc();
     }
 
-    // 产品删除
+    // 删除
     public function delete()
     {
         $ids = input('post.ids', []);
@@ -115,7 +114,7 @@ class Product extends Base
         }
 
         // 是否选择正确
-        $check = $this->product->checkSelect($ids);
+        $check = $this->product->selectedCount($ids);
         if (!$check) {
             return $this->err('产品选择错误');
         }

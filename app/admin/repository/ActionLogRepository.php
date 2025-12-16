@@ -13,6 +13,7 @@ class ActionLogRepository extends BaseRepository
         $this->actionLog = new ActionLog();
     }
 
+    // 列表
     public function index($keyword = '', $userID = 0, $page = 1, $perPage = 20)
     {
         $query = $this->actionLog

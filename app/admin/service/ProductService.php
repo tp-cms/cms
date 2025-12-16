@@ -55,7 +55,7 @@ class ProductService extends BaseService
         return $info->toArray();
     }
 
-    // 新增
+    // 添加
     public function create($data, $userID)
     {
         if ($data['cover']) {
@@ -106,11 +106,11 @@ class ProductService extends BaseService
         return $this->product->update($data['id'], $productData);
     }
 
-    // 检查选择
-    public function checkSelect($ids)
+    // 选择有效记录数量
+    public function selectedCount($ids)
     {
         if ($ids) {
-            $count = $this->product->selectCount($ids);
+            $count = $this->product->selectedCount('product', $ids);
             return count($ids) == $count;
         }
         return false;

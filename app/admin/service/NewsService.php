@@ -22,6 +22,29 @@ class NewsService extends BaseService
         return $this->news->index($keyword, $page, $perPage);
     }
 
+    // 详情
+    public function info($id)
+    {
+        $info = $this->news->info($id);
+
+        if (!$info) {
+            return [];
+        }
+
+        $info->cover_file = [];
+
+        if ($info->cover) {
+            $coverInfo = $this->file->pathInfo($info->cover);
+            if ($coverInfo) {
+                $info->cover_file = $coverInfo;
+            } else {
+                $info->cover = 0;
+            }
+        }
+
+        return $info->toArray();
+    }
+
     // 新增
     public function create($data, $userID)
     {
@@ -65,27 +88,14 @@ class NewsService extends BaseService
         return $this->news->update($data['id'], $newsData);
     }
 
-    // 详情
-    public function info($id)
+    // 选择有效记录数量
+    public function selectedCount($ids)
     {
-        $info = $this->news->info($id);
-
-        if (!$info) {
-            return [];
+        if ($ids) {
+            $count = $this->news->selectedCount('news', $ids);
+            return count($ids) == $count;
         }
-
-        $info->cover_file = [];
-
-        if ($info->cover) {
-            $coverInfo = $this->file->pathInfo($info->cover);
-            if ($coverInfo) {
-                $info->cover_file = $coverInfo;
-            } else {
-                $info->cover = 0;
-            }
-        }
-
-        return $info->toArray();
+        return false;
     }
 
     // 删除
@@ -96,14 +106,5 @@ class NewsService extends BaseService
         }
 
         return $this->news->delete($ids);
-    }
-
-    public function checkSelect($ids)
-    {
-        if ($ids) {
-            $count = $this->news->selectCount($ids);
-            return count($ids) == $count;
-        }
-        return false;
     }
 }

@@ -39,7 +39,40 @@ class BannerService extends BaseService
         return $this->banner->index($keyword, $category, $page, $perPage);
     }
 
-    // 新增
+    // 详情
+    public function info($id)
+    {
+        $info = $this->banner->info($id);
+        if (!$info) {
+            return [];
+        }
+
+        // 处理图片
+        $info->image_file = [];
+        $info->video_file = [];
+
+        if ($info->image) {
+            $imageInfo = $this->file->pathInfo($info->image);
+            if ($imageInfo) {
+                $info->image_file = $imageInfo;
+            } else {
+                $info->image = 0;
+            }
+        }
+
+        if ($info->video) {
+            $videoInfo = $this->file->batchInfo($info->video);
+            if ($videoInfo) {
+                $info->video_file = $videoInfo;
+            } else {
+                $info->video = 0;
+            }
+        }
+
+        return $info->toArray();
+    }
+
+    // 添加
     public function create($data, $userID)
     {
         // 图片处理
@@ -106,44 +139,11 @@ class BannerService extends BaseService
         return $this->banner->update($data['id'], $bannerData);
     }
 
-    // 详情
-    public function info($id)
-    {
-        $info = $this->banner->info($id);
-        if (!$info) {
-            return [];
-        }
-
-        // 处理图片
-        $info->image_file = [];
-        $info->video_file = [];
-
-        if ($info->image) {
-            $imageInfo = $this->file->pathInfo($info->image);
-            if ($imageInfo) {
-                $info->image_file = $imageInfo;
-            } else {
-                $info->image = 0;
-            }
-        }
-
-        if ($info->video) {
-            $videoInfo = $this->file->batchInfo($info->video);
-            if ($videoInfo) {
-                $info->video_file = $videoInfo;
-            } else {
-                $info->video = 0;
-            }
-        }
-
-        return $info->toArray();
-    }
-
-    // 检查选择
-    public function checkSelect($ids)
+    // 选择有效记录数量
+    public function selectedCount($ids)
     {
         if ($ids) {
-            $count = $this->banner->selectCount($ids);
+            $count = $this->banner->selectedCount('banner', $ids);
             return count($ids) == $count;
         }
         return false;

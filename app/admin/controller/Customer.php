@@ -39,7 +39,7 @@ class Customer extends Base
         return $this->suc($list);
     }
 
-    // 新增
+    // 添加
     public function createHtml()
     {
         $fileCategory = $this->fileCategory->all();
@@ -63,12 +63,14 @@ class Customer extends Base
         return $this->suc();
     }
 
-
     // 更新
     public function updateHtml()
     {
         $id = $this->request->route('id');
         $info = $this->customer->info($id);
+        if (!$info) {
+            return View::fetch('admin@tips/notfound');
+        }
         View::assign('info', $info);
 
         $fileCategory = $this->fileCategory->all();
@@ -96,7 +98,7 @@ class Customer extends Base
         }
 
         // 是否选择正确
-        $check = $this->customer->checkSelect($ids);
+        $check = $this->customer->selectedCount($ids);
         if (!$check) {
             return $this->err('客户选择错误');
         }

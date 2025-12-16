@@ -19,6 +19,7 @@ class Page extends Base
         return parent::__construct($app);
     }
 
+    // 关于我们
     public function aboutUsHtml()
     {
         // 文件分类
@@ -26,10 +27,10 @@ class Page extends Base
         View::assign('fileCategory', $fileCategory);
         // 获取关于我们信息
         $info = $this->page->info('about_us');
-        View::assign('info', $info);
         return View::fetch('admin@page/aboutus');
     }
 
+    // 隐私政策
     public function privacyHtml()
     {
         // 文件分类
@@ -37,7 +38,6 @@ class Page extends Base
         View::assign('fileCategory', $fileCategory);
         // 获取关于我们信息
         $info = $this->page->info('privacy');
-        View::assign('info', $info);
         return View::fetch('admin@page/privacy');
     }
 

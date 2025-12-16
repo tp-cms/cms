@@ -40,8 +40,7 @@ class News extends Base
         return $this->suc($list);
     }
 
-
-    // 新增
+    // 添加
     public function createHtml()
     {
         // 文件分类
@@ -69,12 +68,15 @@ class News extends Base
     // 更新
     public function updateHtml()
     {
+        $id = $this->request->route('id');
+        $info = $this->news->info($id);
+        if (!$info) {
+            return View::fetch('admin@tips/notfound');
+        }
+        View::assign('info', $info);
         // 文件分类
         $fileCategory = $this->fileCategory->all();
         View::assign('fileCategory', $fileCategory);
-        $id = $this->request->route('id');
-        $info = $this->news->info($id);
-        View::assign('info', $info);
         return View::fetch('admin@news/update');
     }
 
@@ -99,7 +101,7 @@ class News extends Base
         }
 
         // 是否选择正确
-        $check = $this->news->checkSelect($ids);
+        $check = $this->news->selectedCount($ids);
         if (!$check) {
             return $this->err('新闻选择错误');
         }

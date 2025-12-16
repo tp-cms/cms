@@ -17,6 +17,7 @@ class ConfigService extends BaseService
         $this->file = new FileRepository();
     }
 
+    // 配置信息
     public function index()
     {
         $configs = $this->config->index();
@@ -32,6 +33,7 @@ class ConfigService extends BaseService
         return $configs;
     }
 
+    // 检查下配置键是否存在
     public function checkKey($key)
     {
         return in_array($key, [

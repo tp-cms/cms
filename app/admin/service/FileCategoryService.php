@@ -22,19 +22,36 @@ class FileCategoryService extends BaseService
         return $this->fileCategory->all();
     }
 
-    // 删除前判断
-    public function checkDelete($ids)
-    {
-        return $this->file->foundFile($ids);
-    }
-
     // 列表
     public function index($keyword = '', $page = 1, $perPage = 20)
     {
         return $this->fileCategory->index($keyword, $page, $perPage);
     }
 
-    // 新增
+    // 名称/CODE是否存在
+    public function duplicate($name, $code, $id = 0)
+    {
+        return $this->fileCategory->duplicate($name, $code, $id);
+    }
+
+    // 某个分类是否存在文件
+    public function hasFileInCategory($ids)
+    {
+        return $this->file->hasFileInCategory($ids);
+    }
+
+    // 详情
+    public function info($id)
+    {
+        $info = $this->fileCategory->info($id);
+        if (!$info) {
+            return [];
+        }
+        return $info->toArray();
+    }
+
+
+    // 添加
     public function create($data, $userID)
     {
         $fileCategoryData = [
@@ -57,10 +74,14 @@ class FileCategoryService extends BaseService
         return $this->fileCategory->update($data['id'], $fileCategoryData);
     }
 
-    // 是否重复
-    public function duplicate($name, $code, $id = 0)
+    // 选择有效记录数量
+    public function selectedCount($ids)
     {
-        return $this->fileCategory->duplicate($name, $code, $id);
+        if ($ids) {
+            $count = $this->fileCategory->selectedCount('file_category', $ids);
+            return count($ids) == $count;
+        }
+        return false;
     }
 
     // 删除
@@ -71,24 +92,5 @@ class FileCategoryService extends BaseService
         }
 
         return $this->fileCategory->delete($ids);
-    }
-
-    public function checkSelect($ids)
-    {
-        if ($ids) {
-            $count = $this->fileCategory->selectCount($ids);
-            return count($ids) == $count;
-        }
-        return false;
-    }
-
-    // 详情
-    public function info($id)
-    {
-        $info = $this->fileCategory->info($id);
-        if (!$info) {
-            return [];
-        }
-        return $info->toArray();
     }
 }

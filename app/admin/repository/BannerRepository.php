@@ -13,6 +13,7 @@ class BannerRepository extends BaseRepository
         $this->banner = new Banner();
     }
 
+    // 列表
     public function index($keyword = '', $category = '', $page = 1, $perPage = 20)
     {
         $query = $this->banner
@@ -45,12 +46,6 @@ class BannerRepository extends BaseRepository
         ];
     }
 
-    // 添加
-    public function create($data)
-    {
-        return $this->banner->insertGetId($data);
-    }
-
     // 详情
     public function info($id)
     {
@@ -60,6 +55,12 @@ class BannerRepository extends BaseRepository
             ->find();
 
         return $info;
+    }
+
+    // 添加
+    public function create($data)
+    {
+        return $this->banner->insertGetId($data);
     }
 
     // 更新
@@ -75,10 +76,5 @@ class BannerRepository extends BaseRepository
             ->where('id', 'in', $ids)
             ->useSoftDelete('deleted_at', date('Y-m-d H:i:s'))
             ->delete();
-    }
-
-    public function selectCount($ids)
-    {
-        return $this->banner->where('id', 'in', $ids)->count('id');
     }
 }

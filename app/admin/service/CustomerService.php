@@ -40,7 +40,7 @@ class CustomerService extends BaseService
         return $info->toArray();
     }
 
-    // 新增
+    // 添加
     public function create($data, $userID)
     {
         if ($data['logo']) {
@@ -79,6 +79,16 @@ class CustomerService extends BaseService
         return $this->customer->update($data['id'], $customerData);
     }
 
+    // 选择有效记录数量
+    public function selectedCount($ids)
+    {
+        if ($ids) {
+            $count = $this->customer->selectedCount('customer', $ids);
+            return count($ids) == $count;
+        }
+        return false;
+    }
+
     // 删除
     public function delete($ids)
     {
@@ -87,14 +97,5 @@ class CustomerService extends BaseService
         }
 
         return $this->customer->delete($ids);
-    }
-
-    public function checkSelect($ids)
-    {
-        if ($ids) {
-            $count = $this->customer->selectCount($ids);
-            return count($ids) == $count;
-        }
-        return false;
     }
 }

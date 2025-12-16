@@ -40,17 +40,17 @@ class ContactMessageService extends BaseService
         ]);
     }
 
-    // 更新状态
+    // 更新
     public function updateStatus($id, $status)
     {
         return $this->contactMessage->update($id, $status);
     }
 
-    // 检查选择
-    public function checkSelect($ids)
+    // 选择有效记录数量
+    public function selectedCount($ids)
     {
         if ($ids) {
-            $count = $this->contactMessage->selectCount($ids);
+            $count = $this->contactMessage->selectedCount('contact_message', $ids);
             return count($ids) == $count;
         }
         return false;

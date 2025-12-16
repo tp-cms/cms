@@ -13,6 +13,7 @@ class ContactMessageRepository extends BaseRepository
         $this->contactMessage = new ContactMessage();
     }
 
+    // 列表
     public function index($keyword = '', $page = 1, $perPage = 20)
     {
         $query = $this->contactMessage
@@ -60,12 +61,6 @@ class ContactMessageRepository extends BaseRepository
             'status' => $status,
         ];
         return $this->contactMessage->update($data, ['id' => $id]);
-    }
-
-    // 检查产品id选择情况
-    public function selectCount($ids)
-    {
-        return $this->contactMessage->where('id', 'in', $ids)->count('id');
     }
 
     // 删除

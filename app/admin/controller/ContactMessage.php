@@ -19,6 +19,7 @@ class ContactMessage extends Base
         return parent::__construct($app);
     }
 
+    // 列表
     public function indexHtml()
     {
         return View::fetch('admin@contactmessage/index');
@@ -41,6 +42,9 @@ class ContactMessage extends Base
     {
         $id = $this->request->route('id');
         $info = $this->contactMessage->info($id);
+        if (!$info) {
+            return View::fetch('admin@tips/notfound');
+        }
         View::assign('info', $info);
         return View::fetch('admin@contactmessage/update');
     }
@@ -66,7 +70,7 @@ class ContactMessage extends Base
         }
 
         // 是否选择正确
-        $check = $this->contactMessage->checkSelect($ids);
+        $check = $this->contactMessage->selectedCount($ids);
         if (!$check) {
             return $this->err('留言选择错误');
         }

@@ -14,99 +14,32 @@ class FileService extends BaseService
         $this->file = new FileRepository();
     }
 
-    // 文件类型
-    public function mimeType(\think\File $file): string
+    // 文件列表
+    public function index($keyword = '', $category = 0, $fileType = 'all', $page = 1, $perPage = 20)
     {
-        $realPath = $file->getRealPath();
-        if (!$realPath || !is_file($realPath)) {
-            return '';
-        }
-
-        // 打开 finfo 资源，用于检测 MIME 类型
-        $finfo = finfo_open(FILEINFO_MIME_TYPE);
-        if (!$finfo) {
-            return '';
-        }
-
-        // 获取文件的 MIME 类型
-        $mimeType = finfo_file($finfo, $realPath);
-        // 不需要手动关闭,finfo会自动关闭
-
-        return $mimeType ?: '';
+        return $this->file->index($keyword, $category, $fileType, $page, $perPage);
     }
 
-    private function fileSafeName(string $fileName): string
+    // 文件详情
+    public function info($id)
     {
-        // 获取扩展名和主文件名
-        $ext = pathinfo($fileName, PATHINFO_EXTENSION);
-        $base = pathinfo($fileName, PATHINFO_FILENAME);
-
-        // 替换非法字符为下划线，Windows 和 Linux 常见非法字符
-        $illegal = ['\\', '/', ':', '*', '?', '"', '<', '>', '|'];
-        $base = str_replace($illegal, '_', $base);
-
-        // 去除不可打印的控制字符，避免文件名异常
-        $base = preg_replace('/[\x00-\x1F]/', '', $base);
-
-        // URL 编码，防止特殊字符导致路径或链接异常
-        $safe = rawurlencode($base);
-
-        // 返回拼接扩展名的安全文件名
-        return $safe . ($ext ? '.' . $ext : '');
-    }
-
-    // 文件hash
-    private function fileHash(string $filePath): ?string
-    {
-        if (!is_readable($filePath)) {
-            return null;
+        $info = $this->file->info($id);
+        if (!$info) {
+            return [];
         }
 
-        $handle = fopen($filePath, 'rb');
-        if (!$handle) {
-            return null;
-        }
-
-        $hashContext = hash_init('sha256');
-        while (!feof($handle)) {
-            // 每次读取 128KB，防止内存占用过大
-            $chunk = fread($handle, 128 * 1024);
-            if ($chunk === false) {
-                fclose($handle);
-                return null;
-            }
-            hash_update($hashContext, $chunk);
-        }
-
-        fclose($handle);
-        return hash_final($hashContext);
-    }
-
-    private function prepareUploadDir()
-    {
-        $dateDir = date('Y-m-d');
-        $relativeDir = 'storage/upload/' . $dateDir . '/';
-        $saveDir = public_path($relativeDir);
-
-        if (!is_dir($saveDir)) {
-            mkdir($saveDir, 0755, true);
-        }
-
-        return [
-            'saveDir' => $saveDir,
-            'relativeDir' => $relativeDir,
-        ];
+        return $info->toArray();
     }
 
     // 文件上传
     public function upload($file, $userID, $isContent = true)
     {
-        $dirInfo = $this->prepareUploadDir();
+        $dirInfo = prepareUploadDir();
         $saveDir = $dirInfo['saveDir'];
         $relativeDir = $dirInfo['relativeDir'];
 
         $realPath = $file->getRealPath();
-        $hash = $this->fileHash($realPath);
+        $hash = fileHash($realPath);
         if (!$hash) {
             throw new \Exception('无法计算文件哈希');
         }
@@ -117,11 +50,11 @@ class FileService extends BaseService
             'size' => $file->getSize(),
             'extension' => $file->getOriginalExtension() ?: 'bin',
             'originalName' => $file->getOriginalName(),
-            'mime' => $this->mimeType($file),
+            'mime' => mimeType($file),
         ];
 
         // 是否重复
-        $found = $this->file->hashDuplicate([$hash], $userID);
+        $found = $this->file->isExist([$hash], $userID);
 
         if ($found) {
             return [
@@ -145,7 +78,7 @@ class FileService extends BaseService
 
         // 写入数据库
         $new = $this->file->create([
-            'name' => $this->fileSafeName($fileInfo['originalName']),
+            'name' => fileSafeName($fileInfo['originalName']),
             'hash_name' => $hash,
             'path' => $relativePath,
             'size' => $fileInfo['size'],
@@ -166,6 +99,7 @@ class FileService extends BaseService
         ];
     }
 
+    // 批量上传
     public function uploadMultiple(array $files, $userID)
     {
         $results = [];
@@ -179,20 +113,15 @@ class FileService extends BaseService
         return $results;
     }
 
-    // 文件列表
-    public function index($keyword = '', $category = 0, $fileType = 'all', $page = 1, $perPage = 20)
+    // 更新
+    public function update($data)
     {
-        return $this->file->index($keyword, $category, $fileType, $page, $perPage);
-    }
+        $fileData = [
+            'category_id' => $data['category_id'],
+            'name' => fileSafeName($data['name'])
+        ];
 
-    // 选择情况
-    public function checkSelect($ids)
-    {
-        if ($ids) {
-            $count = $this->file->selectCount($ids);
-            return count($ids) == $count;
-        }
-        return false;
+        return $this->file->update($data['id'], $fileData);
     }
 
     // 更新文件分类
@@ -201,26 +130,14 @@ class FileService extends BaseService
         return $this->file->updateCategory($ids, $categoryId);
     }
 
-    // 文件详情
-    public function info($id)
+    // 选择有效记录数量
+    public function selectedCount($ids)
     {
-        $info = $this->file->info($id);
-        if (!$info) {
-            return [];
+        if ($ids) {
+            $count = $this->file->selectedCount('file', $ids);
+            return count($ids) == $count;
         }
-
-        return $info->toArray();
-    }
-
-    // 更新
-    public function update($data)
-    {
-        $fileData = [
-            'category_id' => $data['category_id'],
-            'name' => $this->fileSafeName($data['name'])
-        ];
-
-        return $this->file->update($data['id'], $fileData);
+        return false;
     }
 
     // 删除

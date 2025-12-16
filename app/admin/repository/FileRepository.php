@@ -13,6 +13,7 @@ class FileRepository extends BaseRepository
         $this->file = new File();
     }
 
+    // 列表
     public function index($keyword = '', $category = 0, $fileType = 'all', $page = 1, $perPage = 20)
     {
         $query = $this->file->alias('f')
@@ -49,7 +50,32 @@ class FileRepository extends BaseRepository
         ];
     }
 
-    public function hashDuplicate($hash, $userID, $storageType = File::fileStorageTypeLocal)
+    // 某个分类是否存在文件
+    public function hasFileInCategory($categoryIds)
+    {
+        return $this->file->field('id')->where('category_id', 'in', $categoryIds)->find();
+    }
+
+    // 详情
+    public function info($id)
+    {
+        return $this->file->where('id', $id)->field('id,name,category_id')->find();
+    }
+
+    // 单文件详情
+    public function pathInfo($id)
+    {
+        return $this->file->where('id', $id)->field('id,path')->select();
+    }
+
+    // 多个文件详情
+    public function batchInfo($ids)
+    {
+        return $this->file->whereIn('id', $ids)->field('id,path')->select();
+    }
+
+    // 文件是否已存在
+    public function isExist($hash, $userID, $storageType = File::fileStorageTypeLocal)
     {
         return $this->file->where([
             'hash_name' => $hash,
@@ -58,9 +84,22 @@ class FileRepository extends BaseRepository
         ])->find();
     }
 
+    // 添加
     public function create($data)
     {
         return $this->file->create($data);
+    }
+
+    // 更新
+    public function update($id, $data)
+    {
+        return $this->file->update($data, ['id' => $id]);
+    }
+
+    // 更新文件分类
+    public function updateCategory($ids, $categoryId)
+    {
+        return $this->file->where('id', 'in', $ids)->update(['category_id' => $categoryId]);
     }
 
     // 删除
@@ -70,45 +109,5 @@ class FileRepository extends BaseRepository
             ->where('id', 'in', $ids)
             ->useSoftDelete('deleted_at', date('Y-m-d H:i:s'))
             ->delete();
-    }
-
-    // 获取文件信息
-    public function pathInfo($id)
-    {
-        return $this->file->where('id', $id)->field('id,path')->select();
-    }
-
-    public function batchInfo($ids)
-    {
-        return $this->file->whereIn('id', $ids)->field('id,path')->select();
-    }
-
-    public function selectCount($ids)
-    {
-        return $this->file->where('id', 'in', $ids)->count('id');
-    }
-
-    // 某个分类是否存在文件
-    public function foundFile($categoryIds)
-    {
-        return $this->file->field('id')->where('category_id', 'in', $categoryIds)->find();
-    }
-
-    // 更新文件分类
-    public function updateCategory($ids, $categoryId)
-    {
-        return $this->file->where('id', 'in', $ids)->update(['category_id' => $categoryId]);
-    }
-
-    // 详情
-    public function info($id)
-    {
-        return $this->file->where('id', $id)->field('id,name,category_id')->find();
-    }
-
-    // 更新
-    public function update($id, $data)
-    {
-        return $this->file->update($data, ['id' => $id]);
     }
 }

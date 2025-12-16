@@ -47,10 +47,10 @@ class ProductRepository extends BaseRepository
         ];
     }
 
-    // 添加
-    public function create($data)
+    // 某个分类是否存在产品
+    public function hasProductInCategory($categoryIds)
     {
-        return $this->product->insertGetId($data);
+        return $this->product->field('id')->where('category_id', 'in', $categoryIds)->find();
     }
 
     // 详情
@@ -64,16 +64,16 @@ class ProductRepository extends BaseRepository
         return $info;
     }
 
+    // 添加
+    public function create($data)
+    {
+        return $this->product->insertGetId($data);
+    }
+
     // 更新
     public function update($id, $data)
     {
         return $this->product->update($data, ['id' => $id]);
-    }
-
-    // 检查产品id选择情况
-    public function selectCount($ids)
-    {
-        return $this->product->where('id', 'in', $ids)->count('id');
     }
 
     // 删除
@@ -85,11 +85,5 @@ class ProductRepository extends BaseRepository
             ->where('id', 'in', $ids)
             ->useSoftDelete('deleted_at', date('Y-m-d H:i:s'))
             ->delete();
-    }
-
-    // 某个分类是否存在产品
-    public function foundProduct($categoryIds)
-    {
-        return $this->product->field('id')->where('category_id', 'in', $categoryIds)->find();
     }
 }

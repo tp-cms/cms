@@ -37,7 +37,7 @@ class ProductCategory extends Base
         return $this->suc($list);
     }
 
-    // 新增
+    // 添加
     public function createHtml()
     {
         return View::fetch('admin@productcategory/create');
@@ -69,6 +69,9 @@ class ProductCategory extends Base
     {
         $id = $this->request->route('id');
         $info = $this->productCategory->info($id);
+        if (!$info) {
+            return View::fetch('admin@tips/notfound');
+        }
         View::assign('info', $info);
         return View::fetch('admin@productcategory/update');
     }
@@ -99,13 +102,13 @@ class ProductCategory extends Base
         }
 
         // 是否选择正确
-        $check = $this->productCategory->checkSelect($ids);
+        $check = $this->productCategory->selectedCount($ids);
         if (!$check) {
             return $this->err('分类选择错误');
         }
 
         // 删除前判断
-        $hasProduct = $this->productCategory->checkDelete($ids);
+        $hasProduct = $this->productCategory->hasProductInCategory($ids);
         if ($hasProduct) {
             return $this->err('请先删除分类下的分类信息');
         }

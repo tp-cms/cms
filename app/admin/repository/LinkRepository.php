@@ -13,6 +13,7 @@ class LinkRepository extends BaseRepository
         $this->link = new Link();
     }
 
+    // 列表
     public function index($keyword = '', $page = 1, $perPage = 20)
     {
         $query = $this->link
@@ -45,10 +46,16 @@ class LinkRepository extends BaseRepository
         ];
     }
 
-    // 添加
-    public function create($data)
+    // 链接url是否重复
+    public function duplicate($url, $id = 0)
     {
-        return $this->link->insertGetId($data);
+        return $this->link
+            ->where(['url' => $url])
+            ->when($id > 0, function ($query) use ($id) {
+                $query->where('id', '<>', $id);
+            })
+            ->field('id')
+            ->find();
     }
 
     // 详情
@@ -60,6 +67,12 @@ class LinkRepository extends BaseRepository
             ->find();
 
         return $info;
+    }
+
+    // 添加
+    public function create($data)
+    {
+        return $this->link->insertGetId($data);
     }
 
     // 更新
@@ -75,21 +88,5 @@ class LinkRepository extends BaseRepository
             ->where('id', 'in', $ids)
             ->useSoftDelete('deleted_at', date('Y-m-d H:i:s'))
             ->delete();
-    }
-
-    public function duplicate($url, $id = 0)
-    {
-        return $this->link
-            ->where(['url' => $url])
-            ->when($id > 0, function ($query) use ($id) {
-                $query->where('id', '<>', $id);
-            })
-            ->field('id')
-            ->find();
-    }
-
-    public function selectCount($ids)
-    {
-        return $this->link->where('id', 'in', $ids)->count('id');
     }
 }

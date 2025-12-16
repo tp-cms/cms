@@ -13,6 +13,7 @@ class CustomerRepository extends BaseRepository
         $this->customer = new Customer();
     }
 
+    // 列表
     public function index($keyword = '', $page = 1, $perPage = 20)
     {
         $query = $this->customer
@@ -42,10 +43,16 @@ class CustomerRepository extends BaseRepository
         ];
     }
 
-    // 添加
-    public function create($data)
+    // 名称是否重复
+    public function duplicate($name, $id = 0)
     {
-        return $this->customer->insertGetId($data);
+        return $this->customer
+            ->where(['name' => $name])
+            ->when($id > 0, function ($query) use ($id) {
+                $query->where('id', '<>', $id);
+            })
+            ->field('id')
+            ->find();
     }
 
     // 详情
@@ -57,6 +64,12 @@ class CustomerRepository extends BaseRepository
             ->find();
 
         return $info;
+    }
+
+    // 添加
+    public function create($data)
+    {
+        return $this->customer->insertGetId($data);
     }
 
     // 更新
@@ -72,21 +85,5 @@ class CustomerRepository extends BaseRepository
             ->where('id', 'in', $ids)
             ->useSoftDelete('deleted_at', date('Y-m-d H:i:s'))
             ->delete();
-    }
-
-    public function selectCount($ids)
-    {
-        return $this->customer->where('id', 'in', $ids)->count('id');
-    }
-
-    public function duplicate($name, $id = 0)
-    {
-        return $this->customer
-            ->where(['name' => $name])
-            ->when($id > 0, function ($query) use ($id) {
-                $query->where('id', '<>', $id);
-            })
-            ->field('id')
-            ->find();
     }
 }

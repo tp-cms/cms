@@ -44,7 +44,7 @@ class ProjectService extends BaseService
         return $info->toArray();
     }
 
-    // 新增
+    // 添加
     public function create($data, $userID)
     {
         if ($data['cover']) {
@@ -89,11 +89,11 @@ class ProjectService extends BaseService
         return $this->project->update($data['id'], $projectData);
     }
 
-    // 检查选择
-    public function checkSelect($ids)
+    // 选择有效记录数量
+    public function selectedCount($ids)
     {
         if ($ids) {
-            $count = $this->project->selectCount($ids);
+            $count = $this->project->selectedCount('project', $ids);
             return count($ids) == $count;
         }
         return false;

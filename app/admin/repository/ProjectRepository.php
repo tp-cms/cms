@@ -13,6 +13,7 @@ class ProjectRepository extends BaseRepository
         $this->project = new Project();
     }
 
+    // 列表
     public function index($keyword = '', $page = 1, $perPage = 20)
     {
         $query = $this->project
@@ -42,10 +43,6 @@ class ProjectRepository extends BaseRepository
         ];
     }
 
-    public function create($data)
-    {
-        return $this->project->insertGetId($data);
-    }
 
     // 详情
     public function info($id)
@@ -56,6 +53,12 @@ class ProjectRepository extends BaseRepository
             ->find();
 
         return $info;
+    }
+
+    // 添加
+    public function create($data)
+    {
+        return $this->project->insertGetId($data);
     }
 
     // 更新
@@ -71,10 +74,5 @@ class ProjectRepository extends BaseRepository
             ->where('id', 'in', $ids)
             ->useSoftDelete('deleted_at', date('Y-m-d H:i:s'))
             ->delete();
-    }
-
-    public function selectCount($ids)
-    {
-        return $this->project->where('id', 'in', $ids)->count('id');
     }
 }

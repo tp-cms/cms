@@ -21,6 +21,7 @@ class ProductCategoryRepository extends BaseRepository
         return $names;
     }
 
+    // 列表
     public function index($keyword = '', $page = 1, $perPage = 20)
     {
         $query = $this->productCategory
@@ -50,10 +51,19 @@ class ProductCategoryRepository extends BaseRepository
         ];
     }
 
-    // 添加
-    public function create($data)
+    // 名称/CODE是否重复
+    public function duplicate($name, $code, $id = 0)
     {
-        return $this->productCategory->insertGetId($data);
+        return $this->productCategory
+            ->field('id')
+            ->when($id > 0, function ($query) use ($id) {
+                $query->where('id', '<>', $id);
+            })
+            ->where(function ($query) use ($name, $code) {
+                $query->where('name', $name)
+                    ->whereOr('code', $code);
+            })
+            ->find();
     }
 
     // 详情
@@ -65,6 +75,12 @@ class ProductCategoryRepository extends BaseRepository
             ->find();
 
         return $info;
+    }
+
+    // 添加
+    public function create($data)
+    {
+        return $this->productCategory->insertGetId($data);
     }
 
     // 更新
@@ -80,24 +96,5 @@ class ProductCategoryRepository extends BaseRepository
             ->where('id', 'in', $ids)
             ->useSoftDelete('deleted_at', date('Y-m-d H:i:s'))
             ->delete();
-    }
-
-    public function selectCount($ids)
-    {
-        return $this->productCategory->where('id', 'in', $ids)->count('id');
-    }
-
-    public function duplicate($name, $code, $id = 0)
-    {
-        return $this->productCategory
-            ->field('id')
-            ->when($id > 0, function ($query) use ($id) {
-                $query->where('id', '<>', $id);
-            })
-            ->where(function ($query) use ($name, $code) {
-                $query->where('name', $name)
-                    ->whereOr('code', $code);
-            })
-            ->find();
     }
 }

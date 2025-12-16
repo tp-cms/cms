@@ -19,15 +19,10 @@ class LinkService extends BaseService
         return $this->link->index($keyword, $page, $perPage);
     }
 
-    // 新增
-    public function create($data, $userID)
+    // 链接是否重复
+    public function duplicate($url, $id = 0)
     {
-        $linkData = [
-            'title' => $data['title'],
-            'url' => $data['url'],
-            'created_by' => $userID
-        ];
-        return $this->link->create($linkData);
+        return $this->link->duplicate($url, $id);
     }
 
     // 详情
@@ -40,6 +35,17 @@ class LinkService extends BaseService
         return $info->toArray();
     }
 
+    // 添加
+    public function create($data, $userID)
+    {
+        $linkData = [
+            'title' => $data['title'],
+            'url' => $data['url'],
+            'created_by' => $userID
+        ];
+        return $this->link->create($linkData);
+    }
+
     // 更新
     public function update($data)
     {
@@ -50,23 +56,19 @@ class LinkService extends BaseService
         return $this->link->update($data['id'], $linkData);
     }
 
+    // 选择有效记录数量
+    public function selectedCount($ids)
+    {
+        if ($ids) {
+            $count = $this->link->selectedCount('link', $ids);
+            return count($ids) == $count;
+        }
+        return false;
+    }
+
     // 删除
     public function delete($ids)
     {
         return $this->link->delete($ids);
-    }
-
-    public function duplicate($url, $id = 0)
-    {
-        return $this->link->duplicate($url, $id);
-    }
-
-    public function checkSelect($ids)
-    {
-        if ($ids) {
-            $count = $this->link->selectCount($ids);
-            return count($ids) == $count;
-        }
-        return false;
     }
 }
