@@ -25,6 +25,14 @@ return [
 
     // 添加模板变量替换，前期前后端不分离时使用
     'tpl_replace_string' => [
+        '__JS__'                => '/assets/js',
+
+        // 前台资源
+        '__STATIC_FRONTEND__'   => '/assets/frontend',
+        '__FRONTEND_CSS__'      => '/assets/frontend/css',
+        '__FRONTEND_JS__'       => '/assets/frontend/js',
+        '__FRONTEND_IMG__'      => '/assets/frontend/img',
+
         // 后台资源
         '__STATIC_ADMIN__'      => '/assets/admin',
         '__ADMIN_CSS__'         => '/assets/admin/css',
