@@ -17,11 +17,13 @@ class ProjectRepository extends BaseRepository
     public function index($keyword = '', $page = 1, $perPage = 20)
     {
         $query = $this->project
+            ->alias('p')
+            ->join('file f', 'p.cover = f.id', 'left')
             ->when($keyword, function ($query) use ($keyword) {
-                $query->where('title', 'like', '%' . $keyword . '%');
+                $query->where('p.title', 'like', '%' . $keyword . '%');
             })
-            ->order('id desc')
-            ->field('id,title,summary,cover,status,is_top,tag,created_at');
+            ->order('p.id desc')
+            ->field('p.id,p.title,p.summary,p.cover,p.status,p.is_top,p.tag,p.created_at,f.path as file_path, f.mime as file_mime');
 
         // 记录数
         $total = $query->count();

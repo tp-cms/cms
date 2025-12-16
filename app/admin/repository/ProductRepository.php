@@ -18,6 +18,7 @@ class ProductRepository extends BaseRepository
     {
         $query = $this->product->alias('p')
             ->join('product_category c', 'p.category_id = c.id', 'left')
+            ->join('file f', 'p.cover = f.id', 'left')
             ->when($keyword, function ($query) use ($keyword) {
                 $query->where('p.title', 'like', '%' . $keyword . '%');
             })
@@ -25,7 +26,7 @@ class ProductRepository extends BaseRepository
                 $query->where('p.category_id', $category);
             })
             ->order('p.id desc')
-            ->field('p.id,p.title,p.summary,p.cover,p.created_at,p.price,p.b2b_uri, c.name as category_name');
+            ->field('p.id,p.title,p.summary,p.cover,p.created_at,p.price,p.b2b_uri, c.name as category_name, f.path as file_path, f.mime as file_mime');
 
         // 记录数
         $total = $query->count();

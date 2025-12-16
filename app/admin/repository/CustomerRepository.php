@@ -17,11 +17,13 @@ class CustomerRepository extends BaseRepository
     public function index($keyword = '', $page = 1, $perPage = 20)
     {
         $query = $this->customer
+            ->alias('c')
+            ->join('file f', 'c.logo = f.id', 'left')
             ->when($keyword, function ($query) use ($keyword) {
-                $query->where('name', 'like', '%' . $keyword . '%');
+                $query->where('c.name', 'like', '%' . $keyword . '%');
             })
-            ->order('id desc')
-            ->field('id,name,logo,url');
+            ->order('c.id desc')
+            ->field('c.id,c.name,c.logo,c.url,f.path as file_path, f.mime as file_mime');
 
         // 记录数
         $total = $query->count();

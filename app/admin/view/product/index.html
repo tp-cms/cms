@@ -20,7 +20,7 @@
             <button class="layui-btn layui-btn-danger" id="deleteBtn">删除</button>
         </div>
     </div>
-    <div class="table-wrap">
+    <div class="table-wrap table-contain-preview">
         <!-- 将表格ID作为标识 -->
         <table class="layui-table" id="table-id" lay-filter="filter"></table>
     </div>
@@ -42,6 +42,18 @@
         },
         cols: [
             { field: 'title', title: '产品名称', width: 200 },
+            {
+                field: 'file_path', title: '封面', width: 200,
+                templet: function (d) {
+                    const fileType = getFileType(d.file_mime);
+                    const fileIcon = fileType === 'image' ? window.origin + '/' + d.file_path : getFileIcon(fileType);
+                    if (fileType == 'image') {
+                        return `<a href="${fileIcon}" target="_blank" class="table-preview-img"><img src="${fileIcon}"></a>`;
+                    } else {
+                        return `<a class="table-preview-img"><img src="${fileIcon}" alt="${d.name}"></a>`;
+                    }
+                }
+            },
             { field: 'category_name', title: '分类', width: 200 },
             { field: 'summary', title: '描述', width: 300 },
             { field: 'price', title: '价格', width: 100, sort: true },

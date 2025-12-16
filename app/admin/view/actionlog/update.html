@@ -1,0 +1,58 @@
+{extend name="layout/main" /}
+
+{block name="content"}
+<div class="wrap-con">
+    <div class="con-header">
+        <h2>日志</h2>
+    </div>
+    <form class="layui-form" id="banner-form">
+        <!-- id信息 -->
+        <input type="text" id="id" name="id" value="{$info.id}" hidden>
+
+        <!-- 模块 -->
+        <div class="layui-form-item">
+            <label class="layui-form-label">模块</label>
+            <div class="layui-input-block">
+                <input type="text" id="module" name="module" required lay-verify="required" disabled
+                    class="layui-input" autocomplete="off" value="{$info.module}">
+            </div>
+        </div>
+
+        <!-- 操作人 -->
+        <div class="layui-form-item">
+            <label class="layui-form-label">操作人</label>
+            <div class="layui-input-block">
+                <input type="text" id="username" name="username" required lay-verify="required" disabled class="layui-input"
+                    autocomplete="off" value="{$info.username}">
+            </div>
+        </div>
+
+        <!-- ip -->
+        <div class="layui-form-item">
+            <label class="layui-form-label">IP地址</label>
+            <div class="layui-input-block">
+                <input type="text" id="ip" name="ip" required lay-verify="required" disabled class="layui-input"
+                    autocomplete="off" value="{$info.ip}">
+            </div>
+        </div>
+
+        <!-- 设备 -->
+        <div class="layui-form-item">
+            <label class="layui-form-label">设备</label>
+            <div class="layui-input-block">
+                <textarea name="user_agent" id="user_agent" class="layui-textarea" disabled>{$info.user_agent}</textarea>
+            </div>
+        </div>
+
+        <!-- 操作时间 -->
+        <div class="layui-form-item">
+            <label class="layui-form-label">时间</label>
+            <div class="layui-input-block">
+                <input type="text" id="created_at" name="created_at" required lay-verify="required" disabled class="layui-input"
+                    autocomplete="off" value="{$info.created_at}">
+            </div>
+        </div>
+    </form>
+</div>
+
+{/block}

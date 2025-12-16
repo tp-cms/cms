@@ -35,4 +35,16 @@ class ActionLog extends Base
         $list = $this->actionLog->index($keyword, $userId, $page);
         return $this->suc($list);
     }
+
+    // 更新
+    public function updateHtml()
+    {
+        $id = $this->request->route('id');
+        $info = $this->actionLog->info($id);
+        if (!$info) {
+            return View::fetch('admin@tips/notfound');
+        }
+        View::assign('info', $info);
+        return View::fetch('admin@actionlog/update');
+    }
 }

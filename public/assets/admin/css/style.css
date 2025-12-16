@@ -56,6 +56,15 @@ body {
 	border: 1px solid #ddd;
 	border-radius: 6px;
 }
+/* 列表包含封面 */
+.table-contain-preview td {
+	height: 120px;
+}
+
+/* 默认的行样式 */
+.table-contain-preview .layui-table-cell {
+	height: auto;
+}
 
 /* jqconfirm相关 */
 /* 弹出框 */
@@ -68,13 +77,13 @@ body {
 	color: #fff;
 }
 
-.jqconfirm-alert-item{
+.jqconfirm-alert-item {
 	display: flex;
 	align-items: center;
 	gap: 10px;
 }
 
-.jqconfirm-alert-item label{
+.jqconfirm-alert-item label {
 	width: 74px;
 	text-align: center;
 	background-color: #f6f8fa;

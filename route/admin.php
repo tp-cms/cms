@@ -82,6 +82,7 @@ Route::group($adminPrefix, function () {
 
     // 操作记录
     Route::get('action-log/index', A('ActionLog@indexHtml'));
+    Route::get('action-log/update/:id', A('ActionLog@updateHtml'));
 
     // 用户
     Route::get('user/index', A('User@indexHtml'));

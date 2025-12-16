@@ -18,6 +18,7 @@ class FileRepository extends BaseRepository
     {
         $query = $this->file->alias('f')
             ->join('file_category c', 'f.category_id = c.id', 'left')
+            ->join('user u', 'f.created_by = u.id', 'left')
             ->when($keyword, function ($query) use ($keyword) {
                 $query->where('f.name', 'like', '%' . $keyword . '%');
             })
@@ -28,7 +29,7 @@ class FileRepository extends BaseRepository
                 $query->where('mime', 'like', $fileType . '%');
             })
             ->order('f.id desc')
-            ->field('f.id,f.name,f.path,f.size,f.mime,f.storage_type,f.ext,f.is_content,f.created_at,c.name as category_name');
+            ->field('f.id,f.name,f.path,f.size,f.mime,f.storage_type,f.ext,f.is_content,f.created_at,c.name as category_name, u.username');
 
         // 记录数
         $total = $query->count();

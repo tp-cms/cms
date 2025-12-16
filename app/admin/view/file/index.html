@@ -1,15 +1,6 @@
 {extend name="layout/main" /}
 
 {block name="content"}
-<style>
-    .file-table td {
-        height: 120px;
-    }
-
-    /* 默认的行样式 */
-    .layui-table-cell {
-        height: auto;
-    }
 </style>
 <div class="wrap-con">
     <div class="con-header">
@@ -31,7 +22,7 @@
             </div>
         </div>
     </div>
-    <div class="table-wrap file-table">
+    <div class="table-wrap table-contain-preview">
         <table class="layui-table" id="table-id" lay-filter="filter"></table>
     </div>
 </div>
@@ -182,6 +173,7 @@
                     }
                 }
             },
+            { field: 'username', title: '上传人', width: 200},
             {
                 field: 'size', title: '大小', width: 200,
                 templet: function (d) {

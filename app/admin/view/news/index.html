@@ -13,7 +13,7 @@
             </div>
         </div>
     </div>
-    <div class="table-wrap">
+    <div class="table-wrap table-contain-preview">
         <table class="layui-table" id="table-id" lay-filter="filter"></table>
     </div>
 </div>
@@ -31,6 +31,18 @@
         },
         cols: [
             { field: 'title', title: '标题', width: 200 },
+            {
+                field: 'file_path', title: '封面', width: 200,
+                templet: function (d) {
+                    const fileType = getFileType(d.file_mime);
+                    const fileIcon = fileType === 'image' ? window.origin + '/' + d.file_path : getFileIcon(fileType);
+                    if (fileType == 'image') {
+                        return `<a href="${fileIcon}" target="_blank" class="table-preview-img"><img src="${fileIcon}"></a>`;
+                    } else {
+                        return `<a class="table-preview-img"><img src="${fileIcon}" alt="${d.name}"></a>`;
+                    }
+                }
+            },
             { field: 'summary', title: '简介', width: 200 },
             {
                 field: 'status', title: '状态', width: 100,

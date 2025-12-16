@@ -17,11 +17,13 @@ class NewsRepository extends BaseRepository
     public function index($keyword = '', $page = 1, $perPage = 20)
     {
         $query = $this->news
+            ->alias('n')
+            ->join('file f', 'n.cover = f.id', 'left')
             ->when($keyword, function ($query) use ($keyword) {
-                $query->where('title', 'like', '%' . $keyword . '%');
+                $query->where('n.title', 'like', '%' . $keyword . '%');
             })
-            ->order('id desc')
-            ->field('id,title,summary,cover,status,is_top,created_at');
+            ->order('n.id desc')
+            ->field('n.id,n.title,n.summary,n.cover,n.status,n.is_top,n.created_at,f.path as file_path, f.mime as file_mime');
 
         // 记录数
         $total = $query->count();

@@ -17,19 +17,21 @@ class ActionLogRepository extends BaseRepository
     public function index($keyword = '', $userID = 0, $page = 1, $perPage = 20)
     {
         $query = $this->actionLog
+            ->alias('al')
+            ->join('user u', 'al.created_by = u.id', 'left')
             ->when($keyword, function ($query) use ($keyword) {
                 $query->where(function ($q) use ($keyword) {
                     // https://doc.thinkphp.cn/v8_0/adv_query.html
-                    $ipMap = ['ip', 'like', '%' . $keyword . '%'];
-                    $moduleMap = ['module', 'like', '%' . $keyword . '%'];
+                    $ipMap = ['al.ip', 'like', '%' . $keyword . '%'];
+                    $moduleMap = ['al.module', 'like', '%' . $keyword . '%'];
                     $q->whereOr([$ipMap, $moduleMap]);
                 });
             })
             ->when($userID, function ($query) use ($userID) {
-                $query->where('created_by', $userID);
+                $query->where('al.created_by', $userID);
             })
-            ->order('id desc')
-            ->field('id,action,module,description,ip,user_agent,created_at,created_by');
+            ->order('al.id desc')
+            ->field('al.id,al.action,al.module,al.description,al.ip,al.user_agent,al.created_at,al.created_by,u.username');
 
         // 记录数
         $total = $query->count();
@@ -55,8 +57,10 @@ class ActionLogRepository extends BaseRepository
     public function info($id)
     {
         $info = $this->actionLog
-            ->field('id,action,module,description,ip,user_agent,created_by,created_at')
-            ->where(['id' => $id])
+            ->alias('al')
+            ->join('user u', 'al.created_by = u.id', 'left')
+            ->field('al.id,al.action,al.module,al.description,al.ip,al.user_agent,al.created_by,al.created_at,u.username')
+            ->where(['al.id' => $id])
             ->find();
 
         return $info;
