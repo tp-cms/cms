@@ -62,8 +62,9 @@ class BannerService extends BaseService
         }
 
         if ($info->video) {
-            $videoInfo = $this->file->batchInfo($info->video);
+            $videoInfo = $this->file->pathInfo($info->video);
             if ($videoInfo) {
+                $videoInfo[0]->path = 'assets/admin/img/icon/mp4.png';
                 $info->video_file = $videoInfo;
             } else {
                 $info->video = 0;
