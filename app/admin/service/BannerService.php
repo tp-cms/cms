@@ -20,6 +20,7 @@ class BannerService extends BaseService
     {
         return in_array($category, [
             'product',
+            'about-us',
             'index',
             'contact',
             'project',

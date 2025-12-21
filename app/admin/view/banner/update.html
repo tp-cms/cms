@@ -25,6 +25,7 @@
                 <select id="category" name="category" lay-verify="required">
                     <option value="">选择分类</option>
                     <option {if condition="$info.category == 'index'"}selected{/if} value="index">首页</option>
+                    <option {if condition="$info.category == 'about-us'"}selected{/if} value="about-us">关于我们</option>
                     <option {if condition="$info.category == 'product'"}selected{/if} value="product">产品</option>
                     <option {if condition="$info.category == 'news'"}selected{/if} value="news">新闻</option>
                     <option {if condition="$info.category == 'project'"}selected{/if} value="project">案例</option>
