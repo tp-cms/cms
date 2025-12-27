@@ -272,7 +272,8 @@ VALUES
   ('抖音' ,'douyin',      0, 'img', 1),
   ('微信' ,'wechat',      0, 'img', 1),
   ('公司' ,'company',     '', 'input', 1),
-  ('备案号' ,'icp',         '', 'input', 1)
+  ('备案号' ,'icp',         '', 'input', 1),
+  ('爱采购' ,'baidu_b2b', '', 'img', 1)
 ON DUPLICATE KEY UPDATE
   cfg_label   = VALUES(cfg_label),
   cfg_val   = VALUES(cfg_val),
