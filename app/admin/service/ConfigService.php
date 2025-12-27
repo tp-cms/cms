@@ -49,6 +49,7 @@ class ConfigService extends BaseService
             Config::configKeyDouyin,
             Config::configKeyCompany,
             Config::configKeyICP,
+            Config::configkeyBaiduB2b,
         ]);
     }
 

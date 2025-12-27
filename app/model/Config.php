@@ -30,4 +30,6 @@ class Config extends Base
     public const configKeyCompany = 'company';
     // 备案号
     public const configKeyICP = 'icp';
+    // 百度爱采购商铺
+    public const configkeyBaiduB2b = 'baidu_b2b';
 }
